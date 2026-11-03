@@ -63,11 +63,11 @@ testDB('news-only discovery never increases verified signal count before approva
  assert.equal(sql.prepare(SUMMARY_SQL).get().signals,0);
  await decideSourceCandidate(db,{id,decision:'approve',now:at});
  assert.equal(sql.prepare(SUMMARY_SQL).get().signals,1);
- assert.equal(sql.prepare('SELECT count(*) n FROM signals WHERE '+SIGNAL_ELIGIBILITY).get().n,1);
+ assert.equal(sql.prepare('SELECT count(*) n FROM signals s WHERE '+SIGNAL_ELIGIBILITY).get().n,1);
  assert.equal(sql.prepare('SELECT event_date FROM signals').get().event_date,'2026-10-12');
 });
 testDB('reviewed non-Research-Park iVenture venture adds exactly one company without inventing tenancy',async(sql,db)=>{
- const before=sql.prepare(SUMMARY_SQL).get();
+ const before=sql.prepare(SUMMARY_SQL).get(),sectorBefore=sql.prepare(SECTORS_SQL).all();
  const candidate=parseIVentureCandidates(iventure,companyList,at).find(x=>x.companyName==='New UIUC Venture');
  assert.equal(candidate.companyId,null);
  const id=await queue(sql,candidate);
@@ -78,7 +78,7 @@ testDB('reviewed non-Research-Park iVenture venture adds exactly one company wit
  assert.equal(sql.prepare("SELECT count(*) n FROM claims WHERE field='affiliation' AND company_id LIKE 'iventure-%'").get().n,0);
  assert.equal(sql.prepare("SELECT count(*) n FROM companies WHERE id LIKE 'iventure-%'").get().n,1);
  assert.equal(sql.prepare("SELECT count(*) n FROM signals").get().n,0);
- assert.deepEqual(sql.prepare(SECTORS_SQL).all().length,before.companies>0?sql.prepare(SECTORS_SQL).all().length:0);
+ assert.deepEqual(sql.prepare(SECTORS_SQL).all(),sectorBefore);
 });
 testDB('existing user notes are untouched while new public-source reviews commit',async(sql,db)=>{
  sql.prepare('INSERT INTO workspace(id,user_id,kind,key,value,updated_at) VALUES(?,?,?,?,?,?)')
