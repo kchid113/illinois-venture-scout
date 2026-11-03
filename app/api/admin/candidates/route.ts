@@ -3,6 +3,7 @@ import {z} from 'zod';
 import {isAdmin} from '@/lib/admin';
 import {all,database} from '@/lib/radar';
 import {decideSourceCandidate,ReviewError} from '@/core/review-service.mjs';
+import {publicVentureWebsite,trustedOfficialProfile} from '@/core/source-security.mjs';
 export const dynamic='force-dynamic';
 
 export async function GET(req:NextRequest){
@@ -15,10 +16,7 @@ export async function GET(req:NextRequest){
    const payload=JSON.parse(String(r.payload||'{}'));
    const url=r.connector==='iventure-cohorts'?payload.ventureWebsite:r.connector==='enterpriseworks-directory'?payload.profileUrl:null;
    if(typeof url==='string'){
-    const u=new URL(url);
-    if(u.protocol==='https:'&&!u.username&&!u.password&&!u.hash&&!(r.connector==='enterpriseworks-directory'&&u.hostname!=='researchpark.illinois.edu')){
-     reviewUrl=u.href;
-    }
+    reviewUrl=r.connector==='enterpriseworks-directory'?trustedOfficialProfile(url):publicVentureWebsite(url);
    }
    canCreate=!r.company_id&&!!reviewUrl&&['iventure-cohorts','enterpriseworks-directory'].includes(String(r.connector));
   }catch{}
