@@ -7,7 +7,7 @@ export const CONNECTORS=Object.freeze([
 ]);
 
 export function normalizeCompanyName(name){
- return String(name||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\\s+/g,' ');
+ return String(name||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
 }
 /** Exact normalized name matching only. Ambiguous duplicate names are never auto-linked. */
 export function matchCompany(name,companies){
