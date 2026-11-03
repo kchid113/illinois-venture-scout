@@ -1,10 +1,11 @@
 import {text} from './ingestion.mjs';
-import {mentionsCompany,normalizeCompanyName} from './source-candidates.mjs';
+import {matchCompany,mentionsCompany,normalizeCompanyName} from './source-candidates.mjs';
 
 export const OFFICIAL_LISTINGS=Object.freeze({
  'research-park-news':{url:'https://researchpark.illinois.edu/news/',publisher:'University of Illinois Research Park'},
  'illinois-news':{url:'https://www.entrepreneurship.illinois.edu/news/news-and-info',publisher:'Entrepreneurship at Illinois'},
- 'otm-startups':{url:'https://otm.illinois.edu/browse-technologies-startups/startups',publisher:'University of Illinois Office of Technology Management'}
+ 'otm-startups':{url:'https://otm.illinois.edu/browse-technologies-startups/startups',publisher:'University of Illinois Office of Technology Management'},
+ 'iventure-cohorts':{url:'https://iventure.illinois.edu/startups',publisher:'iVenture Accelerator, Gies College of Business, University of Illinois'}
 });
 const OFFICIAL_API=Object.freeze({
  'nih-reporter':'https://api.reporter.nih.gov/v2/projects/search',
@@ -143,4 +144,50 @@ export async function usaSpendingCandidates(company,uei,observedAt,fetcher=fetch
     companyName:company.name,companyId:company.id,eventDate,
     payload:{recordType:'usaspending-award',uei,awardId,awardType,amount:Number.isFinite(amount)?amount:null},observedAt};
  });
+}
+
+
+/**
+ * iVenture's primary cohort directory includes for-profit and nonprofit
+ * student-led ventures. Participation does not prove University-owned IP,
+ * Research Park tenancy, financing, equity investment or commercial success.
+ * Only numbered cohort headings and their nested venture headings are parsed.
+ */
+export function parseIVentureCandidates(html,companies,observedAt){
+ const config=OFFICIAL_LISTINGS['iventure-cohorts'],markup=String(html);
+ const headings=[...markup.matchAll(/<h([2-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi)];
+ let cohort=null,cohortLevel=0;
+ const candidates=[];
+ for(let i=0;i<headings.length;i++){
+  const m=headings[i],heading=text(m[2]).trim();
+  const label=heading.match(/^iVenture\s+(?:cohort\s+)?(\d{1,2})$/i);
+  if(label){cohort=Number(label[1]);cohortLevel=Number(m[1]);continue;}
+  if(!cohort||Number(m[1])<=cohortLevel){if(Number(m[1])<=cohortLevel)cohort=null;continue;}
+  const name=heading.replace(/\s+/g,' ').trim();
+  if(name.length<3||name.length>125||/^(?:home|apply|startups by|about|contact|read more)/i.test(name))continue;
+  const between=markup.slice(m.index+m[0].length,headings[i+1]?.index??markup.length).slice(0,1900);
+  const paragraph=between.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i);
+  const description=paragraph?text(paragraph[1]).slice(0,180):'';
+  const anchor=m[2].match(/<a\b[^>]*href=["']([^"']+)["']/i);
+  let ventureWebsite=null;
+  if(anchor){
+   try{
+    const u=new URL(anchor[1]);
+    if(u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&!u.hash&&
+       !/^(?:localhost|127\.|192\.168\.|10\.|172\.(?:1[6-9]|2\d|3[01])\.)/.test(u.hostname))
+      ventureWebsite=u.href;
+   }catch{/* No trusted company website in the listing heading. */}
+  }
+  const matched=matchCompany(name,companies);
+  const excerpt=('Official iVenture cohort '+cohort+' listing names '+name+'.'+(description?' Directory description: '+description:'')).slice(0,440);
+  candidates.push({
+   connector:'iventure-cohorts',externalId:'cohort-'+cohort+':'+normalizeCompanyName(name),
+   sourceUrl:config.url,title:name+' — iVenture cohort '+cohort,
+   publisher:config.publisher,excerpt,companyName:name,companyId:matched?.id||null,
+   eventDate:null,payload:{recordType:'iventure-cohort',cohort,ventureWebsite},
+   observedAt
+  });
+ }
+ if(!candidates.length)throw Error('iVenture cohort listing layout changed or produced no venture headings; review before import');
+ return [...new Map(candidates.map(c=>[c.externalId,c])).values()];
 }
