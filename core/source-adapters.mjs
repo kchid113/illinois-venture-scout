@@ -1,5 +1,6 @@
 import {text} from './ingestion.mjs';
 import {matchCompany,mentionsCompany,normalizeCompanyName} from './source-candidates.mjs';
+import {officialSourceUrl,publicVentureWebsite,trustedOfficialProfile,publishedDate} from './source-security.mjs';
 
 export const OFFICIAL_LISTINGS=Object.freeze({
  'research-park-news':{url:'https://researchpark.illinois.edu/news/',publisher:'University of Illinois Research Park'},
@@ -51,9 +52,10 @@ async function allowedRobots(url,fetcher){
 export async function officialHTML(connector,fetcher=fetch,{page=1}={}){
  const target=OFFICIAL_LISTINGS[connector];
  if(!target)throw Error('Unknown listing connector');
- validateEndpoint(target.url,target.url);
+ officialSourceUrl(target.url,connector);
  if(!Number.isInteger(page)||page<1||page>(connector==='enterpriseworks-directory'?6:1))throw Error('Unsupported source listing page');
  const url=page===1?target.url:target.url+'page/'+page+'/';
+ officialSourceUrl(url,connector);
  const delay=await allowedRobots(url,fetcher);
  await new Promise(resolve=>setTimeout(resolve,delay));
  const html=await boundedResponse(url,{},fetcher);
@@ -62,9 +64,8 @@ export async function officialHTML(connector,fetcher=fetch,{page=1}={}){
 function safeArticleUrl(url,base){
  let u;try{u=new URL(url,base);}catch{return null;}
  const trustedOrigin=new URL(base).origin;
- if(u.origin!==trustedOrigin||u.protocol!=='https:'||u.username||u.password||u.hash)return null;
- // Do not stage external links or navigational anchor targets as official article evidence.
- u.search='';return u.href;
+ if(u.origin!==trustedOrigin||u.protocol!=='https:'||u.username||u.password||u.hash||u.search||u.port)return null;
+ return u.href;
 }
 export function parseNewsCandidates(html,connector,companies,observedAt){
  const config=OFFICIAL_LISTINGS[connector];
@@ -84,26 +85,41 @@ export function parseNewsCandidates(html,connector,companies,observedAt){
   const matched=mentioned[0];
   const rawDate=block.match(/<time[^>]*datetime=["']([^"']+)["']/i)?.[1]
    ||block.match(/\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+20\d{2}\b/i)?.[0];
-  const eventDate=rawDate&&!Number.isNaN(Date.parse(rawDate))?new Date(rawDate).toISOString().slice(0,10):null;
+  const eventDate=publishedDate(rawDate);
   found.push({connector,externalId:href,sourceUrl:href,title,publisher:config.publisher,
    excerpt:title,companyName:matched.name,companyId:matched.id,eventDate,
    payload:{recordType:'official-news-mention',listingUrl:config.url},observedAt});
  }
  return [...new Map(found.map(c=>[c.externalId,c])).values()];
 }
+/**
+ * OTM mentions must occur in a bounded official startup listing entry, never in
+ * navigation, page text, or a search-result teaser. This errs toward missing a
+ * company rather than inventing a university IP licensing relationship.
+ */
 export function parseOTMCandidates(html,companies,observedAt){
- const config=OFFICIAL_LISTINGS['otm-startups'],plain=' '+normalizeCompanyName(text(html))+' ';
- const found=[];
- for(const c of companies){
-  const name=normalizeCompanyName(c.name);
-  if(name.length<4||!plain.includes(' '+name+' '))continue;
-  found.push({connector:'otm-startups',externalId:'otm:'+c.id,sourceUrl:config.url,
-   title:`${c.name} listed in OTM's university IP startup directory`,publisher:config.publisher,
-   excerpt:`The Office of Technology Management startup directory includes ${c.name}. Verify the exact listing and current status before approval.`,
-   companyName:c.name,companyId:c.id,eventDate:null,
-   payload:{recordType:'otm-listing',listingUrl:config.url},observedAt});
+ const config=OFFICIAL_LISTINGS['otm-startups'];
+ const cards=[...String(html).matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/gi)].map(x=>x[0]);
+ cards.push(...[...String(html).matchAll(/<li\b[^>]*class=["'][^"']*(?:startup|portfolio|venture)[^"']*["'][^>]*>[\s\S]*?<\/li>/gi)].map(x=>x[0]));
+ const result=[];
+ for(const card of cards.slice(0,120)){
+  const a=card.match(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/i);
+  if(!a)continue;
+  let entry;try{entry=new URL(a[1],config.url);}catch{continue;}
+  if(entry.protocol!=='https:'||!['otm.illinois.edu','www.otm.illinois.edu'].includes(entry.hostname)||
+     entry.username||entry.password||entry.hash||entry.search)continue;
+  const title=normalizeCompanyName(text(a[2]));
+  if(title.length<4)continue;
+  const m=companies.filter(c=>normalizeCompanyName(c.name)===title);
+  if(m.length!==1)continue;
+  const company=m[0];
+  result.push({connector:'otm-startups',externalId:'otm:'+company.id,sourceUrl:config.url,
+   title:company.name+' listed in the OTM startup directory',publisher:config.publisher,
+   excerpt:'Official OTM startup listing entry identifies '+company.name+'. Verify the current IP status before approval.',
+   companyName:company.name,companyId:company.id,eventDate:null,
+   payload:{recordType:'otm-listing',listingUrl:config.url,entryUrl:entry.href},observedAt});
  }
- return found;
+ return [...new Map(result.map(x=>[x.externalId,x])).values()];
 }
 async function postOfficialJSON(connector,payload,fetcher=fetch){
  const endpoint=validateEndpoint(OFFICIAL_API[connector],OFFICIAL_API[connector]);
@@ -115,14 +131,14 @@ async function postOfficialJSON(connector,payload,fetcher=fetch){
 export async function nihCandidates(company,organizationName,observedAt,fetcher=fetch){
  if(!organizationName||normalizeCompanyName(organizationName).length<5)throw Error('NIH organization identity not reviewed');
  const rows=await postOfficialJSON('nih-reporter',{criteria:{org_names_exact_match:[organizationName]},offset:0,limit:25},fetcher);
- return rows.filter(r=>normalizeCompanyName(r.organization?.org_name)===normalizeCompanyName(organizationName)&&Number.isSafeInteger(Number(r.appl_id))&&r.appl_id)
+ return rows.filter(r=>r&&typeof r==='object'&&r.organization&&typeof r.organization.org_name==='string'&&normalizeCompanyName(r.organization.org_name)===normalizeCompanyName(organizationName)&&/^[1-9]\d*$/.test(String(r.appl_id))&&Number.isSafeInteger(Number(r.appl_id)))
  .slice(0,25).map(r=>{
   const id=String(r.appl_id),url=`https://reporter.nih.gov/project-details/${encodeURIComponent(id)}`;
   const title=String(r.project_title||r.project_num||'NIH project').slice(0,240);
-  const amount=typeof r.award_amount==='number'?r.award_amount:null;
+  const amount=typeof r.award_amount==='number'&&Number.isFinite(r.award_amount)&&r.award_amount>=0?r.award_amount:null;
   const amountText=Number.isFinite(amount)&&amount>=0?` Reported award amount: USD ${amount.toFixed(2)}.`:' Award amount not stated.';
   const rawDate=r.award_notice_date||r.project_start_date||null;
-  const eventDate=rawDate&&!Number.isNaN(Date.parse(rawDate))?new Date(rawDate).toISOString().slice(0,10):null;
+  const eventDate=publishedDate(rawDate);
   return {connector:'nih-reporter',externalId:id,sourceUrl:url,title:`${title} (NIH ${r.project_num||id})`,
     publisher:'NIH RePORTER',excerpt:`Recipient: ${r.organization.org_name}; project: ${r.project_num||id}.${amountText}`,
     companyName:company.name,companyId:company.id,eventDate,
@@ -136,10 +152,10 @@ export async function usaSpendingCandidates(company,uei,observedAt,fetcher=fetch
   filters:{recipient_search_text:[uei]},fields,limit:25,page:1,sort:'Award Amount',order:'desc',
   subawards:false
  },fetcher);
- return rows.filter(r=>String(r['Recipient UEI']||'').toUpperCase()===uei && r['Award ID']&&r.generated_internal_id).slice(0,25).map(r=>{
+ return rows.filter(r=>r&&typeof r==='object'&&String(r['Recipient UEI']||'').toUpperCase()===uei && r['Award ID']&&r.generated_internal_id).slice(0,25).map(r=>{
   const internalId=String(r.generated_internal_id),awardId=String(r['Award ID']).slice(0,120);
-  const amount=typeof r['Award Amount']==='number'?r['Award Amount']:null,date=r['Start Date'];
-  const eventDate=date&&!Number.isNaN(Date.parse(date))?new Date(date).toISOString().slice(0,10):null;
+  const amount=typeof r['Award Amount']==='number'&&Number.isFinite(r['Award Amount'])&&r['Award Amount']>=0?r['Award Amount']:null,date=r['Start Date'];
+  const eventDate=publishedDate(date);
   const awardType=String(r['Award Type']||'Award type unspecified');
   return {connector:'usaspending',externalId:internalId,sourceUrl:`https://www.usaspending.gov/award/${encodeURIComponent(internalId)}`,
     title:`Federal award ${awardId} (${awardType})`,publisher:'USAspending.gov / U.S. Treasury',
@@ -173,14 +189,7 @@ export function parseIVentureCandidates(html,companies,observedAt){
   const description=paragraph?text(paragraph[1]).slice(0,180):'';
   const anchor=m[2].match(/<a\b[^>]*href=["']([^"']+)["']/i);
   let ventureWebsite=null;
-  if(anchor){
-   try{
-    const u=new URL(anchor[1]);
-    if(u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&!u.hash&&
-       !/^(?:localhost|127\.|192\.168\.|10\.|172\.(?:1[6-9]|2\d|3[01])\.)/.test(u.hostname))
-      ventureWebsite=u.href;
-   }catch{/* No trusted company website in the listing heading. */}
-  }
+  if(anchor){try{ventureWebsite=publicVentureWebsite(anchor[1]);}catch{/* Not a verified public venture website. */}}
   const matched=matchCompany(name,companies);
   const excerpt=('Official iVenture cohort '+cohort+' listing names '+name+'.'+(description?' Directory description: '+description:'')).slice(0,440);
   candidates.push({
@@ -217,7 +226,9 @@ export function parseEnterpriseWorksCandidates(html,companies,observedAt,listing
   if(!cats.includes('EnterpriseWorks Incubator')||!cats.includes('Tenant Directory'))continue;
   const h=article.match(/<h2[^>]*class=["'][^"']*entry-title[^"']*["'][^>]*>\s*<a[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/i);
   if(!h)continue;
-  const name=text(h[2]).trim(),profileUrl=safeArticleUrl(h[1],config.url);
+  const name=text(h[2]).trim();
+  let profileUrl=null;
+  try{profileUrl=trustedOfficialProfile(new URL(h[1],config.url).href);}catch{/* Not a canonical official profile. */}
   if(name.length<3||name.length>125||!profileUrl||profileUrl===config.url||!/^\/[a-z0-9-]+\/$/.test(new URL(profileUrl).pathname))continue;
   const matched=matchCompany(name,companies);
   const excerpt=[name,...cats].join(' · ').slice(0,440);
