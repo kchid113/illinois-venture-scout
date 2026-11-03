@@ -60,9 +60,12 @@ export async function fetchText(url,fetcher=fetch,{wait=ms=>new Promise(resolve=
  } throw Error('Fetch failed');
 }
 /** Respect the applicable robots group and longest matching Allow/Disallow directive. */
-export async function assertRobots(fetcher=fetch){
- const robots=await fetchText(ORIGIN+'/robots.txt',fetcher);
- const groups=[];let agents=[],rules=[],hasRules=false;
+/** Apply robots access policy to every requested page before fetching it. */
+export async function assertRobots(fetcher=fetch,{paths=['/category/tenant-directory/startup/']}={}){
+ if(!Array.isArray(paths)||!paths.length||paths.some(x=>typeof x!=='string'||!x.startsWith('/')))
+  throw Error('Invalid directory robots-check paths');
+ const robots=await fetchText(ORIGIN+'/robots.txt',fetcher),groups=[];
+ let agents=[],rules=[],hasRules=false;
  const flush=()=>{if(agents.length)groups.push({agents:[...agents],rules:[...rules]});agents=[];rules=[];hasRules=false;};
  for(const raw of robots.split(/\r?\n/)){
   const line=raw.replace(/#.*/,'').trim(),m=line.match(/^([a-z-]+)\s*:\s*(.*)$/i);
@@ -73,33 +76,37 @@ export async function assertRobots(fetcher=fetch){
  }
  flush();
  const bot='illinoisventureradar';
- const specific=groups.filter(g=>g.agents.some(a=>a!=='*'&&(bot===a||bot.startsWith(a))));
- const applicable=specific.length?specific:groups.filter(g=>g.agents.includes('*'));
- let winning=null,delay=10000;
+ const specificity=group=>Math.max(0,...group.agents.filter(a=>a!=='*'&&(bot===a||bot.startsWith(a))).map(a=>a.length));
+ const level=Math.max(0,...groups.map(specificity));
+ const applicable=level>0?groups.filter(g=>specificity(g)===level):groups.filter(g=>g.agents.includes('*'));
  const dollar=String.fromCharCode(36);
- for(const g of applicable)for(const rule of g.rules){
-  if(rule.key==='crawl-delay'){
-   const seconds=Number(rule.value);
-   if(Number.isFinite(seconds)&&seconds>=0)delay=Math.max(delay,Math.min(60000,seconds*1000));
-  }else if(rule.value){
-   const anchored=rule.value.endsWith(dollar);
-   const pattern=anchored?rule.value.slice(0,-1):rule.value;
-   const pathRegexp='^'+pattern.split('*').map(piece=>piece.replace(/[^a-z0-9/_-]/gi,'\\$&')).join('.*')+(anchored?dollar:'');
-   if(new RegExp(pathRegexp).test('/category/tenant-directory/startup/')){
-    const length=pattern.replace(/\*/g,'').length;
-    if(!winning||length>winning.length||length===winning.length&&rule.key==='allow')
-     winning={key:rule.key,length};
+ let delay=10000;
+ for(const path of paths){
+  let winning=null;
+  for(const group of applicable)for(const rule of group.rules){
+   if(rule.key==='crawl-delay'){
+    const seconds=Number(rule.value);
+    if(Number.isFinite(seconds)&&seconds>=0)delay=Math.max(delay,Math.min(60000,seconds*1000));
+   }else if(rule.value){
+    const anchored=rule.value.endsWith(dollar),pattern=anchored?rule.value.slice(0,-1):rule.value;
+    const source='^'+pattern.split('*').map(chunk=>chunk.replace(/[^a-z0-9/_-]/gi,'\\$&')).join('.*')+(anchored?dollar:'');
+    if(new RegExp(source).test(path)){
+     const size=pattern.replace(/\*/g,'').length;
+     if(!winning||size>winning.size||size===winning.size&&rule.key==='allow')
+      winning={key:rule.key,size};
+    }
    }
   }
+  if(winning?.key==='disallow')throw Error('Robots policy disallows directory page '+path);
  }
- if(winning?.key==='disallow')throw Error('Robots policy disallows directory');
  return delay;
 }
 /** Invalid pagination is an error, never silently clamped. */
 export async function collectDirectory({pages=3,startPage=1,fetcher=fetch,onPage=()=>{},wait=ms=>new Promise(resolve=>setTimeout(resolve,ms))}={}){
  if(!Number.isInteger(pages)||!Number.isInteger(startPage)||pages<1||startPage<1||pages>5||startPage>5||startPage+pages-1>5)
   throw Error('Invalid directory page count or range');
- const delay=await assertRobots(fetcher),all=[];
+ const paths=Array.from({length:pages},(_,i)=>'/category/tenant-directory/startup/'+(startPage+i===1?'':'page/'+(startPage+i)+'/'));
+ const delay=await assertRobots(fetcher,{paths}),all=[];
  for(let page=startPage;page<startPage+pages;page++){
   await wait(delay);
   const url=page===1?directoryUrl:directoryUrl+'page/'+page+'/';
