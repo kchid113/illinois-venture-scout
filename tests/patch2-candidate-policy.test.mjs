@@ -52,11 +52,11 @@ for(const [name,patch] of [
 test('publisher-origin identity and approval rules do not infer money or ownership from incubator presence',async()=>{
  const candidate={...valid,connector:'enterpriseworks-directory',sourceUrl:'https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/',
   externalId:'https://researchpark.illinois.edu/venture-one/',title:'Venture One — EnterpriseWorks',
-  payload:JSON.stringify({recordType:'official-incubator-directory',profileUrl:'https://researchpark.illinois.edu/venture-one/',sourceCategories:['Tenant Directory','EnterpriseWorks Incubator']})};
+  payload:{recordType:'official-incubator-directory',profileUrl:'https://researchpark.illinois.edu/venture-one/',sourceCategories:['Tenant Directory','EnterpriseWorks Incubator']}};
  const stmt=await candidateStatements(candidate,at);
  const row={id:stmt.id,source_url:candidate.sourceUrl,title:candidate.title,publisher:candidate.publisher,
   status:'Pending',company_id:'venture-one',connector:candidate.connector,excerpt:candidate.excerpt,
-  observed_at:at,event_date:null,content_hash:stmt.values[12],payload:candidate.payload};
+  observed_at:at,event_date:null,content_hash:stmt.values[12],payload:JSON.stringify(candidate.payload)};
  const ops=await approvalStatements(row,at);
  assert.ok(ops.some(x=>x.sql.includes('affiliations')));
  assert.ok(!ops.some(x=>x.sql.includes('signals')));
