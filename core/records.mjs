@@ -51,14 +51,15 @@ function citationUrl(value){
  return url.href.replace(/\(/g,'%28').replace(/\)/g,'%29');
 }
 function citedSources(claim){
- return (claim.evidence||[]).filter(e=>e.relationship==='supports'||e.relationship==null)
+ return (claim.evidence||[]).filter(e=>e?.source_id&&e.relationship==='supports')
   .map(e=>citationUrl(e.url)).filter(Boolean).map(url=>'[Source]('+url+')').join(' ');
 }
 const FINANCE_FIELDS=new Set(['funding','equity funding','grants','grant','research award',
  'government award','contract','government contract','revenue','valuation','financing','funding round']);
 export function report(company){
  const claims=Array.isArray(company.claims)?company.claims:[],
-  publicClaims=claims.filter(c=>['Published','Conflicting'].includes(c.status)||c.status==null),
+  publicClaims=claims.filter(c=>['Published','Conflicting'].includes(c.status)&&
+   Array.isArray(c.evidence)&&c.evidence.some(e=>e?.source_id&&e.relationship==='supports')),
   lines=['# '+markdownText(company.name),'Research snapshot — '+markdownText(company.updated_at),'',
    '## Executive overview'];
  for(const c of publicClaims){
@@ -67,8 +68,7 @@ export function report(company){
    markdownText(c.value)+' '+citedSources(c));
  }
  lines.push('','## Funding and financial information');
- const financial=publicClaims.filter(c=>FINANCE_FIELDS.has(String(c.field).trim().toLowerCase()) &&
-  (c.evidence||[]).some(e=>e.source_id&&(e.relationship==='supports'||e.relationship==null)));
+ const financial=publicClaims.filter(c=>FINANCE_FIELDS.has(String(c.field).trim().toLowerCase()));
  if(financial.length){
   for(const c of financial){
    lines.push('- **'+markdownText(c.field)+'**'+(c.status==='Conflicting'?' (conflicting)':'')+
@@ -88,7 +88,7 @@ export function report(company){
   '- What financing, customer and IP documentation can the company provide?','','## Sources');
  const sources=new Map();
  for(const c of publicClaims)for(const e of c.evidence||[]){
-  if(e.source_id&&e.url&&!sources.has(e.source_id))sources.set(e.source_id,e);
+  if(e.source_id&&e.url&&e.relationship==='supports'&&!sources.has(e.source_id))sources.set(e.source_id,e);
  }
  for(const e of sources.values()){
   const url=citationUrl(e.url);
