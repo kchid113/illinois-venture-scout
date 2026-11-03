@@ -4,6 +4,9 @@
 
 ## Test execution
 
+**Verified GitHub Actions result:** [run 41692638580](https://github.com/kchid113/illinois-venture-scout/actions/runs/41692638580) — **216/216 tests passed, 0 failed, 0 skipped**; TypeScript, ESLint and production build all passed. Node V8 reported **99.71% line, 91.74% branch and 96.34% function coverage of instrumented files** (which includes tests, while not instrumenting Next/React routes and visual UI). These numbers apply to the code commit tested in that run, before subsequent documentation-only edits.
+
+
 GitHub Actions `.github/workflows/verify-methodology.yml` runs the Node 22 built-in test runner with V8 source coverage, TypeScript typecheck, ESLint, and a production build. The final outcome and exact number of passed test cases must be taken from the latest PR-head run, not from a historical workflow attempt. All test input for upstream services is fixture-based and deterministic; no live API calls or customer credentials are required.
 
 ### Case inventory
