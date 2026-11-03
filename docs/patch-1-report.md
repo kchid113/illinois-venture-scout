@@ -34,3 +34,16 @@ Screening uses case-insensitive substring matching against eligible published, e
 Stage, lifecycle, business model, funding, grants and commercial traction cannot be substantiated from the current imported dataset and remain unverified/unavailable. No completeness denominator, validated investment ranking, numeric source confidence, growth or momentum score is invented. Directory classifications may be debatable but are identified as directory taxonomy with their actual source. The research screen still evaluates the first page alphabetically, explicitly disclosed rather than described as a ranked universe. Refresh remains manual. Corrections can be documented in private notes but are not automatically sent to an administrator.
 
 The methodology page states that Illinois Venture Radar is independent and is not affiliated with or endorsed by the University of Illinois.
+
+
+## Follow-up implementation audit — v1.2.0 (feature/methodology-tooltips)
+
+The repository already contained the original v1.1.0 patch before this branch was created. This follow-up preserves that work and makes these targeted improvements:
+
+- **Evidence semantics:** public search and filters, claim/sector counts, company claim queries and screening now require at least one actual `supports` evidence relationship; a contradicting-only citation does not substantiate a claim. Contradictory source records remain preserved for review.
+- **Company profile:** lifecycle, founder/leadership, typed equity financing, grants/contracts and commercial traction now render their exact supported claim(s), classification and citation if present. Unpopulated fields continue to say `Not verified`, not zero. Generic untyped `funding` cannot be arbitrarily labelled equity or grant. The diligence gaps sidebar reflects the same source-backed fields.
+- **Source display:** citation buttons prefer supporting evidence while the drawer still exposes contradictions. A company profile distinguishes its record update time from the latest linked source-check timestamp.
+- **Methodology registry:** clarified that affiliation mappings and verification classifications are system-derived annotations from sourced records, added precise founder/traction entries, a typed profile-field mapping, and versioned the rule changes as 1.2.0. The Methodology link is now in the main navigation.
+- **Regression tests and CI:** added contradictory-only evidence and profile field tests; provided GitHub Actions jobs for SQLite/unit tests, typecheck, lint and production build.
+
+The prior 25-test, typecheck, build and managed-browser validation cited above pertains to **v1.1.0** before these follow-up edits. GitHub Actions results, rather than the prior report, determine whether **v1.2.0** tests and build pass. Browser interaction tests were not re-run in this chat's tooling. No data source has been re-fetched, no hosted database has been modified, and this branch has not been deployed. Source freshness is still manual; missing stage, company equity funding, external traction and founder evidence in the existing initial dataset cannot be substantiated automatically.
