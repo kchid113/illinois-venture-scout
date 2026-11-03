@@ -49,12 +49,25 @@ export async function refreshConnector(db,connector,{fetcher=fetch,now=new Date(
     imported++;
    }
   }else if(['research-park-news','illinois-news','otm-startups','iventure-cohorts','enterpriseworks-directory'].includes(connector)){
-   const page=await officialHTML(connector,fetcher);
-   const candidates=connector==='otm-startups'?
-    parseOTMCandidates(page.html,companies,now):connector==='iventure-cohorts'?
-    parseIVentureCandidates(page.html,companies,now):connector==='enterpriseworks-directory'?
-    parseEnterpriseWorksCandidates(page.html,companies,now):
-    parseNewsCandidates(page.html,connector,companies,now);
+   const collected=[];
+   if(connector==='enterpriseworks-directory'){
+    for(let pageNo=1;pageNo<=6;pageNo++){
+     let listing;
+     try{listing=await officialHTML(connector,fetcher,{page:pageNo});}
+     catch(error){
+      if(pageNo>1&&String(error instanceof Error?error.message:error).includes('Source HTTP 404'))break;
+      throw error;
+     }
+     collected.push(...parseEnterpriseWorksCandidates(listing.html,companies,now,listing.url));
+    }
+   }else{
+    const page=await officialHTML(connector,fetcher);
+    collected.push(...(connector==='otm-startups'?
+     parseOTMCandidates(page.html,companies,now):connector==='iventure-cohorts'?
+     parseIVentureCandidates(page.html,companies,now):
+     parseNewsCandidates(page.html,connector,companies,now)));
+   }
+   const candidates=[...new Map(collected.map(c=>[c.externalId,c])).values()];
    seen=candidates.length;
    for(const c of candidates){if(await stageCandidate(db,c,now))staged++;}
   }else if(connector==='nih-reporter'||connector==='usaspending'){
