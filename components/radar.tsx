@@ -95,7 +95,7 @@ function SettingsPage({heading,local,admin,summary,reload}:{heading:(a:string,b:
     <select aria-label="Refresh source" value={connector} disabled={busy||!admin} onChange={e=>setConnector(e.target.value)}>{CONNECTORS.map((id:string)=><option key={id} value={id}>{id}</option>)}</select>
     <button disabled={busy||!admin} onClick={()=>void runRefresh()}><RefreshCw size={16}/>Refresh selected source</button>
    </div>
-   <p role="status">{status}</p><div className="hint">Scheduled GitHub Actions run only after production URL and protected credentials are configured. SBIR's official API is currently under maintenance. No AI-generated financial numbers are used.</div>
+   <p role="status">{status}</p><div className="hint">Scheduled GitHub Actions run only after production URL and protected credentials are configured. The official SBIR API is currently under maintenance. No AI-generated financial numbers are used.</div>
   </section>
  </div>
  {admin&&<section className="panel padded" style={{marginTop:18}}>
