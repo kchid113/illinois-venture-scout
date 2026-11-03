@@ -71,7 +71,7 @@ test('iVenture does not infer equity ownership or university investment from coh
 });
 for(const bad of ['https://localhost/private/','https://127.0.0.1/admin','http://nova.example.org/','https://user:pw@nova.example.org/']){
  test('iVenture new venture cannot use unsafe website '+bad,async()=>{
-  const candidate=validCandidate({companyId:null,payload:JSON.stringify({cohort:11,ventureWebsite:bad}),status:'Pending'});
+  const candidate={...validCandidate({companyId:null}),company_id:null,company_name:'Nova Labs',payload:JSON.stringify({cohort:11,ventureWebsite:bad}),status:'Pending'};
   await assert.rejects(()=>newIVentureCompany(candidate,at),/Untrusted company website/);
  });
 }
@@ -82,8 +82,7 @@ test('iVenture parser prevents headings outside cohorts from becoming ventures',
 });
 for(const href of ['https://evil.test/tenant/','http://researchpark.illinois.edu/tenant/','https://researchpark.illinois.edu/','https://researchpark.illinois.edu/category/tenant-directory/startup/']){
  test('EnterpriseWorks parser excludes noncanonical company profile '+href,()=>{
-  const a=parseEnterpriseWorksCandidates(entry('Nova Labs',href),teams,at);
-  assert.throws(()=>a,/no qualifying tagged records/);
+  assert.throws(()=>parseEnterpriseWorksCandidates(entry('Nova Labs',href),teams,at),/no qualifying tagged records/);
  });
 }
 test('EnterpriseWorks rejects wrong tag combination and duplicate source rows',()=>{
