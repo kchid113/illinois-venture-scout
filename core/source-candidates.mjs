@@ -88,7 +88,7 @@ export async function newIVentureCompany(candidate,reviewedAt){
  if(typeof url!=='string')throw Error('Official listing has no linked venture website; manual identity review required');
  let website;try{website=new URL(url);}catch{throw Error('Invalid linked venture website');}
  const name=String(candidate.company_name||'').trim();
- if(!name||name.length>130||!/^[a-z0-9][a-z0-9 _'&!.()-]{1,128}$/i.test(name))throw Error('Unreviewable venture name');
+ if(!name||name.length>130||/[\x00-\x1f<>]/.test(name)||!/^[\p{L}\p{N}]/u.test(name))throw Error('Unreviewable venture name');
  if(website.protocol!=='https:'||website.username||website.password||website.port||website.hash||/^(?:localhost|.*\.local|127\.|10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.)/.test(website.hostname))throw Error('Untrusted company website');
  const slug=normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70);
  const companyId='iventure-'+slug+'-'+candidate.id.slice(0,8);
@@ -107,7 +107,7 @@ export async function newEnterpriseWorksCompany(candidate,reviewedAt){
  if(official.protocol!=='https:'||official.hostname!=='researchpark.illinois.edu'||official.search||official.hash||official.username||official.password||official.port||!/^\/[a-z0-9-]+\/$/.test(official.pathname))
   throw Error('Venture must have an exact Research Park official profile');
  const name=String(candidate.company_name||'').trim();
- if(!name||name.length>130||!/^[a-z0-9][a-z0-9 _'&!.()-]{1,128}$/i.test(name))throw Error('Unreviewable venture name');
+ if(!name||name.length>130||/[\x00-\x1f<>]/.test(name)||!/^[\p{L}\p{N}]/u.test(name))throw Error('Unreviewable venture name');
  const id='enterpriseworks-'+normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70)+'-'+candidate.id.slice(0,8);
  return {companyId:id,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[id,name,official.href,reviewedAt,reviewedAt]}};
 }
