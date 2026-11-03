@@ -42,7 +42,7 @@ test('official news becomes a review-only candidate with event date',()=>{
  assert.equal(found[0].companyId,'forgebee');
  assert.equal(found[0].eventDate,'2026-08-05');
  assert.ok(found[0].sourceUrl.startsWith('https://researchpark.illinois.edu/'));
- assert.equal(parseOTMCandidates('<p>ForgeBee</p>',companies,at).length,1);
+ assert.equal(parseOTMCandidates('<article class="startup"><h3><a href="https://otm.illinois.edu/startups/forgebee/">ForgeBee</a></h3></article>',companies,at).length,1);
 });
 
 test('iVenture cohort parser distinguishes exact matches, new ventures and cohorts',()=>{
