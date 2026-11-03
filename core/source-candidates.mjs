@@ -30,7 +30,7 @@ export async function candidateStatements(candidate,observedAt){
   throw Error('Invalid source candidate metadata');
  if(companyName!=null&&!bounded(companyName,150))throw Error('Invalid company name');
  if(companyId!=null&&!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,149}$/.test(companyId))throw Error('Invalid company identity');
- if(typeof observedAt!=='string'||!/^\\d{4}-\\d{2}-\\d{2}T/.test(observedAt)||!publishedDate(observedAt)||Number.isNaN(Date.parse(observedAt)))
+ if(typeof observedAt!=='string'||!/^\d{4}-\d{2}-\d{2}T/.test(observedAt)||!publishedDate(observedAt)||Number.isNaN(Date.parse(observedAt)))
   throw Error('Invalid observation timestamp');
  if(eventDate!=null&&publishedDate(eventDate)!==eventDate)throw Error('Invalid event date');
  if(!payload||typeof payload!=='object'||Array.isArray(payload))throw Error('Invalid source candidate payload');
