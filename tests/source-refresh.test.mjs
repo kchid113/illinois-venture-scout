@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
-import {candidateStatements,approvalStatements,newIVentureCompany,matchCompany,normalizeCompanyName,mentionsCompany} from '../core/source-candidates.mjs';
-import {parseNewsCandidates,parseOTMCandidates,parseIVentureCandidates,nihCandidates,usaSpendingCandidates} from '../core/source-adapters.mjs';
+import {candidateStatements,approvalStatements,newIVentureCompany,newEnterpriseWorksCompany,matchCompany,normalizeCompanyName,mentionsCompany} from '../core/source-candidates.mjs';
+import {parseNewsCandidates,parseOTMCandidates,parseIVentureCandidates,parseEnterpriseWorksCandidates,nihCandidates,usaSpendingCandidates} from '../core/source-adapters.mjs';
 import {recordStatements} from '../core/records.mjs';
 import {refreshConnector} from '../core/refresh-runner.mjs';
 
@@ -139,5 +139,79 @@ test('refresh runner queues iVenture candidates and logs jobs without publishing
  const repeat=await refreshConnector(db,'iventure-cohorts',{fetcher,now:at});
  assert.equal(repeat.staged,0);
  assert.equal(d.prepare('SELECT count(*) n FROM source_candidates').get().n,3);
+ d.close();
+});
+
+
+const enterpriseHTML=[
+ '<article><a rel="category tag">EnterpriseWorks Incubator</a><a rel="category tag">Tenant Directory</a>',
+ '<h2 class="entry-title"><a href="https://researchpark.illinois.edu/archean-sciences/">Archean Sciences</a></h2></article>',
+ '<article><a rel="category tag">EnterpriseWorks Incubator</a><a rel="category tag">Tenant Directory</a>',
+ '<h2 class="entry-title"><a href="https://researchpark.illinois.edu/cleanslate-robotics/">Cleanslate Robotics</a></h2></article>',
+ '<article><a rel="category tag">Tenant Directory</a><a rel="category tag">Corporate Innovation Site</a>',
+ '<h2 class="entry-title"><a href="https://researchpark.illinois.edu/corporate-tenant/">Corporate Tenant</a></h2></article>'
+].join('');
+
+test('EnterpriseWorks connector includes incubator listings even without generic Startup tag',()=>{
+ const found=parseEnterpriseWorksCandidates(enterpriseHTML,[{id:'archean-sciences',name:'Archean Sciences'}],at);
+ assert.equal(found.length,2);
+ const existing=found.find(x=>x.companyName==='Archean Sciences');
+ const prospective=found.find(x=>x.companyName==='Cleanslate Robotics');
+ assert.equal(existing.companyId,'archean-sciences');
+ assert.equal(prospective.companyId,null);
+ assert.equal(prospective.payload.profileUrl,'https://researchpark.illinois.edu/cleanslate-robotics/');
+ assert.equal(prospective.payload.sourceCategories.includes('EnterpriseWorks Incubator'),true);
+ assert.equal(found[0].sourceUrl,'https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/');
+ assert.ok(!found.some(x=>x.companyName==='Corporate Tenant'));
+ assert.throws(()=>parseEnterpriseWorksCandidates('<h2>Page layout changed</h2>',[],at),/no qualifying tagged records/);
+});
+
+test('EnterpriseWorks exact-matched affiliation is distinct from university ownership or financial signals',async()=>{
+ const {d}=store();
+ await put(d,records.find(x=>x.slug==='archean-sciences'));
+ const candidate=parseEnterpriseWorksCandidates(enterpriseHTML,[{id:'archean-sciences',name:'Archean Sciences'}],at)[0];
+ const statement=await candidateStatements(candidate,at);
+ d.prepare(statement.sql).run(...statement.values);
+ for(const o of await approvalStatements(d.prepare('SELECT * FROM source_candidates').get(),at))d.prepare(o.sql).run(...o.values);
+ const c=d.prepare("SELECT * FROM claims WHERE field='incubator'").get();
+ assert.equal(c.value,'Listed in the official EnterpriseWorks Incubator directory');
+ assert.equal(c.classification,'Verified factual');
+ assert.equal(d.prepare("SELECT count(*) n FROM evidence WHERE claim_id=? AND relationship='supports'").get(c.id).n,1);
+ assert.equal(d.prepare("SELECT count(*) n FROM affiliations WHERE type='EnterpriseWorks Incubator directory listing'").get().n,1);
+ assert.equal(d.prepare("SELECT count(*) n FROM claims WHERE field IN ('equity funding','university ownership','student founder')").get().n,0);
+ assert.equal(d.prepare("SELECT count(*) n FROM signals").get().n,0);
+ d.close();
+});
+
+test('new EnterpriseWorks venture requires reviewed directory profile and stays unclassified otherwise',async()=>{
+ const {d}=store();
+ const candidate=parseEnterpriseWorksCandidates(enterpriseHTML,[],at).find(x=>x.companyName==='Cleanslate Robotics');
+ const statement=await candidateStatements(candidate,at);
+ d.prepare(statement.sql).run(...statement.values);
+ const row=d.prepare('SELECT * FROM source_candidates').get();
+ const {companyId,statement:companyOp}=await newEnterpriseWorksCompany(row,at);
+ d.prepare(companyOp.sql).run(...companyOp.values);
+ assert.equal(d.prepare('SELECT name FROM companies WHERE id=?').get(companyId).name,'Cleanslate Robotics');
+ for(const o of await approvalStatements({...row,company_id:companyId},at))d.prepare(o.sql).run(...o.values);
+ assert.equal(d.prepare("SELECT count(*) n FROM claims WHERE field='incubator'").get().n,1);
+ assert.equal(d.prepare("SELECT count(*) n FROM claims WHERE field='affiliation'").get().n,0);
+ const bad={...row,payload:JSON.stringify({...JSON.parse(row.payload),profileUrl:'https://example.com/fake'})};
+ await assert.rejects(()=>newEnterpriseWorksCompany(bad,at),/Research Park official profile/);
+ await assert.rejects(()=>newEnterpriseWorksCompany({...row,connector:'iventure-cohorts'},at),/Only unmatched EnterpriseWorks/);
+ d.close();
+});
+
+test('EnterpriseWorks scheduled refresh stages candidates without auto-publishing companies',async()=>{
+ const {d,db}=store();
+ const fetcher=async url=>new Response(String(url).endsWith('/robots.txt')?'User-agent: *\nAllow: /\n':enterpriseHTML,{status:200});
+ const result=await refreshConnector(db,'enterpriseworks-directory',{fetcher,now:at});
+ assert.equal(result.observed,2);
+ assert.equal(result.staged,2);
+ assert.equal(result.imported,0);
+ assert.equal(d.prepare('SELECT count(*) n FROM companies').get().n,0);
+ assert.equal(d.prepare('SELECT count(*) n FROM claims').get().n,0);
+ const second=await refreshConnector(db,'enterpriseworks-directory',{fetcher,now:at});
+ assert.equal(second.staged,0);
+ assert.equal(d.prepare('SELECT count(*) n FROM source_candidates').get().n,2);
  d.close();
 });
