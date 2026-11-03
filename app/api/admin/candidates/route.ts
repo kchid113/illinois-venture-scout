@@ -2,7 +2,7 @@ import {NextRequest,NextResponse} from 'next/server';
 import {z} from 'zod';
 import {isAdmin} from '@/lib/admin';
 import {all,database} from '@/lib/radar';
-import {approvalStatements,newIVentureCompany,newEnterpriseWorksCompany,matchCompany} from '@/core/source-candidates.mjs';
+import {decideSourceCandidate,ReviewError} from '@/core/review-service.mjs';
 export const dynamic='force-dynamic';
 
 export async function GET(req:NextRequest){
@@ -35,30 +35,10 @@ export async function POST(req:NextRequest){
  if(req.headers.has('origin')&&req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});
  const parsed=body.safeParse(await req.json().catch(()=>null));
  if(!parsed.success)return NextResponse.json({error:'Invalid review action'},{status:400});
- const rows=await all('SELECT * FROM source_candidates WHERE id=?',parsed.data.id);
- if(rows.length!==1||rows[0].status!=='Pending')return NextResponse.json({error:'Candidate is not pending'},{status:409});
- const row=rows[0] as Record<string,string|null>;
- const decision=parsed.data.decision,now=new Date().toISOString();
  try{
-  let reviewRow=row;
-  const ops:{sql:string;values:unknown[]}[]=[];
-  if(decision==='create'){
-   if(!['iventure-cohorts','enterpriseworks-directory'].includes(String(row.connector))||row.company_id)return NextResponse.json({error:'Only unmatched source-listed ventures may be created after review'},{status:422});
-   const existing=await all('SELECT id,name,profile FROM companies');
-   if(matchCompany(row.company_name,existing as {id:string;name:string}[]))return NextResponse.json({error:'A tracked company with this name already exists; review its identity first'},{status:409});
-   const {companyId,statement}=row.connector==='iventure-cohorts'?await newIVentureCompany(row,now):await newEnterpriseWorksCompany(row,now);
-   if(existing.some(e=>e.id===companyId||e.profile===statement.values[2]))return NextResponse.json({error:'Venture ID or official website is already tracked'},{status:409});
-   ops.push(statement);
-   reviewRow={...row,company_id:companyId};
-  }else if(decision==='approve'){
-   if(!row.company_id)return NextResponse.json({error:'Resolve the exact company identity before approval'},{status:422});
-   const owners=await all('SELECT id,name FROM companies WHERE id=?',row.company_id);
-   if(owners.length!==1||owners[0].name!==row.company_name)return NextResponse.json({error:'Candidate company identity no longer matches'},{status:409});
-  }
-  if(decision==='approve'||decision==='create')ops.push(...await approvalStatements(reviewRow,now));
-  ops.push({sql:"UPDATE source_candidates SET company_id=COALESCE(?,company_id),status=? WHERE id=? AND status='Pending'",values:[reviewRow.company_id,decision==='reject'?'Rejected':'Approved',row.id]});
-  ops.push({sql:'INSERT INTO audit(id,actor,action,target,created_at) VALUES(?,?,?,?,?)',values:[crypto.randomUUID(),'administrator','candidate-'+decision,row.id,now]});
-  await database().batch(ops.map(o=>database().prepare(o.sql).bind(...o.values)));
-  return NextResponse.json({ok:true,status:decision==='reject'?'Rejected':'Approved',companyId:reviewRow.company_id});
- }catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Review failed'},{status:500});}
+  return NextResponse.json(await decideSourceCandidate(database(),{id:parsed.data.id,decision:parsed.data.decision}));
+ }catch(error){
+  const status=error instanceof ReviewError?error.status:500;
+  return NextResponse.json({error:error instanceof Error?error.message:'Review failed'},{status});
+ }
 }
