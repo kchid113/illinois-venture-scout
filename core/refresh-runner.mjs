@@ -3,7 +3,7 @@ import {recordStatements} from './records.mjs';
 import {githubReleases} from './github.mjs';
 import {releaseStatements} from './github-store.mjs';
 import {candidateStatements,CONNECTORS} from './source-candidates.mjs';
-import {officialHTML,parseOTMCandidates,parseNewsCandidates,parseIVentureCandidates,nihCandidates,usaSpendingCandidates} from './source-adapters.mjs';
+import {officialHTML,parseOTMCandidates,parseNewsCandidates,parseIVentureCandidates,parseEnterpriseWorksCandidates,nihCandidates,usaSpendingCandidates} from './source-adapters.mjs';
 
 const results=async(db,sql,...values)=>(await db.prepare(sql).bind(...values).all()).results;
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -48,11 +48,12 @@ export async function refreshConnector(db,connector,{fetcher=fetch,now=new Date(
     await runStatements(db,await recordStatements(r));
     imported++;
    }
-  }else if(['research-park-news','illinois-news','otm-startups','iventure-cohorts'].includes(connector)){
+  }else if(['research-park-news','illinois-news','otm-startups','iventure-cohorts','enterpriseworks-directory'].includes(connector)){
    const page=await officialHTML(connector,fetcher);
    const candidates=connector==='otm-startups'?
     parseOTMCandidates(page.html,companies,now):connector==='iventure-cohorts'?
-    parseIVentureCandidates(page.html,companies,now):
+    parseIVentureCandidates(page.html,companies,now):connector==='enterpriseworks-directory'?
+    parseEnterpriseWorksCandidates(page.html,companies,now):
     parseNewsCandidates(page.html,connector,companies,now);
    seen=candidates.length;
    for(const c of candidates){if(await stageCandidate(db,c,now))staged++;}
