@@ -62,7 +62,7 @@ export async function approvalStatements(candidate,reviewedAt){
   kind==='nih-reporter'?('NIH RePORTER project: '+candidate.title):
   kind==='usaspending'?('USAspending award: '+candidate.title):
   ('Official news mention: '+candidate.title);
- const field=kind==='iventure-cohorts'?'accelerator':kind==='otm-startups'?'university IP startup':kind==='nih-reporter'?'grant':kind==='usaspending'?'government award':'news';
+ const field=kind==='iventure-cohorts'?'accelerator':kind==='otm-startups'?'university IP startup':kind==='nih-reporter'?'research award':kind==='usaspending'?'government award':'news';
  const classification='Verified factual';
  const claimId=await digest(candidate.company_id+'\\n'+field+'\\n'+value);
  const ops=[
@@ -73,7 +73,7 @@ export async function approvalStatements(candidate,reviewedAt){
  ];
  if(kind==='iventure-cohorts')ops.push({sql:"INSERT OR IGNORE INTO affiliations(id,company_id,claim_id,university,type,status) VALUES(?,?,?,?,?,'Source-backed')",values:[claimId,candidate.company_id,claimId,'University of Illinois Urbana-Champaign',`iVenture cohort ${cohort} participant`]});
  if(kind==='otm-startups')ops.push({sql:"INSERT OR IGNORE INTO affiliations(id,company_id,claim_id,university,type,status) VALUES(?,?,?,?,?,'Source-backed')",values:[claimId,candidate.company_id,claimId,'University of Illinois Urbana-Champaign','OTM-listed university IP startup']});
- if(kind==='research-park-news'||kind==='illinois-news')ops.push({sql:"INSERT OR IGNORE INTO signals(id,company_id,claim_id,category,description,event_date,first_observed,dedup_key,status) VALUES(?,?,?,?,?,?,?,?,'Verified')",values:[claimId,candidate.company_id,claimId,'News',value,candidate.event_date,candidate.observed_at,'reviewed-news:'+candidate.id]});
+ if((kind==='research-park-news'||kind==='illinois-news')&&candidate.event_date)ops.push({sql:"INSERT OR IGNORE INTO signals(id,company_id,claim_id,category,description,event_date,first_observed,dedup_key,status) VALUES(?,?,?,?,?,?,?,?,'Verified')",values:[claimId,candidate.company_id,claimId,'News',value,candidate.event_date,candidate.observed_at,'reviewed-news:'+candidate.id]});
  return ops;
 }
 
