@@ -1,3 +1,4 @@
+import {refreshTargets,refreshConfiguration} from '../core/refresh-schedule.mjs';
 /**
  * GitHub Actions scheduler: invokes the deployed application's protected refresh API.
  * No secrets or live data are written to the Git repository.
@@ -7,16 +8,8 @@ if(!enabled){
  console.log('Public-source refresh disabled. Set repository variable IVR_AUTOMATION_ENABLED=true after deployment and secret configuration.');
  process.exit(0);
 }
-const site=process.env.IVR_SITE_URL,token=process.env.IVR_ADMIN_TOKEN,serviceToken=process.env.IVR_SITES_SERVICE_TOKEN;
-if(!site||!token||token.length<32)throw Error('IVR_SITE_URL and a >=32-character IVR_ADMIN_TOKEN are required');
-const base=new URL(site);
-if(base.protocol!=='https:'||base.username||base.password||base.search||base.hash||(base.pathname!=='/'&&base.pathname!==''))
- throw Error('IVR_SITE_URL must be a clean HTTPS origin');
-const manual=process.env.IVR_CONNECTOR||'scheduled';
-const all=['research-park-news','illinois-news','iventure-cohorts','enterpriseworks-directory','research-park-1','research-park-2','research-park-3','otm-startups','nih-reporter','usaspending','github-releases'];
-const scheduled=new Date().getUTCDay()===1?all:['research-park-news','illinois-news'];
-const targets=manual==='scheduled'?scheduled:manual==='all'?all:[manual];
-if(targets.some(c=>!all.includes(c)))throw Error('Unrecognized scheduled connector');
+const {base,token,serviceToken}=refreshConfiguration(process.env);
+const targets=refreshTargets(process.env.IVR_CONNECTOR||'scheduled');
 let failed=0;
 for(const connector of targets){
  try{
