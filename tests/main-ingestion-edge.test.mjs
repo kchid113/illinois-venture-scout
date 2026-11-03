@@ -119,3 +119,37 @@ for(const n of [0,-1,1.5,NaN,6,'2',null]){
   assert.equal(calls,0);
  });
 }
+
+
+test('robots refusal for directory page 2 blocks the entire multi-page refresh',async()=>{
+ const lines=[
+  'User-agent: *',
+  'Allow: /category/tenant-directory/startup/',
+  'Disallow: /category/tenant-directory/startup/page/2/'
+ ].join('\n');
+ let calls=0;
+ const fetcher=async url=>{calls++;assert.ok(String(url).endsWith('/robots.txt'));return new Response(lines);};
+ const {collectDirectory}=await import('../core/ingestion.mjs');
+ await assert.rejects(()=>collectDirectory({pages:2,fetcher,wait:async()=>{}}),/Robots policy disallows directory page/);
+ assert.equal(calls,1,'source pages were never fetched');
+});
+test('longer allow rule wins over a broad page-specific disallow',async()=>{
+ const rules=['User-agent: *','Disallow: /category/tenant-directory/startup/',
+  'Allow: /category/tenant-directory/startup/page/2/'].join('\n');
+ const p='/category/tenant-directory/startup/page/2/';
+ assert.equal(await assertRobots(async()=>new Response(rules),{paths:[p]}),10000);
+ await assert.rejects(()=>assertRobots(async()=>new Response(rules),{paths:['/category/tenant-directory/startup/']}),/Robots policy disallows/);
+});
+test('most-specific Research Park robots user-agent group takes precedence',async()=>{
+ const robots=['User-agent: Illinois','Disallow: /',
+  'User-agent: IllinoisVentureRadar','Allow: /',
+  'User-agent: *','Disallow: /'].join('\n');
+ assert.equal(await assertRobots(async()=>new Response(robots)),10000);
+});
+test('directory cannot fetch unspecified or over-budget page range even with an allowed robots response',async()=>{
+ let requests=0;
+ const fetcher=async()=>{requests++;return new Response('User-agent: *\nAllow: /');};
+ const {collectDirectory}=await import('../core/ingestion.mjs');
+ await assert.rejects(()=>collectDirectory({startPage:4,pages:3,fetcher}),/Invalid directory page/);
+ assert.equal(requests,0);
+});
