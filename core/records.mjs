@@ -59,6 +59,7 @@ const FINANCE_FIELDS=new Set(['funding','equity funding','grants','grant','resea
 export function report(company){
  const claims=Array.isArray(company.claims)?company.claims:[],
   publicClaims=claims.filter(c=>['Published','Conflicting'].includes(c.status)&&
+   ['Verified factual','Company-reported'].includes(c.classification)&&
    Array.isArray(c.evidence)&&c.evidence.some(e=>e?.source_id&&e.relationship==='supports')),
   lines=['# '+markdownText(company.name),'Research snapshot — '+markdownText(company.updated_at),'',
    '## Executive overview'];
