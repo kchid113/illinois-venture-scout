@@ -37,7 +37,7 @@ export default function Radar({section,slug}:{section:string;slug?:string}){
  function toggleCompare(c:Company){let next=compare.filter(x=>x.id!==c.id);if(next.length===compare.length){if(compare.length>=5){notify('Compare up to 5 companies');return;}next=[...compare,c];}setCompare(next);sessionStorage.setItem('ivr-compare',JSON.stringify(next));}
  const info=(metric:keyof typeof METRICS,claims:Claim[]=[]) => <MetricInfo metric={metric} claims={claims} lastChecked={summary.lastChecked}/>;
  const fieldInfo=(c:Company,k:string)=>info((FIELD_METRICS as Record<string,keyof typeof METRICS>)[k]||'verification',c.claims.filter(cl=>cl.field===k));
- function openEvidence(c:Claim,e=c.evidence[0]){const owner=[...(selectedCompany?[selectedCompany]:[]),...companies,...compare].find(co=>co.claims.some(cl=>cl.id===c.id));setSourceClaims(owner?owner.claims.filter(cl=>cl.field===c.field):[c]);setSource(e);}
+ function openEvidence(c:Claim,e=c.evidence.find(item=>item.relationship==='supports')||c.evidence[0]){const owner=[...(selectedCompany?[selectedCompany]:[]),...companies,...compare].find(co=>co.claims.some(cl=>cl.id===c.id));setSourceClaims(owner?owner.claims.filter(cl=>cl.field===c.field):[c]);setSource(e);}
  const citation=(c?:Claim)=>c?.evidence?.length?<button className="citation" title={`View evidence for ${c.field}`} aria-label={`View source for ${c.field}`} onClick={()=>openEvidence(c)}><Link2 size={12}/></button>:null;
  const renderValue=(c:Company,k:string)=><>{value(c,k)} {citation(field(c,k))}{field(c,k)&&field(c,k)?.classification!=='Verified factual'&&<small>{field(c,k)?.classification||'Requires review'}</small>}</>;
  const profileFacts=(c:Company,dimension:keyof typeof PROFILE_FIELDS)=>supportedProfileClaims(c.claims,dimension) as Claim[];
