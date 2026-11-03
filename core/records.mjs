@@ -24,7 +24,7 @@ export function thesisFit(company,criteria){
   const tokens=requested.split(',').map(k=>k.trim().toLowerCase()).filter(Boolean);
   const candidates=company.claims.filter(c=>fieldNames[key].includes(c.field));
   const conflicting=candidates.some(c=>c.status==='Conflicting');
-  const eligible=candidates.filter(c=>c.status==='Published'&&['Verified factual','Company-reported'].includes(c.classification)&&c.evidence?.some(e=>e.source_id&&e.relationship!=='contradicts'));
+  const eligible=candidates.filter(c=>c.status==='Published'&&['Verified factual','Company-reported'].includes(c.classification)&&c.evidence?.some(e=>e.source_id&&e.relationship==='supports'));
   const known=weight>0&&tokens.length>0&&!conflicting&&eligible.length>0;
   const matched=known?eligible.filter(c=>tokens.some(t=>c.value.toLowerCase().includes(t))):[];
   const reason=weight===0?'Disabled (zero weight)':!tokens.length?'Not specified':conflicting?'Conflicting evidence — requires review':!eligible.length?'No eligible source-backed claim':matched.length?'Matches entered text':'Known evidence does not match entered text';
