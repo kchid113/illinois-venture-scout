@@ -118,3 +118,16 @@ test('report must not emit clickable dangerous source schemes from untrusted evi
  const text=report(company);
  assert.ok(!text.includes('(javascript:'));
 });
+
+test('report excludes rejected, analytical and contradicting-only claims from the research summary',()=>{
+ const legitimate=claim('description','Documented robotics tools');
+ const bad1=claim('revenue','$100M',{status:'Rejected',id:'rejected'});
+ const bad2=claim('funding','$20M',{evidence:[{source_id:'disputed',relationship:'contradicts',url:'https://example.org/disputed'}],id:'disputed'});
+ const bad3=claim('valuation','$999B',{classification:'Unverified',id:'unverified'});
+ const text=report(c(legitimate,bad1,bad2,bad3));
+ assert.match(text,/Documented robotics tools/);
+ assert.ok(!text.includes('$100M'));
+ assert.ok(!text.includes('$20M'));
+ assert.ok(!text.includes('$999B'));
+ assert.ok(!text.includes('disputed'));
+});
