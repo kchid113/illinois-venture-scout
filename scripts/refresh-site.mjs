@@ -13,7 +13,7 @@ const base=new URL(site);
 if(base.protocol!=='https:'||base.username||base.password||base.search||base.hash||(base.pathname!=='/'&&base.pathname!==''))
  throw Error('IVR_SITE_URL must be a clean HTTPS origin');
 const manual=process.env.IVR_CONNECTOR||'scheduled';
-const all=['research-park-news','illinois-news','research-park-1','research-park-2','research-park-3','otm-startups','nih-reporter','usaspending','github-releases'];
+const all=['research-park-news','illinois-news','iventure-cohorts','research-park-1','research-park-2','research-park-3','otm-startups','nih-reporter','usaspending','github-releases'];
 const scheduled=new Date().getUTCDay()===1?all:['research-park-news','illinois-news'];
 const targets=manual==='scheduled'?scheduled:manual==='all'?all:[manual];
 if(targets.some(c=>!all.includes(c)))throw Error('Unrecognized scheduled connector');
