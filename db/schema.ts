@@ -10,3 +10,13 @@ export const jobs=sqliteTable('ingestion_jobs',{id:text('id').primaryKey(),conne
 export const review=sqliteTable('review_queue',{id:text('id').primaryKey(),claimId:text('claim_id').references(()=>claims.id),reason:text('reason').notNull(),status:text('status').notNull().default('Pending'),createdAt:text('created_at').notNull()});
 export const audit=sqliteTable('audit',{id:text('id').primaryKey(),actor:text('actor').notNull(),action:text('action').notNull(),target:text('target').notNull(),createdAt:text('created_at').notNull()});
 export const workspace=sqliteTable('workspace',{id:text('id').primaryKey(),userId:text('user_id').notNull(),kind:text('kind').notNull(),key:text('key').notNull(),value:text('value').notNull(),updatedAt:text('updated_at').notNull()},t=>[uniqueIndex('workspace_owner_key').on(t.userId,t.kind,t.key)]);
+
+/** New candidate records never appear as published claims until explicitly reviewed. */
+export const sourceCandidates=sqliteTable('source_candidates',{
+ id:text('id').primaryKey(),connector:text('connector').notNull(),externalId:text('external_id').notNull(),
+ sourceUrl:text('source_url').notNull(),publisher:text('publisher').notNull(),title:text('title').notNull(),
+ excerpt:text('excerpt').notNull(),companyName:text('company_name'),companyId:text('company_id').references(()=>companies.id),
+ eventDate:text('event_date'),observedAt:text('observed_at').notNull(),lastChecked:text('last_checked').notNull(),
+ status:text('status').notNull().default('Pending'),contentHash:text('content_hash').notNull(),payload:text('payload').notNull().default('{}')
+},t=>[index('candidate_status_idx').on(t.status,t.lastChecked),index('candidate_company_idx').on(t.companyId),index('candidate_connector_idx').on(t.connector)]);
+export const refreshLeases=sqliteTable('refresh_leases',{name:text('name').primaryKey(),token:text('token').notNull(),expiresAt:text('expires_at').notNull()});

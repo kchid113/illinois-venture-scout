@@ -33,8 +33,8 @@ export async function fetchText(url,fetcher=fetch) {
  } throw Error('Fetch failed');
 }
 export async function assertRobots(fetcher=fetch){const robots=await fetchText(`${ORIGIN}/robots.txt`,fetcher);const disallows=[...robots.matchAll(/^Disallow:\s*(\S+)/gmi)].map(m=>m[1]);if(disallows.some(p=>'/category/tenant-directory/startup/'.startsWith(p)))throw Error('Robots policy disallows directory');return Math.max(10000,Number(robots.match(/Crawl-delay:\s*(\d+)/i)?.[1]||10)*1000);}
-export async function collectDirectory({pages=3,fetcher=fetch,onPage=()=>{}}={}) {
+export async function collectDirectory({pages=3,startPage=1,fetcher=fetch,onPage=()=>{}}={}) {
  const delay=await assertRobots(fetcher);const all=[];
- for(let page=1;page<=Math.min(pages,5);page++) {await new Promise(r=>setTimeout(r,delay));const url=page===1?directoryUrl:`${directoryUrl}page/${page}/`;const html=await fetchText(url,fetcher);const records=parseDirectory(html,url,new Date().toISOString());const contentHash=await digest(html);for(const record of records)record.contentHash=contentHash;all.push(...records);await onPage(records);}
+ for(let page=Math.max(1,Math.min(5,Math.floor(startPage)));page<Math.min(6,Math.max(1,Math.min(5,Math.floor(startPage)))+Math.max(1,Math.min(5,Math.floor(pages))));page++) {await new Promise(r=>setTimeout(r,delay));const url=page===1?directoryUrl:`${directoryUrl}page/${page}/`;const html=await fetchText(url,fetcher);const records=parseDirectory(html,url,new Date().toISOString());const contentHash=await digest(html);for(const record of records)record.contentHash=contentHash;all.push(...records);await onPage(records);}
  return [...new Map(all.map(r=>[r.slug,r])).values()];
 }

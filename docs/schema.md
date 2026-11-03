@@ -13,5 +13,12 @@
 | review_queue | Candidate review reason/status | Optional claim foreign key; reserved for expanded review workflow |
 | audit | Actor, operation, target, timestamp | Append-only through administration actions |
 | workspace | User-owned notes, watchlists, statuses, saved searches, theses and editable reports | Unique user/kind/key; all API reads/writes scoped to trusted user ID |
+| source_candidates | Source-discovery queue for original URL, publisher, event/check dates, exact company match, source excerpt and approval status | Stable content hash + external identity; candidates cannot publish themselves |
+| refresh_leases | Best-effort concurrency lock for each external source connector | Name-keyed expiring lease, released after refresh |
 
 Public claims require an evidence join. A published claim and its evidence are imported atomically. Rejected claims remain in storage but are excluded from public queries. Conflicting values are retained; the display flags conflicts. Applicable dates are nullable and are not inferred from retrieval time. Ingestion never creates funding or product-launch events from directory records.
+
+
+## Patch 2 schema migration
+
+Apply `drizzle/0001_source_refresh.sql` after the existing initial schema. It adds `source_candidates` and `refresh_leases` only; no changes to the initial 29 company records, private workspace or existing source provenance tables are required. Reviewed OTM, EnterpriseWorks Incubator, iVenture cohorts, NIH awards, federal awards and news become published facts only after a dedicated administrator approval action preserves their original evidence and classification. Incubation is distinct from university ownership, spinout status and financial backing.

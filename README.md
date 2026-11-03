@@ -1,8 +1,8 @@
 # Illinois Venture Radar
 
-**Discover Illinois-connected startups, understand the evidence, and organize better research.**
+**VC discovery and evidence-backed diligence for startups across the University of Illinois Urbana-Champaign ecosystem.**
 
-Illinois Venture Radar is a research application for exploring companies connected to the University of Illinois innovation ecosystem. Its goal is to turn scattered directory listings and company developments into a searchable, traceable workspace for investors, founders, students, and ecosystem researchers.
+Illinois Venture Radar is an **independent VC research tool** for discovering companies across the University of Illinois Urbana-Champaign (UIUC) entrepreneurial ecosystem. The mission is **not** to promote university-owned, university-backed, or officially endorsed companies. Instead, it helps investors find and investigate promising ventures wherever a sourced UIUC ecosystem connection exists: Research Park, student or alumni founders, EnterpriseWorks Incubator, iVenture Accelerator, independent startup teams, or businesses supported by university research, technology licensing, and other programs. These paths can overlap, but no ownership or financing relationship is inferred.
 
 Every important claim should answer three questions: **What is being claimed? Where did it come from? What remains unknown?** The platform keeps sources and supporting excerpts alongside company records, separates company-reported statements from documented facts and analyst interpretation, and explains how its classifications and screening calculations work.
 
@@ -10,13 +10,14 @@ Every important claim should answer three questions: **What is being claimed? Wh
 
 ## Project goals
 
+- **Help VCs source deals across campus:** discover student-founded, incubated, independently operated and university-linked ventures using primary-source evidence rather than university endorsement as a ranking signal.
 - **Make discovery useful:** find companies by their documented products, sectors, and ecosystem relationships.
 - **Make research auditable:** connect claims to original sources, publication and retrieval dates, excerpts, verification classifications, and conflicting evidence.
 - **Make uncertainty visible:** show missing information as unknown; never guess funding, stage, traction, or university ownership.
 - **Support a repeatable workflow:** save watchlists, private notes, searches, comparisons, reports, and reproducible screening snapshots.
 - **Build toward responsible monitoring:** add reviewed source integrations and event updates while preserving provenance and avoiding invented signals.
 
-A Research Park tenancy or EnterpriseWorks participation establishes a specific ecosystem relationship. Neither automatically establishes a university spinout, university ownership, or investment readiness.
+A Research Park tenant, EnterpriseWorks directory listing or iVenture cohort establishes a specific, source-supported ecosystem connection. None automatically establishes university ownership, a spinout, university equity backing, licensed IP, venture funding received, or investment readiness.
 
 ## Typical workflow
 
@@ -89,7 +90,7 @@ The protected administrative endpoint supports:
 
 Administrative authorization requires either the configured `ADMIN_EMAIL` in a trusted Sites session or a >=32-character `ADMIN_TOKEN` bearer token. Browser mutations also validate Origin. Server secrets never enter the client bundle. The UI uses the signed-in administrator account; CLI automation can use the token. When calling a private Site from a service, Sites' separate `OAI-Sites-Authorization` header is also required. Obtain that supported service credential through Sites, never put it into source control or a schedule prompt.
 
-No unattended refresh schedule was configured. The CLI can be invoked by a job runner independently of a browser. GitHub documentation reviewed: https://docs.github.com/en/rest/releases/releases and https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api. Public releases need no API key; unauthenticated quota is 60 requests/hour. The connector stops on API failures and preserves original release dates and source IDs. Never create a repository mapping by name similarity alone.
+An opt-in GitHub Actions schedule now exists in `.github/workflows/refresh-public-sources.yml`, but it is DISABLED until repository variables, a production deployment, the additive migration, and secret credentials are configured. `scripts/refresh-site.mjs` invokes the protected hosted refresh endpoint; it does not use the browser or copy production data into GitHub. GitHub documentation reviewed: https://docs.github.com/en/rest/releases/releases and https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api. Public releases need no API key; unauthenticated quota is 60 requests/hour. The connector stops on API failures and preserves original release dates and source IDs. Never create a repository mapping by name similarity alone.
 
 ## Schema and provenance
 
@@ -134,3 +135,30 @@ The checked-in production import contains **29 distinct Research Park directory 
 The production seed generator and protected `seed` API now enforce source provenance, allowed affiliation types, unique identities, exact company/profile matches, and rejection of sample/demo/fake company names or placeholder websites before writing. The committed SQL is checked against the reviewed company list in automated tests. Synthetic companies in `tests/` remain deliberate fixtures and are not imported into the deployed database.
 
 The UI also no longer presents an invented account avatar or a prefilled “Software / AI, infrastructure” investment thesis as if it were the user's preference. Screening starts with blank sector, stage, and keyword fields. Missing company details remain explicitly unverified. This change does not delete existing hosted records or alter anyone's private workspace.
+
+## Patch 2 — continuous official-source discovery (review-first)
+
+**Status: implemented on the `feature/live-source-refresh` branch, not deployed or enabled.** After the additive D1 migration and protected credentials are configured, authorized administrators can refresh official sources manually or opt into daily/weekly GitHub Actions scheduling. See [full Patch 2 operations and risk notes](docs/patch-2-report.md).
+
+Sources include: Research Park startup tenant directory pages 1–3; EnterpriseWorks Incubator directory; Research Park news; Entrepreneurship at Illinois news; Office of Technology Management startup listing; **iVenture Accelerator's official [Startups by Cohort](https://iventure.illinois.edu/startups) directory**; NIH RePORTER project search and USAspending award search (both require a previously verified recipient identity); and GitHub releases for source-verified repository mappings. SBIR.gov's API is in maintenance, so no SBIR API results are fabricated. The directory importer checks robots.txt and rate-limits requests; all other official HTML connectors fail closed if robots.txt disallows access or cannot be retrieved.
+
+The iVenture connector records **cohort participation only**. A cohort may include nonprofit ventures. Inclusion does not establish Research Park tenancy, EnterpriseWorks membership, university IP ownership, receipt of accelerator funds, or investment merit. Existing exact-matching company names are staged as pending affiliation claims. Unmatched ventures are review-only; they may be explicitly created by an administrator **only when the official cohort listing links to a unique real venture website**. Ambiguous names are not silently merged.
+
+An additional EnterpriseWorks Incubator connector reads the official [EnterpriseWorks directory category](https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/), including program-listed ventures absent from the Startup tag. It stages exact matches and unmatched official profiles for review; administrators may add an unmatched venture only after verifying its unique Research Park profile. **EnterpriseWorks participation is a program affiliation, not evidence of university ownership or backing.**
+
+Source candidates, source timestamps and review decisions are stored in new D1 tables. Source discoveries are not public claims until an administrator approves them. Approvals preserve publisher, URL, excerpt, last-check timestamp, methodology classification and review audit. A known company record's original Research Park directory identity is not silently replaced. A news mention is not automatically labeled equity funding or customer traction. Scheduled actions are observability mechanisms—not freshness guarantees.
+
+### Required setup (after independent deployment)
+
+1. Apply `drizzle/0001_source_refresh.sql` to your **development D1** first. Verify that `source_candidates` and `refresh_leases` were created and that the 29 reviewed seed companies remain unchanged. Apply it to production D1 only after backup and validation. The original migration `0000_first_drax.sql` is still required for a fresh database.
+2. Deploy code to an environment that actually supports Vinext/Cloudflare D1 and trusted ChatGPT Sites identity (or deliberately port those dependencies). GitHub merge alone does **not** redeploy the current private Sites app.
+3. Test `POST /api/admin/refresh` as an authorized admin with `{"connector":"iventure-cohorts"}` and inspect the `GET /api/admin/candidates` review queue in Settings. Review each source before approving it. News and award sources may return no matches until verified company identifiers exist.
+4. In GitHub repository **Settings → Secrets and variables → Actions**, set variable `IVR_SITE_URL` to the HTTPS deployed site origin; set `IVR_AUTOMATION_ENABLED=true` **only after successful manual validation**. Set `IVR_ADMIN_TOKEN` as a secret (a unique 32+ character token matching the deployed secret). If the Site is private, configure `IVR_SITES_SERVICE_TOKEN` as a secret when an authorized, supported service token is available. Do not put secrets in source or documentation.
+5. The workflow runs daily at **10:17 UTC** for official news. On Mondays it also attempts the Research Park directory, EnterpriseWorks Incubator, iVenture, OTM, NIH, USAspending and reviewed GitHub releases. Failed jobs report failures in GitHub Actions and `ingestion_jobs`. To suspend all requests, set `IVR_AUTOMATION_ENABLED=false`.
+
+No live authentication, D1 database, scheduled job, or external data source has been altered merely by committing this branch. The source connectors are conservative, and official providers can change layouts, rate limits or API contracts; review actual data after deployment.
+
+
+### Patch 2 test-and-repair audit
+
+Pull Request #2 has a [comprehensive QA report](docs/patch-2-qa-report.md) covering 216 deterministic regression cases across official-source parsing, EnterpriseWorks, iVenture, NIH/USAspending, trust boundaries, review concurrency, migrations, refresh jobs and the scheduler CLI. The verified full test run passed all 216 tests, typecheck, lint and build. Browser E2E interactions, real production D1 migration and live upstream source compatibility still require independent staged validation before enabling the opt-in schedule.
