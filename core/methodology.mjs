@@ -37,7 +37,7 @@ export const PROFILE_FIELDS=Object.freeze({
  lifecycle:Object.freeze(['lifecycle','status','operating status']),
  founders:Object.freeze(['founder','founders','leadership']),
  equityFunding:Object.freeze(['equity funding','equity financing','funding round']),
- grants:Object.freeze(['grant','grants','federal award','government contract','contract']),
+ grants:Object.freeze(['grant','grants','federal award','government contract','contract','government award','research award']),
  traction:Object.freeze(['customer','customers','revenue','sales','commercial traction'])
 });
 /** Only claims with explicit supporting evidence can fill a profile field. */
@@ -48,4 +48,4 @@ export function supportedProfileClaims(claims,dimension){
   && ['Published','Conflicting'].includes(c.status)
   && c.evidence?.some(e=>e.relationship==='supports'&&e.source_id&&e.url));
 }
-export const FIELD_METRICS={sector:'sector',affiliation:'affiliation',stage:'stage',status:'stage',accelerator:'iventure','business model':'business',funding:'funding','equity funding':'funding',grant:'funding',grants:'funding',founder:'founders',founders:'founders',leadership:'founders',revenue:'traction',customers:'traction',description:'description',release:'signals',website:'verification',name:'verification',technology:'description'};
+export const FIELD_METRICS={sector:'sector',affiliation:'affiliation',stage:'stage',status:'stage',accelerator:'iventure','business model':'business',funding:'funding','equity funding':'funding',grant:'funding',grants:'funding','government award':'funding','research award':'funding',founder:'founders',founders:'founders',leadership:'founders',revenue:'traction',customers:'traction',description:'description',release:'signals',website:'verification',name:'verification',technology:'description'};
