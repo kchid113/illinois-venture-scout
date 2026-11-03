@@ -98,7 +98,6 @@ test('citation validation fails for unknown IDs and accepts known IDs only',()=>
 test('CSV injection protection applies to leading tabs, newlines, spaces and Unicode separators',()=>{
  const values=['=HYPERLINK("https://evil.test")','+2+2','@SUM(1,1)','-4+4',' \t=HYPERLINK("https://evil.test")','\t@SUM(1,1)','\r\n+2+2','\ufeff=1+1'];
  const line=csv([values]);
- const escaped=line.split(',');
  for(const v of values)assert.ok(!line.includes('"'+v.replaceAll('"','""')+'"'),'Unprotected spreadsheet formula: '+JSON.stringify(v));
  assert.ok(line.includes("'=HYPERLINK"));
 });
