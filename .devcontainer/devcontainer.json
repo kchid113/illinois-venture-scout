@@ -1,0 +1,31 @@
+{
+  "name": "Illinois Venture Radar — Node 22 / D1 development",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "corepack enable && corepack prepare pnpm@11.25.0 --activate && pnpm install --frozen-lockfile",
+  "forwardPorts": [
+    3000,
+    8787
+  ],
+  "portsAttributes": {
+    "3000": {
+      "label": "Illinois Venture Radar (dev)",
+      "onAutoForward": "notify"
+    },
+    "8787": {
+      "label": "Wrangler local worker",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "GitHub.copilot"
+      ]
+    }
+  }
+}
