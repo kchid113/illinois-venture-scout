@@ -25,3 +25,12 @@ CREATE TABLE IF NOT EXISTS refresh_leases (
  token text NOT NULL,
  expires_at text NOT NULL
 );
+
+-- Database-level invariant: a decision is single-use. A competing reviewer
+-- cannot overwrite an approval/rejection; the entire D1 batch rolls back.
+CREATE TRIGGER IF NOT EXISTS source_candidate_decision_once
+BEFORE UPDATE OF status ON source_candidates
+WHEN OLD.status <> 'Pending' OR NEW.status NOT IN ('Approved','Rejected')
+BEGIN
+ SELECT RAISE(ABORT,'Candidate review requires pending status and a terminal decision');
+END;
