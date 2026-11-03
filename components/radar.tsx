@@ -87,7 +87,7 @@ function SettingsPage({heading,local,admin,summary,reload}:{heading:(a:string,b:
   </section>
   <section className="panel padded"><h2>{admin?'Administrator controls':'Data operations'}</h2><p className="muted">{admin?'Your account is authorized to refresh source data.':'An authorized administrator manages source refreshes.'}</p>
    <div className="stack"><button disabled={busy||!admin} onClick={()=>void runAdmin('refresh')}><RefreshCw size={16}/>Refresh original directory page 1</button><button disabled={busy||!admin} onClick={()=>void runAdmin('seed')}>Import reviewed initial records</button></div>
-   <h3>Public-source refresh {info('freshness')}</h3>
+   <h3>Public-source refresh <MetricInfo metric="freshness" lastChecked={summary.lastChecked}/></h3>
    <p className="muted">Research Park listings import documented tenant facts. iVenture cohort ventures, news, OTM, and federal-award candidates remain pending until reviewed. NIH and USAspending require a separately verified recipient identity.</p>
    <div className="row" style={{flexWrap:'wrap',marginTop:10}}>
     <select aria-label="Refresh source" value={connector} disabled={busy||!admin} onChange={e=>setConnector(e.target.value)}>{CONNECTORS.map((id:string)=><option key={id} value={id}>{id}</option>)}</select>
