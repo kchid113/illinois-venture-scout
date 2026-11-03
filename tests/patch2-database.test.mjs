@@ -74,7 +74,7 @@ withDb('program approval preserves source and evidence and does not produce fund
   payload:{profileUrl:'https://researchpark.illinois.edu/archean-sciences/',sourceCategories:['Tenant Directory','EnterpriseWorks Incubator']}});
  for(const op of await approvalStatements(row,at))d.prepare(op.sql).run(...op.values);
  const claims=d.prepare("SELECT field,classification,status FROM claims WHERE field='incubator'").all();
- assert.deepEqual(claims,[{field:'incubator',classification:'Verified factual',status:'Published'}]);
+ assert.deepEqual(claims.map(x=>({...x})),[{field:'incubator',classification:'Verified factual',status:'Published'}]);
  assert.equal(d.prepare("SELECT count(*) n FROM evidence e JOIN claims c ON c.id=e.claim_id WHERE c.field='incubator' AND e.relationship='supports'").get().n,1);
  assert.equal(d.prepare("SELECT count(*) n FROM claims WHERE field IN ('university ownership','equity funding','revenue','student founder')").get().n,0);
  assert.equal(d.prepare('SELECT count(*) n FROM signals').get().n,0);
