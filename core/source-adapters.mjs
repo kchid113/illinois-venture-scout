@@ -48,14 +48,16 @@ async function allowedRobots(url,fetcher){
  if(restricted)throw Error('Source robots policy disallows requested path');
  return Math.min(60000,Math.max(1000,delay));
 }
-export async function officialHTML(connector,fetcher=fetch){
+export async function officialHTML(connector,fetcher=fetch,{page=1}={}){
  const target=OFFICIAL_LISTINGS[connector];
  if(!target)throw Error('Unknown listing connector');
  validateEndpoint(target.url,target.url);
- const delay=await allowedRobots(target.url,fetcher);
+ if(!Number.isInteger(page)||page<1||page>(connector==='enterpriseworks-directory'?6:1))throw Error('Unsupported source listing page');
+ const url=page===1?target.url:target.url+'page/'+page+'/';
+ const delay=await allowedRobots(url,fetcher);
  await new Promise(resolve=>setTimeout(resolve,delay));
- const html=await boundedResponse(target.url,{},fetcher);
- return {html,url:target.url,publisher:target.publisher};
+ const html=await boundedResponse(url,{},fetcher);
+ return {html,url,publisher:target.publisher};
 }
 function safeArticleUrl(url,base){
  let u;try{u=new URL(url,base);}catch{return null;}
@@ -200,8 +202,32 @@ export function parseIVentureCandidates(html,companies,observedAt){
  * A source taxonomy label supports only directory participation, NOT equity
  * ownership, university IP, founding team identity or revenue.
  */
-export function parseEnterpriseWorksCandidates(html,companies,observedAt){
+export function parseEnterpriseWorksCandidates(html,companies,observedAt,listingUrl=OFFICIAL_LISTINGS['enterpriseworks-directory'].url){
  const config=OFFICIAL_LISTINGS['enterpriseworks-directory'];
+ const trustedRoot=new URL(config.url),observed=new URL(listingUrl);
+ if(observed.origin!==trustedRoot.origin||!(observed.pathname===trustedRoot.pathname||new RegExp('^'+trustedRoot.pathname+'page/[1-6]/
+ const articles=[...String(html).matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/gi)];
+ const found=[];
+ for(const match of articles.slice(0,150)){
+  const article=match[0];
+  const cats=[...article.matchAll(/<a[^>]*rel=["']category tag["'][^>]*>([\s\S]*?)<\/a>/gi)].map(m=>text(m[1]));
+  if(!cats.includes('EnterpriseWorks Incubator')||!cats.includes('Tenant Directory'))continue;
+  const h=article.match(/<h2[^>]*class=["'][^"']*entry-title[^"']*["'][^>]*>\s*<a[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/i);
+  if(!h)continue;
+  const name=text(h[2]).trim(),profileUrl=safeArticleUrl(h[1],config.url);
+  if(name.length<3||name.length>125||!profileUrl||profileUrl===config.url||!/^\/[a-z0-9-]+\/$/.test(new URL(profileUrl).pathname))continue;
+  const matched=matchCompany(name,companies);
+  const excerpt=[name,...cats].join(' · ').slice(0,440);
+  found.push({connector:'enterpriseworks-directory',externalId:profileUrl,
+   sourceUrl:listingUrl,title:name+' — EnterpriseWorks Incubator directory',
+   publisher:config.publisher,excerpt,companyName:name,companyId:matched?.id||null,
+   eventDate:null,payload:{recordType:'official-incubator-directory',profileUrl,
+   sourceCategories:cats,sourceRelationship:'EnterpriseWorks Incubator directory listing'},observedAt});
+ }
+ if(!found.length)throw Error('EnterpriseWorks directory produced no qualifying tagged records; review source layout before import');
+ return [...new Map(found.map(x=>[x.externalId,x])).values()];
+}
+).test(observed.pathname))||observed.search||observed.hash)throw Error('Unexpected EnterpriseWorks listing page');
  const articles=[...String(html).matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/gi)];
  const found=[];
  for(const match of articles.slice(0,150)){
