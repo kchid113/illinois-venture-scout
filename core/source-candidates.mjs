@@ -52,14 +52,15 @@ export async function candidateStatements(candidate,observedAt){
 export async function approvalStatements(candidate,reviewedAt){
  if(candidate.status!=='Pending'||!candidate.company_id)throw Error('An identified pending candidate is required for approval');
  if(!['otm-startups','research-park-news','illinois-news','nih-reporter','usaspending'].includes(candidate.connector))throw Error('Unsupported approval type');
- const sourceId=await digest(candidate.source_url),claimId=await digest('reviewed:'+candidate.id);
+ const sourceId=await digest(candidate.source_url);
  const kind=candidate.connector;
  const value=kind==='otm-startups'?'Appears on the University of Illinois Office of Technology Management list of university IP-based startups':
   kind==='nih-reporter'?('NIH RePORTER project: '+candidate.title):
   kind==='usaspending'?('USAspending award: '+candidate.title):
   ('Official news mention: '+candidate.title);
  const field=kind==='otm-startups'?'university IP startup':kind==='nih-reporter'?'grant':kind==='usaspending'?'government award':'news';
- const classification=kind==='otm-startups'?'Verified factual':kind==='nih-reporter'||kind==='usaspending'?'Verified factual':'Verified factual';
+ const classification='Verified factual';
+ const claimId=await digest(candidate.company_id+'\\n'+field+'\\n'+value);
  const ops=[
   {sql:"INSERT INTO sources(id,url,title,publisher,type,published_at,retrieved_at,last_checked,hash) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(url) DO UPDATE SET last_checked=excluded.last_checked",values:[sourceId,candidate.source_url,candidate.title,candidate.publisher,'Reviewed official source',candidate.event_date,candidate.observed_at,reviewedAt,candidate.content_hash]},
   {sql:"INSERT OR IGNORE INTO source_history(id,source_id,hash,observed_at,summary) VALUES(?,?,?,?,?)",values:[await digest(sourceId+candidate.content_hash),sourceId,candidate.content_hash,candidate.observed_at,'Reviewed candidate '+candidate.id]},
