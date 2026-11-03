@@ -1,5 +1,5 @@
 import {text} from './ingestion.mjs';
-import {matchCompany,mentionsCompany,normalizeCompanyName} from './source-candidates.mjs';
+import {mentionsCompany,normalizeCompanyName} from './source-candidates.mjs';
 
 export const OFFICIAL_LISTINGS=Object.freeze({
  'research-park-news':{url:'https://researchpark.illinois.edu/news/',publisher:'University of Illinois Research Park'},
@@ -11,7 +11,6 @@ const OFFICIAL_API=Object.freeze({
  'usaspending':'https://api.usaspending.gov/api/v2/search/spending_by_award/'
 });
 const AGENT='IllinoisVentureRadar/2.0 (independent public research, source discovery only)';
-const esc=s=>String(s).replace(/[.*+?^$\x7B\x7D()|[\]\\]/g,'\\$&');
 function validateEndpoint(url,allowed){
  const u=new URL(url);
  if(u.protocol!=='https:'||u.username||u.password||u.port||u.hash)throw Error('Source URL outside HTTPS allowlist');
@@ -20,7 +19,7 @@ function validateEndpoint(url,allowed){
  return u.href;
 }
 async function boundedResponse(url,options={},fetcher=fetch){
- const response=await fetcher(url,{redirect:'error',headers:{'User-Agent':AGENT,...(options.headers||{})},signal:AbortSignal.timeout(20000),...options});
+ const response=await fetcher(url,{...options,redirect:'error',headers:{'User-Agent':AGENT,...(options.headers||{})},signal:AbortSignal.timeout(20000)});
  if(response.status===403||response.status===429)throw Error(`Source access restricted HTTP ${response.status}; retry later`);
  if(!response.ok)throw Error(`Source HTTP ${response.status}`);
  const raw=await response.text();
@@ -61,7 +60,7 @@ function safeArticleUrl(url,base){
  const trustedOrigin=new URL(base).origin;
  if(u.origin!==trustedOrigin||u.protocol!=='https:'||u.username||u.password||u.hash)return null;
  // Do not stage external links or navigational anchor targets as official article evidence.
- return u.href;
+ u.search='';return u.href;
 }
 export function parseNewsCandidates(html,connector,companies,observedAt){
  const config=OFFICIAL_LISTINGS[connector];
