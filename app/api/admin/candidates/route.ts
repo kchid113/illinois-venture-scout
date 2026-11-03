@@ -2,7 +2,7 @@ import {NextRequest,NextResponse} from 'next/server';
 import {z} from 'zod';
 import {isAdmin} from '@/lib/admin';
 import {all,database} from '@/lib/radar';
-import {approvalStatements,newIVentureCompany,matchCompany} from '@/core/source-candidates.mjs';
+import {approvalStatements,newIVentureCompany,newEnterpriseWorksCompany,matchCompany} from '@/core/source-candidates.mjs';
 export const dynamic='force-dynamic';
 
 export async function GET(req:NextRequest){
@@ -11,7 +11,7 @@ export async function GET(req:NextRequest){
  const stats=await all("SELECT connector,status,count(*) count FROM source_candidates GROUP BY connector,status ORDER BY connector,status");
  const candidates=rows.map(r=>{
   let canCreate=false;
-  try{const payload=JSON.parse(String(r.payload||'{}'));canCreate=r.connector==='iventure-cohorts'&&!r.company_id&&!!payload.ventureWebsite;}catch{}
+  try{const payload=JSON.parse(String(r.payload||'{}'));canCreate=!r.company_id&&((r.connector==='iventure-cohorts'&&!!payload.ventureWebsite)||(r.connector==='enterpriseworks-directory'&&!!payload.profileUrl));}catch{}
   const {payload:_,...candidate}=r;
   return {...candidate,canCreate};
  });
@@ -32,10 +32,10 @@ export async function POST(req:NextRequest){
   let reviewRow=row;
   const ops:{sql:string;values:unknown[]}[]=[];
   if(decision==='create'){
-   if(row.connector!=='iventure-cohorts'||row.company_id)return NextResponse.json({error:'Only unmatched official iVenture cohort ventures may be created'},{status:422});
+   if(!['iventure-cohorts','enterpriseworks-directory'].includes(String(row.connector))||row.company_id)return NextResponse.json({error:'Only unmatched source-listed ventures may be created after review'},{status:422});
    const existing=await all('SELECT id,name,profile FROM companies');
    if(matchCompany(row.company_name,existing as {id:string;name:string}[]))return NextResponse.json({error:'A tracked company with this name already exists; review its identity first'},{status:409});
-   const {companyId,statement}=await newIVentureCompany(row,now);
+   const {companyId,statement}=row.connector==='iventure-cohorts'?await newIVentureCompany(row,now):await newEnterpriseWorksCompany(row,now);
    if(existing.some(e=>e.id===companyId||e.profile===statement.values[2]))return NextResponse.json({error:'Venture ID or official website is already tracked'},{status:409});
    ops.push(statement);
    reviewRow={...row,company_id:companyId};
