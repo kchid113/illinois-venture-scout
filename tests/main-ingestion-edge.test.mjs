@@ -62,7 +62,7 @@ test('parser never publishes a company when no eligible article evidence exists'
  assert.throws(()=>parse('<header>Nova Labs</header><footer><a>Startup</a></footer>'),/No eligible/);
 });
 test('HTML decoder supports numeric and named entities without crashing on invalid codepoints',()=>{
- assert.equal(text('A&nbsp;B &amp; C &#8217;'),'A B & C ’'.replace('’',"'"));
+ assert.equal(text('A&nbsp;B &amp; C &#8217;'),'A B & C ’');
  assert.doesNotThrow(()=>text('A &#999999999999; B &#x110000;'));
 });
 for(const url of [
