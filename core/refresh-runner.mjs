@@ -2,7 +2,7 @@ import {collectDirectory} from './ingestion.mjs';
 import {recordStatements} from './records.mjs';
 import {githubReleases} from './github.mjs';
 import {releaseStatements} from './github-store.mjs';
-import {candidateStatements,CONNECTORS} from './source-candidates.mjs';
+import {candidateStatements,CONNECTORS,normalizeCompanyName} from './source-candidates.mjs';
 import {officialHTML,parseOTMCandidates,parseNewsCandidates,parseIVentureCandidates,parseEnterpriseWorksCandidates,nihCandidates,usaSpendingCandidates} from './source-adapters.mjs';
 
 const results=async(db,sql,...values)=>(await db.prepare(sql).bind(...values).all()).results;
@@ -19,7 +19,7 @@ async function stageCandidate(db,candidate,observedAt){
 function verifiedIdentities(rows,field){
  return rows.filter(x=>x.field===field&&x.classification==='Verified factual'&&x.status==='Published'&&x.relationship==='supports');
 }
-export async function refreshConnector(db,connector,{fetcher=fetch,now=new Date().toISOString()}={}){
+export async function refreshConnector(db,connector,{fetcher=fetch,now=new Date().toISOString(),directoryCollector=collectDirectory}={}){
  if(!CONNECTORS.includes(connector))throw Error('Unknown refresh connector');
  const leaseToken=crypto.randomUUID(),expiresAt=new Date(Date.parse(now)+15*60*1000).toISOString();
  const lease=await db.prepare(
@@ -34,10 +34,11 @@ export async function refreshConnector(db,connector,{fetcher=fetch,now=new Date(
   const companies=await results(db,'SELECT id,name,profile FROM companies');
   if(/^research-park-[123]$/.test(connector)){
    const page=Number(connector.at(-1));
-   const records=await collectDirectory({pages:1,startPage:page,fetcher});
+   const records=await directoryCollector({pages:1,startPage:page,fetcher});
    seen=records.length;
    for(const r of records){
-    const existing=await results(db,'SELECT id,name,profile FROM companies WHERE id=? OR profile=?',r.slug,r.profile);
+    const identity=normalizeCompanyName(r.name);
+    const existing=companies.filter(c=>c.id===r.slug||c.profile===r.profile||normalizeCompanyName(c.name)===identity);
     if(existing.length && (existing.length!==1||existing[0].id!==r.slug||existing[0].profile!==r.profile||existing[0].name!==r.name)){
      const reason=JSON.stringify({connector,slug:r.slug,sourceUrl:r.sourceUrl,observedAt:now,reason:'A source identifier, profile or name changed; identity review required'}).slice(0,700);
      const reviewId=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('identity:'+r.slug+':'+r.sourceUrl));
@@ -46,6 +47,7 @@ export async function refreshConnector(db,connector,{fetcher=fetch,now=new Date(
      skipped++;continue;
     }
     await runStatements(db,await recordStatements(r));
+    if(!existing.length)companies.push({id:r.slug,name:r.name,profile:r.profile});
     imported++;
    }
   }else if(['research-park-news','illinois-news','otm-startups','iventure-cohorts','enterpriseworks-directory'].includes(connector)){
