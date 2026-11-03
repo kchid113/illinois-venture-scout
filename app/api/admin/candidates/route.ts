@@ -10,11 +10,21 @@ export async function GET(req:NextRequest){
  const rows=await all("SELECT id,connector,source_url,publisher,title,excerpt,company_name,company_id,event_date,observed_at,last_checked,status,payload FROM source_candidates WHERE status='Pending' ORDER BY observed_at DESC LIMIT 100");
  const stats=await all("SELECT connector,status,count(*) count FROM source_candidates GROUP BY connector,status ORDER BY connector,status");
  const candidates=rows.map(r=>{
-  let canCreate=false;
-  try{const payload=JSON.parse(String(r.payload||'{}'));canCreate=!r.company_id&&((r.connector==='iventure-cohorts'&&!!payload.ventureWebsite)||(r.connector==='enterpriseworks-directory'&&!!payload.profileUrl));}catch{}
+  let canCreate=false,reviewUrl:null|string=null;
+  try{
+   const payload=JSON.parse(String(r.payload||'{}'));
+   const url=r.connector==='iventure-cohorts'?payload.ventureWebsite:r.connector==='enterpriseworks-directory'?payload.profileUrl:null;
+   if(typeof url==='string'){
+    const u=new URL(url);
+    if(u.protocol==='https:'&&!u.username&&!u.password&&!u.hash&&!(r.connector==='enterpriseworks-directory'&&u.hostname!=='researchpark.illinois.edu')){
+     reviewUrl=u.href;
+    }
+   }
+   canCreate=!r.company_id&&!!reviewUrl&&['iventure-cohorts','enterpriseworks-directory'].includes(String(r.connector));
+  }catch{}
   const candidate={...r};
   delete candidate.payload;
-  return {...candidate,canCreate};
+  return {...candidate,canCreate,reviewUrl};
  });
  return NextResponse.json({candidates,stats});
 }
