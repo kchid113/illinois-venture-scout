@@ -5,7 +5,8 @@ export const OFFICIAL_LISTINGS=Object.freeze({
  'research-park-news':{url:'https://researchpark.illinois.edu/news/',publisher:'University of Illinois Research Park'},
  'illinois-news':{url:'https://www.entrepreneurship.illinois.edu/news/news-and-info',publisher:'Entrepreneurship at Illinois'},
  'otm-startups':{url:'https://otm.illinois.edu/browse-technologies-startups/startups',publisher:'University of Illinois Office of Technology Management'},
- 'iventure-cohorts':{url:'https://iventure.illinois.edu/startups',publisher:'iVenture Accelerator, Gies College of Business, University of Illinois'}
+ 'iventure-cohorts':{url:'https://iventure.illinois.edu/startups',publisher:'iVenture Accelerator, Gies College of Business, University of Illinois'},
+ 'enterpriseworks-directory':{url:'https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/',publisher:'University of Illinois Research Park / EnterpriseWorks'}
 });
 const OFFICIAL_API=Object.freeze({
  'nih-reporter':'https://api.reporter.nih.gov/v2/projects/search',
@@ -190,4 +191,35 @@ export function parseIVentureCandidates(html,companies,observedAt){
  }
  if(!candidates.length)throw Error('iVenture cohort listing layout changed or produced no venture headings; review before import');
  return [...new Map(candidates.map(c=>[c.externalId,c])).values()];
+}
+
+
+/**
+ * EnterpriseWorks' dedicated official tenant category is broader than the
+ * Research Park "Startup" filter and can include ventures absent from it.
+ * A source taxonomy label supports only directory participation, NOT equity
+ * ownership, university IP, founding team identity or revenue.
+ */
+export function parseEnterpriseWorksCandidates(html,companies,observedAt){
+ const config=OFFICIAL_LISTINGS['enterpriseworks-directory'];
+ const articles=[...String(html).matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/gi)];
+ const found=[];
+ for(const match of articles.slice(0,150)){
+  const article=match[0];
+  const cats=[...article.matchAll(/<a[^>]*rel=["']category tag["'][^>]*>([\s\S]*?)<\/a>/gi)].map(m=>text(m[1]));
+  if(!cats.includes('EnterpriseWorks Incubator')||!cats.includes('Tenant Directory'))continue;
+  const h=article.match(/<h2[^>]*class=["'][^"']*entry-title[^"']*["'][^>]*>\s*<a[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/i);
+  if(!h)continue;
+  const name=text(h[2]).trim(),profileUrl=safeArticleUrl(h[1],config.url);
+  if(name.length<3||name.length>125||!profileUrl||profileUrl===config.url||!/^\/[a-z0-9-]+\/$/.test(new URL(profileUrl).pathname))continue;
+  const matched=matchCompany(name,companies);
+  const excerpt=[name,...cats].join(' · ').slice(0,440);
+  found.push({connector:'enterpriseworks-directory',externalId:profileUrl,
+   sourceUrl:config.url,title:name+' — EnterpriseWorks Incubator directory',
+   publisher:config.publisher,excerpt,companyName:name,companyId:matched?.id||null,
+   eventDate:null,payload:{recordType:'official-incubator-directory',profileUrl,
+   sourceCategories:cats,sourceRelationship:'EnterpriseWorks Incubator directory listing'},observedAt});
+ }
+ if(!found.length)throw Error('EnterpriseWorks directory produced no qualifying tagged records; review source layout before import');
+ return [...new Map(found.map(x=>[x.externalId,x])).values()];
 }
