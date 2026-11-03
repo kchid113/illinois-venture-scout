@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/methodology-tooltips
+      - feature/live-source-refresh
   pull_request:
 
 permissions:
