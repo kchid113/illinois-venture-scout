@@ -21,7 +21,7 @@ function requireObserved(record,index,part){
  if(record.publisher!=='University of Illinois Research Park')reject('unknown data publisher',index,part);
  if(typeof record.name!=='string'||!record.name.trim()||SYNTHETIC_NAME.test(record.name.trim()))reject('placeholder or missing company name',index,part);
  if(record.description!=null&&(typeof record.description!=='string'||SYNTHETIC_NAME.test(record.description.trim())))reject('placeholder or invalid company description',index,part);
- if(typeof record.excerpt!=='string'||!record.excerpt.includes(record.name))reject('missing company-specific evidence excerpt',index,part);
+ if(typeof record.excerpt!=='string'||!record.excerpt.trim()||(part==='directory'&&!record.excerpt.includes(record.name)))reject('missing company-specific evidence excerpt',index,part);
 }
 export function assertProductionSeeds(records,profiles){
  if(!Array.isArray(records)||records.length===0||!Array.isArray(profiles))throw Error('Production seed must contain reviewed company and profile arrays');
@@ -47,6 +47,7 @@ export function assertProductionSeeds(records,profiles){
   if(r.classification!=='Verified factual')reject('profile website is not a reviewed factual field',i,'profile');
   if(r.description||r.sector||r.affiliation)reject('profile may not silently introduce unreviewed claims',i,'profile');
   if(typeof r.website!=='string'||!/^https:\/\/[^/\s]+/i.test(r.website)||/(?:example\.com|localhost|127\.0\.0\.1)/i.test(r.website))reject('unverified or placeholder official website',i,'profile');
+  if(!r.excerpt.includes(new URL(r.website).hostname))reject('profile excerpt does not identify reviewed website',i,'profile');
   seen.add(r.slug);
  });
  return {companies:records.length,reviewedProfiles:profiles.length};
