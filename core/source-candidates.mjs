@@ -3,7 +3,7 @@ import {digest} from './ingestion.mjs';
 export const CONNECTORS=Object.freeze([
  'research-park-1','research-park-2','research-park-3',
  'research-park-news','illinois-news','otm-startups',
- 'nih-reporter','usaspending','github-releases','iventure-cohorts'
+ 'nih-reporter','usaspending','github-releases','iventure-cohorts','enterpriseworks-directory'
 ]);
 
 export function normalizeCompanyName(name){
@@ -29,7 +29,8 @@ function officialSource(url,connector){
   'research-park-news':['researchpark.illinois.edu'],
   'nih-reporter':['reporter.nih.gov'],
   'usaspending':['www.usaspending.gov'],
-  'iventure-cohorts':['iventure.illinois.edu']
+  'iventure-cohorts':['iventure.illinois.edu'],
+  'enterpriseworks-directory':['researchpark.illinois.edu']
  };
  if(!hosts[connector]?.includes(u.hostname))throw Error('Source outside connector allowlist');
  return u.href;
@@ -52,17 +53,17 @@ export async function candidateStatements(candidate,observedAt){
 /** Only the explicit review action can move a candidate into the public claim/signal tables. */
 export async function approvalStatements(candidate,reviewedAt){
  if(candidate.status!=='Pending'||!candidate.company_id)throw Error('An identified pending candidate is required for approval');
- if(!['otm-startups','research-park-news','illinois-news','nih-reporter','usaspending','iventure-cohorts'].includes(candidate.connector))throw Error('Unsupported approval type');
+ if(!['otm-startups','research-park-news','illinois-news','nih-reporter','usaspending','iventure-cohorts','enterpriseworks-directory'].includes(candidate.connector))throw Error('Unsupported approval type');
  const sourceId=await digest(candidate.source_url);
  const kind=candidate.connector;
  const cohort=kind==='iventure-cohorts'?Number(JSON.parse(candidate.payload||'{}').cohort):null;
  if(kind==='iventure-cohorts'&&(!Number.isInteger(cohort)||cohort<1||cohort>30))throw Error('A sourced iVenture cohort number is required');
- const value=kind==='iventure-cohorts'?`iVenture Accelerator cohort ${cohort} participant`:
+ const value=kind==='enterpriseworks-directory'?'Listed in the official EnterpriseWorks Incubator directory':kind==='iventure-cohorts'?`iVenture Accelerator cohort ${cohort} participant`:
  kind==='otm-startups'?'Appears on the University of Illinois Office of Technology Management list of university IP-based startups':
   kind==='nih-reporter'?('NIH RePORTER project: '+candidate.title):
   kind==='usaspending'?('USAspending award: '+candidate.title):
   ('Official news mention: '+candidate.title);
- const field=kind==='iventure-cohorts'?'accelerator':kind==='otm-startups'?'university IP startup':kind==='nih-reporter'?'research award':kind==='usaspending'?'government award':'news';
+ const field=kind==='enterpriseworks-directory'?'incubator':kind==='iventure-cohorts'?'accelerator':kind==='otm-startups'?'university IP startup':kind==='nih-reporter'?'research award':kind==='usaspending'?'government award':'news';
  const classification='Verified factual';
  const claimId=await digest(candidate.company_id+'\\n'+field+'\\n'+value);
  const ops=[
@@ -71,6 +72,7 @@ export async function approvalStatements(candidate,reviewedAt){
   {sql:"INSERT OR IGNORE INTO claims(id,company_id,field,value,classification,status,first_observed,verified_at) VALUES(?,?,?,?,?,'Published',?,?)",values:[claimId,candidate.company_id,field,value,classification,candidate.observed_at,reviewedAt]},
   {sql:"INSERT OR IGNORE INTO evidence(id,claim_id,source_id,excerpt,method,verified_at,relationship) VALUES(?,?,?,?,?,?,'supports')",values:[await digest(claimId+sourceId),claimId,sourceId,candidate.excerpt,'Reviewed exact-identity official record',reviewedAt]}
  ];
+ if(kind==='enterpriseworks-directory')ops.push({sql:"INSERT OR IGNORE INTO affiliations(id,company_id,claim_id,university,type,status) VALUES(?,?,?,?,?,'Source-backed')",values:[claimId,candidate.company_id,claimId,'University of Illinois Urbana-Champaign','EnterpriseWorks Incubator directory listing']});
  if(kind==='iventure-cohorts')ops.push({sql:"INSERT OR IGNORE INTO affiliations(id,company_id,claim_id,university,type,status) VALUES(?,?,?,?,?,'Source-backed')",values:[claimId,candidate.company_id,claimId,'University of Illinois Urbana-Champaign',`iVenture cohort ${cohort} participant`]});
  if(kind==='otm-startups')ops.push({sql:"INSERT OR IGNORE INTO affiliations(id,company_id,claim_id,university,type,status) VALUES(?,?,?,?,?,'Source-backed')",values:[claimId,candidate.company_id,claimId,'University of Illinois Urbana-Champaign','OTM-listed university IP startup']});
  if((kind==='research-park-news'||kind==='illinois-news')&&candidate.event_date)ops.push({sql:"INSERT OR IGNORE INTO signals(id,company_id,claim_id,category,description,event_date,first_observed,dedup_key,status) VALUES(?,?,?,?,?,?,?,?,'Verified')",values:[claimId,candidate.company_id,claimId,'News',value,candidate.event_date,candidate.observed_at,'reviewed-news:'+candidate.id]});
@@ -91,4 +93,21 @@ export async function newIVentureCompany(candidate,reviewedAt){
  const slug=normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70);
  const companyId='iventure-'+slug+'-'+candidate.id.slice(0,8);
  return {companyId,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[companyId,name,website.href,reviewedAt,reviewedAt]}};
+}
+
+
+/**
+ * Adding an incubator-listed venture is a human review decision, not an automatic
+ * acceptance of a source listing. Source profile is the official directory page.
+ */
+export async function newEnterpriseWorksCompany(candidate,reviewedAt){
+ if(candidate.connector!=='enterpriseworks-directory'||candidate.status!=='Pending'||candidate.company_id)throw Error('Only unmatched EnterpriseWorks directory records can create a venture');
+ const payload=JSON.parse(candidate.payload||'{}');
+ let official;try{official=new URL(payload.profileUrl);}catch{throw Error('Official EnterpriseWorks profile link is required');}
+ if(official.protocol!=='https:'||official.hostname!=='researchpark.illinois.edu'||official.search||official.hash||official.username||official.password||official.port||!/^\/[a-z0-9-]+\/$/.test(official.pathname))
+  throw Error('Venture must have an exact Research Park official profile');
+ const name=String(candidate.company_name||'').trim();
+ if(!name||name.length>130||!/^[a-z0-9][a-z0-9 _'&!.()-]{1,128}$/i.test(name))throw Error('Unreviewable venture name');
+ const id='enterpriseworks-'+normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70)+'-'+candidate.id.slice(0,8);
+ return {companyId:id,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[id,name,official.href,reviewedAt,reviewedAt]}};
 }
