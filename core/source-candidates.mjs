@@ -1,5 +1,5 @@
 import {digest} from './ingestion.mjs';
-import {officialSourceUrl,publicVentureWebsite,trustedOfficialProfile} from './source-security.mjs';
+import {officialSourceUrl,publicVentureWebsite,trustedOfficialProfile,publishedDate} from './source-security.mjs';
 
 export const CONNECTORS=Object.freeze([
  'research-park-1','research-park-2','research-park-3',
@@ -25,8 +25,17 @@ export async function candidateStatements(candidate,observedAt){
  const {connector,externalId,sourceUrl,title,publisher,excerpt,companyName=null,companyId=null,eventDate=null,payload={}}=candidate;
  if(!CONNECTORS.includes(connector)||connector.startsWith('research-park-')&&/^research-park-[123]$/.test(connector)||connector==='github-releases')throw Error('Invalid candidate connector');
  const url=officialSourceUrl(sourceUrl,connector);
- if(!externalId||typeof externalId!=='string'||externalId.length>250||!title||!publisher||!excerpt||excerpt.length>1200||title.length>350)throw Error('Invalid source candidate');
+ const bounded=(v,max)=>typeof v==='string'&&v.trim().length>0&&v.length<=max;
+ if(!bounded(externalId,250)||!bounded(title,350)||!bounded(publisher,180)||!bounded(excerpt,1200))
+  throw Error('Invalid source candidate metadata');
+ if(companyName!=null&&!bounded(companyName,150))throw Error('Invalid company name');
  if(companyId!=null&&!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,149}$/.test(companyId))throw Error('Invalid company identity');
+ if(typeof observedAt!=='string'||!/^\\d{4}-\\d{2}-\\d{2}T/.test(observedAt)||!publishedDate(observedAt)||Number.isNaN(Date.parse(observedAt)))
+  throw Error('Invalid observation timestamp');
+ if(eventDate!=null&&publishedDate(eventDate)!==eventDate)throw Error('Invalid event date');
+ if(!payload||typeof payload!=='object'||Array.isArray(payload))throw Error('Invalid source candidate payload');
+ const payloadJson=JSON.stringify(payload);
+ if(payloadJson.length>8192)throw Error('Source candidate payload exceeds size limit');
  const data={title,publisher,excerpt,companyName,eventDate,payload};
  const hash=await digest(JSON.stringify(data));
  const id=await digest(connector+'\\n'+externalId+'\\n'+hash);
