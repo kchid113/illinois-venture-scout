@@ -126,3 +126,11 @@ PostgreSQL/Prisma/Docker/Vercel portability; advanced stage/business-model/evide
 ### Methodology audit refinements (v1.2.0)
 
 The `feature/methodology-tooltips` branch tightens public claim/search/sector counts and thesis scoring to require **supporting** evidence, not merely any linked citation (including contradicting-only links). The research profile now reads source-backed lifecycle, founder, equity-funding, grant/contract, and traction fields when they exist, rather than hard-coding unknown values; generic untyped `funding` is not treated as a confirmed equity round or grant. It distinguishes system-derived affiliation and verification labels from source-reported sector taxonomy. The Methodology page and contextual popovers remain linked from navigation. See [Patch 1 audit notes](docs/patch-1-report.md) for test scope and limitations.
+
+### Production-data and UI placeholder audit (PR #1)
+
+The checked-in production import contains **29 distinct Research Park directory company entries**, linked to three original directory pages. Three separately reviewed company profile URLs add website evidence. No invented company or fabricated production funding/valuation/signal records were found in the checked-in seed. This review establishes source provenance and rejects obvious synthetic names; it does **not** independently confirm every company-reported business assertion.
+
+The production seed generator and protected `seed` API now enforce source provenance, allowed affiliation types, unique identities, exact company/profile matches, and rejection of sample/demo/fake company names or placeholder websites before writing. The committed SQL is checked against the reviewed company list in automated tests. Synthetic companies in `tests/` remain deliberate fixtures and are not imported into the deployed database.
+
+The UI also no longer presents an invented account avatar or a prefilled “Software / AI, infrastructure” investment thesis as if it were the user's preference. Screening starts with blank sector, stage, and keyword fields. Missing company details remain explicitly unverified. This change does not delete existing hosted records or alter anyone's private workspace.
