@@ -115,7 +115,7 @@ export async function nihCandidates(company,organizationName,observedAt,fetcher=
  .slice(0,25).map(r=>{
   const id=String(r.appl_id),url=`https://reporter.nih.gov/project-details/${encodeURIComponent(id)}`;
   const title=String(r.project_title||r.project_num||'NIH project').slice(0,240);
-  const amount=Number(r.award_amount);
+  const amount=typeof r.award_amount==='number'?r.award_amount:null;
   const amountText=Number.isFinite(amount)&&amount>=0?` Reported award amount: USD ${amount.toFixed(2)}.`:' Award amount not stated.';
   const rawDate=r.award_notice_date||r.project_start_date||null;
   const eventDate=rawDate&&!Number.isNaN(Date.parse(rawDate))?new Date(rawDate).toISOString().slice(0,10):null;
@@ -134,7 +134,7 @@ export async function usaSpendingCandidates(company,uei,observedAt,fetcher=fetch
  },fetcher);
  return rows.filter(r=>String(r['Recipient UEI']||'').toUpperCase()===uei && r['Award ID']&&r.generated_internal_id).slice(0,25).map(r=>{
   const internalId=String(r.generated_internal_id),awardId=String(r['Award ID']).slice(0,120);
-  const amount=Number(r['Award Amount']),date=r['Start Date'];
+  const amount=typeof r['Award Amount']==='number'?r['Award Amount']:null,date=r['Start Date'];
   const eventDate=date&&!Number.isNaN(Date.parse(date))?new Date(date).toISOString().slice(0,10):null;
   const awardType=String(r['Award Type']||'Award type unspecified');
   return {connector:'usaspending',externalId:internalId,sourceUrl:`https://www.usaspending.gov/award/${encodeURIComponent(internalId)}`,
