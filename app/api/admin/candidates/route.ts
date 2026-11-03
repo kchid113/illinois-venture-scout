@@ -12,7 +12,8 @@ export async function GET(req:NextRequest){
  const candidates=rows.map(r=>{
   let canCreate=false;
   try{const payload=JSON.parse(String(r.payload||'{}'));canCreate=!r.company_id&&((r.connector==='iventure-cohorts'&&!!payload.ventureWebsite)||(r.connector==='enterpriseworks-directory'&&!!payload.profileUrl));}catch{}
-  const {payload:_,...candidate}=r;
+  const candidate={...r};
+  delete candidate.payload;
   return {...candidate,canCreate};
  });
  return NextResponse.json({candidates,stats});
