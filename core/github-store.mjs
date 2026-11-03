@@ -7,6 +7,7 @@ export async function releaseStatements(companyId,release,observedAt){
   throw Error('Invalid release company identity or observation timestamp');
  const safe=normalizeRelease(release);
  if(!safe)throw Error('Invalid GitHub release source, event date or ID');
+ if(release.description!==safe.description)throw Error('Invalid GitHub release description');
  const sourceId=await digest(safe.url),claimId=await digest(companyId+':github:'+safe.id);
  const hash=await digest(JSON.stringify(safe));
  return [
