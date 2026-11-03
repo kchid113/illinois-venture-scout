@@ -47,6 +47,7 @@ jobs:
         env:
           IVR_AUTOMATION_ENABLED: ${{ vars.IVR_AUTOMATION_ENABLED }}
           IVR_SITE_URL: ${{ vars.IVR_SITE_URL }}
+          IVR_HONEYBADGER_CHECKIN_URL: ${{ secrets.IVR_HONEYBADGER_CHECKIN_URL }}
           IVR_ADMIN_TOKEN: ${{ secrets.IVR_ADMIN_TOKEN }}
           IVR_SITES_SERVICE_TOKEN: ${{ secrets.IVR_SITES_SERVICE_TOKEN }}
           IVR_CONNECTOR: ${{ inputs.connector || 'scheduled' }}
