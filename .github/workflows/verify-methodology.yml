@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/methodology-tooltips
+      - quality/main-regression-hardening
   pull_request:
 
 permissions:
@@ -20,7 +21,7 @@ jobs:
         with:
           node-version: '22'
       - name: Node built-in test suite
-        run: node --test tests/*.test.mjs
+        run: node --experimental-test-coverage --test tests/*.test.mjs
 
   static:
     name: Typecheck, lint and production build
