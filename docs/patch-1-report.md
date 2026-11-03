@@ -47,3 +47,13 @@ The repository already contained the original v1.1.0 patch before this branch wa
 - **Regression tests and CI:** added contradictory-only evidence and profile field tests; provided GitHub Actions jobs for SQLite/unit tests, typecheck, lint and production build.
 
 The prior 25-test, typecheck, build and managed-browser validation cited above pertains to **v1.1.0** before these follow-up edits. GitHub Actions results, rather than the prior report, determine whether **v1.2.0** tests and build pass. Browser interaction tests were not re-run in this chat's tooling. No data source has been re-fetched, no hosted database has been modified, and this branch has not been deployed. Source freshness is still manual; missing stage, company equity funding, external traction and founder evidence in the existing initial dataset cannot be substantiated automatically.
+
+
+## Production dataset audit and demo-default removal
+
+- Audited `data/import.json` (29 distinct Research Park-slugged company entries), `data/profile-evidence.json` (3 matching sourced profile/website records), and the generated `data/seed.sql` against the actual imported identities. Original Research Park directory listing names were also spot-checked against the university's published startup directory.
+- No obviously fabricated or duplicate production company records were identified. Do not delete source-listed entries merely because their description or industry field is unverified; those fields remain absent or source-reported. This is a source-provenance audit, **not independent fact-checking of every claim or proof of current company status**.
+- Removed the hard-coded `KR` account avatar and preselected `Software` / `AI,infrastructure` thesis values. Both could mislead a new user into thinking personalized information had been loaded.
+- Added `core/production-integrity.mjs` and enforced it in both the SQL seed generator and the authenticated admin seed path. It rejects obvious demo company names, invalid publisher/URLs, mismatched profiles, duplicates, invented affiliations, and placeholder profile websites.
+- Added `tests/production-integrity.test.mjs` to check the actual shipped SQL contains only reviewed company IDs and does not silently add fictional funding, valuations or release signals.
+- Synthetic data in existing isolated `tests/` code is intentionally retained for deterministic negative tests and never imported into production. The hosted D1 database is not accessed or changed by this PR.
