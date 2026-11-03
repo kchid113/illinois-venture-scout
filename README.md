@@ -162,3 +162,8 @@ No live authentication, D1 database, scheduled job, or external data source has 
 ### Patch 2 test-and-repair audit
 
 Pull Request #2 has a [comprehensive QA report](docs/patch-2-qa-report.md) covering 216 deterministic regression cases across official-source parsing, EnterpriseWorks, iVenture, NIH/USAspending, trust boundaries, review concurrency, migrations, refresh jobs and the scheduler CLI. The verified full test run passed all 216 tests, typecheck, lint and build. Browser E2E interactions, real production D1 migration and live upstream source compatibility still require independent staged validation before enabling the opt-in schedule.
+
+
+### Combined Patch 1 + Patch 2 regression audit
+
+After merging Patch 2 into `main`, the original directory ingestion, research exports, screening, GitHub release provenance, new iVenture/EnterpriseWorks reviews, source scheduling, private-workspace data and additive migrations were tested together. See the [integrated QA report](docs/integrated-qa-report.md) for the full test matrix, verified GitHub Actions results, cross-cutting fixes and the staging/browser checks that are still required before deployment.
