@@ -101,7 +101,7 @@ Directory descriptions are **Company-reported**, even though reproduced by a uni
 
 Search is parameterized SQLite LIKE/EXISTS over stored data, with bounded inputs and pagination; no external fetch occurs while rendering public pages. It is not a full-text relevance engine. Research writes are user-scoped and validated with Zod. Exports retain original source links, and CSV cells neutralize leading formula operators.
 
-Thesis fit uses editable weights (35/20/25/20 initially). Unknown or unspecified factors reduce coverage and are excluded from the normalized fit numerator/denominator. Scores are withheld below 50% unrounded coverage. Only published, evidenced factual/company-reported claims are eligible; conflicts remain unknown. Methodology version 1.1.0, exact contributions and evidence snapshots are available in the UI. The shared registry is `core/methodology.mjs`; see [Patch 1 report](docs/patch-1-report.md). This is keyword/sector screening, not investment advice, valuation, or a return forecast.
+Thesis fit uses editable weights (35/20/25/20 initially). Unknown or unspecified factors reduce coverage and are excluded from the normalized fit numerator/denominator. Scores are withheld below 50% unrounded coverage. Only published, evidenced factual/company-reported claims are eligible; conflicts remain unknown. Methodology version 1.2.0, exact contributions and evidence snapshots are available in the UI. The shared registry is `core/methodology.mjs`; see [Patch 1 report](docs/patch-1-report.md). This is keyword/sector screening, not investment advice, valuation, or a return forecast.
 
 ## Validation
 
@@ -121,3 +121,8 @@ The tracked `.openai/hosting.json` declares the private Site and D1 binding. Bui
 ## Explicitly incomplete
 
 PostgreSQL/Prisma/Docker/Vercel portability; advanced stage/business-model/evidence/date/watchlist filters; all-company thesis ranking (the UI screens the first page); administrator merge and candidate-approval UI; comprehensive broken-link checker; automated scheduled jobs; robust historical cutoff queries; grant/publication/patent integrations; verified GitHub company mappings; AI research assistant; dark mode; report print view; exhaustive mobile E2E coverage. Source coverage counts are supported claims, not a claim of complete diligence.
+
+
+### Methodology audit refinements (v1.2.0)
+
+The `feature/methodology-tooltips` branch tightens public claim/search/sector counts and thesis scoring to require **supporting** evidence, not merely any linked citation (including contradicting-only links). The research profile now reads source-backed lifecycle, founder, equity-funding, grant/contract, and traction fields when they exist, rather than hard-coding unknown values; generic untyped `funding` is not treated as a confirmed equity round or grant. It distinguishes system-derived affiliation and verification labels from source-reported sector taxonomy. The Methodology page and contextual popovers remain linked from navigation. See [Patch 1 audit notes](docs/patch-1-report.md) for test scope and limitations.
