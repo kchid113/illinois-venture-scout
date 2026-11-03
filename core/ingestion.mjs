@@ -59,10 +59,10 @@ export async function fetchText(url,fetcher=fetch,{wait=ms=>new Promise(resolve=
   await wait(10000*(attempt+1));
  } throw Error('Fetch failed');
 }
-/** Respect selected user-agent groups, then longest-path allow/disallow precedence. */
+/** Respect the applicable robots group and longest matching Allow/Disallow directive. */
 export async function assertRobots(fetcher=fetch){
- const robots=await fetchText(ORIGIN+'/robots.txt',fetcher),groups=[];
- let agents=[],rules=[],hasRules=false;
+ const robots=await fetchText(ORIGIN+'/robots.txt',fetcher);
+ const groups=[];let agents=[],rules=[],hasRules=false;
  const flush=()=>{if(agents.length)groups.push({agents:[...agents],rules:[...rules]});agents=[];rules=[];hasRules=false;};
  for(const raw of robots.split(/\r?\n/)){
   const line=raw.replace(/#.*/,'').trim(),m=line.match(/^([a-z-]+)\s*:\s*(.*)$/i);
@@ -75,12 +75,26 @@ export async function assertRobots(fetcher=fetch){
  const bot='illinoisventureradar';
  const specific=groups.filter(g=>g.agents.some(a=>a!=='*'&&(bot===a||bot.startsWith(a))));
  const applicable=specific.length?specific:groups.filter(g=>g.agents.includes('*'));
- let winner=null,delay=10000;
+ let winning=null,delay=10000;
+ const dollar=String.fromCharCode(36);
  for(const g of applicable)for(const rule of g.rules){
   if(rule.key==='crawl-delay'){
-   const n=Number(rule.value);if(Number.isFinite(n)&&n>=0)delay=Math.max(delay,Math.min(60000,n*1000));
+   const seconds=Number(rule.value);
+   if(Number.isFinite(seconds)&&seconds>=0)delay=Math.max(delay,Math.min(60000,seconds*1000));
   }else if(rule.value){
-   const pattern=rule.value.endsWith('
+   const anchored=rule.value.endsWith(dollar);
+   const pattern=anchored?rule.value.slice(0,-1):rule.value;
+   const pathRegexp='^'+pattern.split('*').map(piece=>piece.replace(/[^a-z0-9/_-]/gi,'\\$&')).join('.*')+(anchored?dollar:'');
+   if(new RegExp(pathRegexp).test('/category/tenant-directory/startup/')){
+    const length=pattern.replace(/\*/g,'').length;
+    if(!winning||length>winning.length||length===winning.length&&rule.key==='allow')
+     winning={key:rule.key,length};
+   }
+  }
+ }
+ if(winning?.key==='disallow')throw Error('Robots policy disallows directory');
+ return delay;
+}
 /** Invalid pagination is an error, never silently clamped. */
 export async function collectDirectory({pages=3,startPage=1,fetcher=fetch,onPage=()=>{},wait=ms=>new Promise(resolve=>setTimeout(resolve,ms))}={}){
  if(!Number.isInteger(pages)||!Number.isInteger(startPage)||pages<1||startPage<1||pages>5||startPage>5||startPage+pages-1>5)
