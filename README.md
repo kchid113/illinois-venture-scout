@@ -157,3 +157,8 @@ Source candidates, source timestamps and review decisions are stored in new D1 t
 5. The workflow runs daily at **10:17 UTC** for official news. On Mondays it also attempts the Research Park directory, EnterpriseWorks Incubator, iVenture, OTM, NIH, USAspending and reviewed GitHub releases. Failed jobs report failures in GitHub Actions and `ingestion_jobs`. To suspend all requests, set `IVR_AUTOMATION_ENABLED=false`.
 
 No live authentication, D1 database, scheduled job, or external data source has been altered merely by committing this branch. The source connectors are conservative, and official providers can change layouts, rate limits or API contracts; review actual data after deployment.
+
+
+### Patch 2 test-and-repair audit
+
+Pull Request #2 has a [comprehensive QA report](docs/patch-2-qa-report.md) covering 216 deterministic regression cases across official-source parsing, EnterpriseWorks, iVenture, NIH/USAspending, trust boundaries, review concurrency, migrations, refresh jobs and the scheduler CLI. The verified full test run passed all 216 tests, typecheck, lint and build. Browser E2E interactions, real production D1 migration and live upstream source compatibility still require independent staged validation before enabling the opt-in schedule.
