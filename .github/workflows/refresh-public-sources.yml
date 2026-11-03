@@ -20,6 +20,7 @@ on:
           - illinois-news
           - otm-startups
           - iventure-cohorts
+          - enterpriseworks-directory
           - nih-reporter
           - usaspending
           - github-releases
