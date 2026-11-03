@@ -54,9 +54,13 @@ export async function decideSourceCandidate(db,{id,decision,actor='administrator
  const ops=[
   // Do not include "AND status='Pending'": the SQL trigger must abort a
   // competing review in the same transaction, rather than update zero rows.
-  {sql:'UPDATE source_candidates SET status=?, company_id=COALESCE(?,company_id) WHERE id=?',values:[decision==='reject'?'Rejected':'Approved',companyId,id]}
+  {sql:'UPDATE source_candidates SET status=? WHERE id=?',values:[decision==='reject'?'Rejected':'Approved',id]}
  ];
- if(createOp)ops.push(createOp);
+ if(createOp){
+  ops.push(createOp);
+  // Foreign-key references are set only after the approved new company exists.
+  ops.push({sql:'UPDATE source_candidates SET company_id=? WHERE id=?',values:[companyId,id]});
+ }
  if(decision!=='reject')ops.push(...await approvalStatements({...candidate,company_id:companyId},now));
  ops.push({sql:'INSERT INTO audit(id,actor,action,target,created_at) VALUES(?,?,?,?,?)',values:[crypto.randomUUID(),actor,'candidate-'+decision,id,now]});
  try{await statements(db,ops);}
