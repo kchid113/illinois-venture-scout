@@ -82,7 +82,7 @@ test('safeUrl permits a genuine official profile without changing its URL',()=>{
 for(const status of [403,429,404,502]){
  test('source restrictions and upstream errors fail closed: '+status,async()=>{
   let calls=0;const fetcher=async()=>{calls++;return new Response('restricted',{status})};
-  await assert.rejects(()=>fetchText(directoryUrl,fetcher),/Source restricted|Source HTTP/);
+  await assert.rejects(()=>fetchText(directoryUrl,fetcher,{wait:async()=>{}}),/Source restricted|Source HTTP/);
   // 502 will be retried; this is tested separately with a fake instantaneous clock.
   assert.equal(calls,status>=500?3:1);
  });
