@@ -19,6 +19,7 @@ on:
           - research-park-news
           - illinois-news
           - otm-startups
+          - iventure-cohorts
           - nih-reporter
           - usaspending
           - github-releases
