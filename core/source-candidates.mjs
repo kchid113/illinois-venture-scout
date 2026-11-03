@@ -1,4 +1,5 @@
 import {digest} from './ingestion.mjs';
+import {officialSourceUrl,publicVentureWebsite,trustedOfficialProfile} from './source-security.mjs';
 
 export const CONNECTORS=Object.freeze([
  'research-park-1','research-park-2','research-park-3',
@@ -20,25 +21,10 @@ export function mentionsCompany(title,name){
  const haystack=' '+normalizeCompanyName(title)+' ',needle=' '+normalizeCompanyName(name)+' ';
  return needle.length>=6&&haystack.includes(needle);
 }
-function officialSource(url,connector){
- let u;try{u=new URL(url);}catch{throw Error('Invalid source URL');}
- if(u.protocol!=='https:'||u.username||u.password||u.port||u.hash||u.search)throw Error('Noncanonical source URL');
- const hosts={
-  'otm-startups':['otm.illinois.edu','www.otm.illinois.edu'],
-  'illinois-news':['www.entrepreneurship.illinois.edu','entrepreneurship.illinois.edu'],
-  'research-park-news':['researchpark.illinois.edu'],
-  'nih-reporter':['reporter.nih.gov'],
-  'usaspending':['www.usaspending.gov'],
-  'iventure-cohorts':['iventure.illinois.edu'],
-  'enterpriseworks-directory':['researchpark.illinois.edu']
- };
- if(!hosts[connector]?.includes(u.hostname))throw Error('Source outside connector allowlist');
- return u.href;
-}
 export async function candidateStatements(candidate,observedAt){
  const {connector,externalId,sourceUrl,title,publisher,excerpt,companyName=null,companyId=null,eventDate=null,payload={}}=candidate;
  if(!CONNECTORS.includes(connector)||connector.startsWith('research-park-')&&/^research-park-[123]$/.test(connector)||connector==='github-releases')throw Error('Invalid candidate connector');
- const url=officialSource(sourceUrl,connector);
+ const url=officialSourceUrl(sourceUrl,connector);
  if(!externalId||typeof externalId!=='string'||externalId.length>250||!title||!publisher||!excerpt||excerpt.length>1200||title.length>350)throw Error('Invalid source candidate');
  if(companyId!=null&&!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,149}$/.test(companyId))throw Error('Invalid company identity');
  const data={title,publisher,excerpt,companyName,eventDate,payload};
@@ -86,13 +72,13 @@ export async function newIVentureCompany(candidate,reviewedAt){
  const payload=JSON.parse(candidate.payload||'{}');
  const url=payload.ventureWebsite;
  if(typeof url!=='string')throw Error('Official listing has no linked venture website; manual identity review required');
- let website;try{website=new URL(url);}catch{throw Error('Invalid linked venture website');}
+ const website=publicVentureWebsite(url);
  const name=String(candidate.company_name||'').trim();
  if(!name||name.length>130||/[\x00-\x1f<>]/.test(name)||!/^[\p{L}\p{N}]/u.test(name))throw Error('Unreviewable venture name');
- if(website.protocol!=='https:'||website.username||website.password||website.port||website.hash||/^(?:localhost|.*\.local|127\.|10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.)/.test(website.hostname))throw Error('Untrusted company website');
+
  const slug=normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70);
  const companyId='iventure-'+slug+'-'+candidate.id.slice(0,8);
- return {companyId,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[companyId,name,website.href,reviewedAt,reviewedAt]}};
+ return {companyId,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[companyId,name,website,reviewedAt,reviewedAt]}};
 }
 
 
@@ -103,11 +89,9 @@ export async function newIVentureCompany(candidate,reviewedAt){
 export async function newEnterpriseWorksCompany(candidate,reviewedAt){
  if(candidate.connector!=='enterpriseworks-directory'||candidate.status!=='Pending'||candidate.company_id)throw Error('Only unmatched EnterpriseWorks directory records can create a venture');
  const payload=JSON.parse(candidate.payload||'{}');
- let official;try{official=new URL(payload.profileUrl);}catch{throw Error('Official EnterpriseWorks profile link is required');}
- if(official.protocol!=='https:'||official.hostname!=='researchpark.illinois.edu'||official.search||official.hash||official.username||official.password||official.port||!/^\/[a-z0-9-]+\/$/.test(official.pathname))
-  throw Error('Venture must have an exact Research Park official profile');
+ let official;try{official=trustedOfficialProfile(payload.profileUrl);}catch{throw Error('Venture must have an exact Research Park official profile');}
  const name=String(candidate.company_name||'').trim();
  if(!name||name.length>130||/[\x00-\x1f<>]/.test(name)||!/^[\p{L}\p{N}]/u.test(name))throw Error('Unreviewable venture name');
  const id='enterpriseworks-'+normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70)+'-'+candidate.id.slice(0,8);
- return {companyId:id,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[id,name,official.href,reviewedAt,reviewedAt]}};
+ return {companyId:id,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[id,name,official,reviewedAt,reviewedAt]}};
 }
