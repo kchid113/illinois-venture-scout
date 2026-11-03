@@ -20,8 +20,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Node built-in test suite
-        run: node --test tests/*.test.mjs
+      - name: Node built-in test suite with V8 source coverage
+        run: node --experimental-test-coverage --test tests/*.test.mjs
 
   static:
     name: Typecheck, lint and production build
