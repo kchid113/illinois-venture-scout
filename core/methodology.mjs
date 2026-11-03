@@ -32,6 +32,7 @@ export const METRICS=Object.freeze({
 });
 /** Exact field groups prevent generic "funding" from being mislabelled as equity or a grant. */
 export const PROFILE_FIELDS=Object.freeze({
+ stage:Object.freeze(['stage']),
  lifecycle:Object.freeze(['lifecycle','status','operating status']),
  founders:Object.freeze(['founder','founders','leadership']),
  equityFunding:Object.freeze(['equity funding','equity financing','funding round']),
