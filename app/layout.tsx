@@ -16,7 +16,7 @@ export default function RootLayout({children}:{children:React.ReactNode}){
    <Script src="https://scripts.simpleanalyticscdn.com/latest.js"
     strategy="afterInteractive"
     data-path-overwriter="ivrAnalyticsPath"
-    data-ignore-pages="/companies/*,/watchlists,/research,/compare,/settings,/signin-with-chatgpt,/signout-with-chatgpt,/callback,/api/*"
+    data-ignore-pages="/companies/*,/watchlists,/watchlists/*,/research,/research/*,/compare,/compare/*,/settings,/settings/*,/signin-with-chatgpt,/signout-with-chatgpt,/callback,/api/*"
     data-collect-dnt="false" data-allow-params="" data-strict-utm="true"/>
   </>}
  </body></html>;
