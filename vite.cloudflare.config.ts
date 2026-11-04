@@ -34,7 +34,9 @@ export default defineConfig(async()=>{
      d1_databases:[{
       binding:'DB',database_name:'illinois-venture-radar',
       database_id:databaseId,
-      migrations_dir:'./drizzle'
+      // Config is injected as the generated dist/server/wrangler.json.
+      // Resolve back to repository root; verified by cloudflare-build-check.
+      migrations_dir:'../../drizzle'
      }],
      vars:{
       IVR_ACCESS_TEAM_DOMAIN:teamDomain,
