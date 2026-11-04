@@ -2,7 +2,7 @@ import {digest} from './ingestion.mjs';
 import {officialSourceUrl,publicVentureWebsite,trustedOfficialProfile,publishedDate} from './source-security.mjs';
 
 export const CONNECTORS=Object.freeze([
- 'research-park-1','research-park-2','research-park-3',
+ 'research-park-1','research-park-2','research-park-3','research-park-4','research-park-5',
  'research-park-news','illinois-news','otm-startups',
  'nih-reporter','usaspending','github-releases','iventure-cohorts','enterpriseworks-directory'
 ]);
@@ -30,7 +30,7 @@ export function mentionsCompany(title,name){
 }
 export async function candidateStatements(candidate,observedAt){
  const {connector,externalId,sourceUrl,title,publisher,excerpt,companyName=null,companyId=null,eventDate=null,payload={}}=candidate;
- if(!CONNECTORS.includes(connector)||connector.startsWith('research-park-')&&/^research-park-[123]$/.test(connector)||connector==='github-releases')throw Error('Invalid candidate connector');
+ if(!CONNECTORS.includes(connector)||connector.startsWith('research-park-')&&/^research-park-[1-5]$/.test(connector)||connector==='github-releases')throw Error('Invalid candidate connector');
  const url=officialSourceUrl(sourceUrl,connector);
  const bounded=(v,max)=>typeof v==='string'&&v.trim().length>0&&v.length<=max;
  if(!bounded(externalId,250)||!bounded(title,350)||!bounded(publisher,180)||!bounded(excerpt,1200))
