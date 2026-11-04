@@ -23,8 +23,8 @@ jobs:
           import {text} from './core/ingestion.mjs';
           const {html}=await officialHTML('iventure-cohorts');
           console.log('HTML chars',html.length);
-          console.log('headings', [...html.matchAll(/<h([2-6])\\b[^>]*>([\\s\\S]*?)<\\/h\\1>/gi)].slice(0,30).map(m=>m[1]+':'+text(m[2])));
-          console.log('strong tags', [...html.matchAll(/<(?:strong|b)\\b[^>]*>([\\s\\S]*?)<\\/(?:strong|b)>/gi)].slice(0,40).map(m=>text(m[1])));
+          console.log('headings', [...html.matchAll(/<h([2-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi)].slice(0,30).map(m=>m[1]+':'+text(m[2])));
+          console.log('strong tags', [...html.matchAll(/<(?:strong|b)\b[^>]*>([\s\S]*?)<\/(?:strong|b)>/gi)].slice(0,40).map(m=>text(m[1])));
           for(const word of ['iVenture 11','CreatoRain','Credence Cleantech','iVenture 10']){
             const i=html.indexOf(word);
             console.log('MARKUP AROUND',word,'OFFSET',i,'SNIPPET',i>=0?html.slice(Math.max(0,i-180),i+850):'not found');
