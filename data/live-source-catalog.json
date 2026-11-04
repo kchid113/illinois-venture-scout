@@ -1,0 +1,1538 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-04T18:22:16.546Z",
+  "seedCompanyCount": 29,
+  "sourceChecks": [
+    {
+      "connector": "research-park-1",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+      "status": "collected",
+      "count": 9
+    },
+    {
+      "connector": "research-park-2",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+      "status": "collected",
+      "count": 10
+    },
+    {
+      "connector": "research-park-3",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+      "status": "collected",
+      "count": 10
+    },
+    {
+      "connector": "research-park-4",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+      "status": "collected",
+      "count": 10
+    },
+    {
+      "connector": "research-park-5",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/5/",
+      "status": "collected",
+      "count": 4
+    },
+    {
+      "connector": "enterpriseworks-directory",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+      "status": "collected",
+      "count": 10
+    },
+    {
+      "connector": "enterpriseworks-directory",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+      "status": "collected",
+      "count": 10
+    },
+    {
+      "connector": "enterpriseworks-directory",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+      "status": "collected",
+      "count": 10
+    },
+    {
+      "connector": "enterpriseworks-directory",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+      "status": "collected",
+      "count": 10
+    },
+    {
+      "connector": "enterpriseworks-directory",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+      "status": "collected",
+      "count": 9
+    },
+    {
+      "connector": "enterpriseworks-directory",
+      "url": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/6/",
+      "status": "collected",
+      "count": 7
+    },
+    {
+      "connector": "iventure-cohorts",
+      "url": "https://iventure.illinois.edu/startups",
+      "status": "failed",
+      "count": 0,
+      "error": "iVenture cohort listing layout changed or produced no venture headings; review before import"
+    },
+    {
+      "connector": "otm-startups",
+      "url": "https://otm.illinois.edu/browse-technologies-startups/startups",
+      "status": "failed",
+      "count": 0,
+      "error": "Source robots policy disallows requested path"
+    }
+  ],
+  "sourceObservations": 99,
+  "uniqueNormalizedNames": 62,
+  "additionalResearchParkNames": [
+    {
+      "slug": "hourglass-medical",
+      "name": "Hourglass Medical",
+      "profile": "https://researchpark.illinois.edu/hourglass-medical/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "kocree",
+      "name": "Kocree",
+      "profile": "https://researchpark.illinois.edu/kocree/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "ai-nexus-healthcare",
+      "name": "AI Nexus Healthcare",
+      "profile": "https://researchpark.illinois.edu/ai-nexus-healthcare/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "cache-energy",
+      "name": "Cache Energy",
+      "profile": "https://researchpark.illinois.edu/cache-energy/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "cygnus",
+      "name": "Cygnus",
+      "profile": "https://researchpark.illinois.edu/cygnus/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "teardx-llc",
+      "name": "TearDx, LLC",
+      "profile": "https://researchpark.illinois.edu/teardx-llc/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "reconstruct",
+      "name": "Reconstruct",
+      "profile": "https://researchpark.illinois.edu/reconstruct/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "frostdefense-envirotech-inc-2",
+      "name": "FrostDefense Envirotech Inc.",
+      "profile": "https://researchpark.illinois.edu/frostdefense-envirotech-inc-2/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "hinetics",
+      "name": "Hinetics",
+      "profile": "https://researchpark.illinois.edu/hinetics/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "habiterre",
+      "name": "HabiTerre",
+      "profile": "https://researchpark.illinois.edu/habiterre/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/"
+    },
+    {
+      "slug": "structureiq",
+      "name": "StructureIQ",
+      "profile": "https://researchpark.illinois.edu/structureiq/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/5/"
+    },
+    {
+      "slug": "epivara",
+      "name": "Epivara",
+      "profile": "https://researchpark.illinois.edu/epivara/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/5/"
+    },
+    {
+      "slug": "bloomd",
+      "name": "BlooMD",
+      "profile": "https://researchpark.illinois.edu/bloomd/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/5/"
+    },
+    {
+      "slug": "phi-optics",
+      "name": "Phi Optics",
+      "profile": "https://researchpark.illinois.edu/phi-optics/",
+      "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/5/"
+    }
+  ],
+  "sourceIdentityConflicts": [],
+  "completeness": false,
+  "companies": [
+    {
+      "name": "AgAnswers.ai",
+      "normalizedName": "aganswers ai",
+      "existingSeedCompanyId": "aganswers-ai",
+      "sourceObservations": [
+        {
+          "connector": "research-park-1",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+          "profile": "https://researchpark.illinois.edu/aganswers-ai/",
+          "ventureWebsite": null,
+          "sector": "AgTech · Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/aganswers-ai/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "AgWizard LLC",
+      "normalizedName": "agwizard llc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/agwizardllc/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "AI Nexus Healthcare",
+      "normalizedName": "ai nexus healthcare",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/ai-nexus-healthcare/",
+          "ventureWebsite": null,
+          "sector": "BioTech and Healthcare",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+          "profile": "https://researchpark.illinois.edu/ai-nexus-healthcare/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "AmnioAlert",
+      "normalizedName": "amnioalert",
+      "existingSeedCompanyId": "amnioalert",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/amnioalert/",
+          "ventureWebsite": null,
+          "sector": "BioTech and Healthcare",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/amnioalert/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Amplified HR",
+      "normalizedName": "amplified hr",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/amplified-hr/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Archean Sciences",
+      "normalizedName": "archean sciences",
+      "existingSeedCompanyId": "archean-sciences",
+      "sourceObservations": [
+        {
+          "connector": "research-park-1",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+          "profile": "https://researchpark.illinois.edu/archean-sciences/",
+          "ventureWebsite": null,
+          "sector": "BioTech and Healthcare · Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/archean-sciences/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Arist AI",
+      "normalizedName": "arist ai",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/arist-ai/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Ball Photonics, Inc.",
+      "normalizedName": "ball photonics inc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/ball-photonics-inc/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "BlooMD",
+      "normalizedName": "bloomd",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-5",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/5/",
+          "profile": "https://researchpark.illinois.edu/bloomd/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/6/",
+          "profile": "https://researchpark.illinois.edu/bloomd/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "BlueMarble Weather",
+      "normalizedName": "bluemarble weather",
+      "existingSeedCompanyId": "bluemarble-weather",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/bluemarble-weather/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/bluemarble-weather/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Boston Bioprocess",
+      "normalizedName": "boston bioprocess",
+      "existingSeedCompanyId": "boston-bioprocess",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/boston-bioprocess/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/boston-bioprocess/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Cache Energy",
+      "normalizedName": "cache energy",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/cache-energy/",
+          "ventureWebsite": null,
+          "sector": "Sustainability",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+          "profile": "https://researchpark.illinois.edu/cache-energy/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cascade Dynamics",
+      "normalizedName": "cascade dynamics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/cascade-dynamics/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "CephalCorps",
+      "normalizedName": "cephalcorps",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/cephalcorps/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cleanslate Robotics",
+      "normalizedName": "cleanslate robotics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/cleanslate-robotics/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cohesive Manufacturing",
+      "normalizedName": "cohesive manufacturing",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/6/",
+          "profile": "https://researchpark.illinois.edu/cohesive-manufacturing/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cygnus",
+      "normalizedName": "cygnus",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/cygnus/",
+          "ventureWebsite": null,
+          "sector": "Electronics and Hardware",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+          "profile": "https://researchpark.illinois.edu/cygnus/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "DapUp",
+      "normalizedName": "dapup",
+      "existingSeedCompanyId": "dapup",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/dapup/",
+          "ventureWebsite": null,
+          "sector": "Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/dapup/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Dark Matter Robotics",
+      "normalizedName": "dark matter robotics",
+      "existingSeedCompanyId": "dark-matter-robotics",
+      "sourceObservations": [
+        {
+          "connector": "research-park-1",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+          "profile": "https://researchpark.illinois.edu/dark-matter-robotics/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/dark-matter-robotics/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "DigiFarmz",
+      "normalizedName": "digifarmz",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/digifarmz/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Eleuthra Photonics",
+      "normalizedName": "eleuthra photonics",
+      "existingSeedCompanyId": "eleuthra-photonics",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/eleuthra-photonics/",
+          "ventureWebsite": null,
+          "sector": "BioTech and Healthcare",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/eleuthra-photonics/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Epivara",
+      "normalizedName": "epivara",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-5",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/5/",
+          "profile": "https://researchpark.illinois.edu/epivara/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "EPL Power Electronics, Inc.",
+      "normalizedName": "epl power electronics inc",
+      "existingSeedCompanyId": "epl-power-electronics-inc",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/epl-power-electronics-inc/",
+          "ventureWebsite": null,
+          "sector": "Electronics and Hardware",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/epl-power-electronics-inc/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Erg Bio",
+      "normalizedName": "erg bio",
+      "existingSeedCompanyId": "erg-bio",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/erg-bio/",
+          "ventureWebsite": null,
+          "sector": "Sustainability",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/erg-bio/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "ForgeBee",
+      "normalizedName": "forgebee",
+      "existingSeedCompanyId": "forgebee",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/forgebee/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/forgebee/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Frenzy Ag",
+      "normalizedName": "frenzy ag",
+      "existingSeedCompanyId": "frenzy-ag",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/frenzy-ag/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/frenzy-ag/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "FrostDefense Envirotech Inc.",
+      "normalizedName": "frostdefense envirotech inc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/frostdefense-envirotech-inc-2/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/6/",
+          "profile": "https://researchpark.illinois.edu/frostdefense-envirotech-inc-2/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "GigaCrop",
+      "normalizedName": "gigacrop",
+      "existingSeedCompanyId": "gigacrop",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/gigacrop/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/gigacrop/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Globi Social",
+      "normalizedName": "globi social",
+      "existingSeedCompanyId": "globi-social",
+      "sourceObservations": [
+        {
+          "connector": "research-park-1",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+          "profile": "https://researchpark.illinois.edu/globi-social/",
+          "ventureWebsite": null,
+          "sector": "General Consumer · Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/globi-social/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "GlucoSentient",
+      "normalizedName": "glucosentient",
+      "existingSeedCompanyId": "glucosentient",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/glucosentient/",
+          "ventureWebsite": null,
+          "sector": "BioTech and Healthcare",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "HabiTerre",
+      "normalizedName": "habiterre",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/habiterre/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/6/",
+          "profile": "https://researchpark.illinois.edu/habiterre/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Helixon",
+      "normalizedName": "helixon",
+      "existingSeedCompanyId": "helixon",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/helixon/",
+          "ventureWebsite": null,
+          "sector": "BioTech and Healthcare",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+          "profile": "https://researchpark.illinois.edu/helixon/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "HexaF Innovations",
+      "normalizedName": "hexaf innovations",
+      "existingSeedCompanyId": "hexaf-innovations",
+      "sourceObservations": [
+        {
+          "connector": "research-park-1",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+          "profile": "https://researchpark.illinois.edu/hexaf-innovations/",
+          "ventureWebsite": null,
+          "sector": "Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/hexaf-innovations/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Hinetics",
+      "normalizedName": "hinetics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/hinetics/",
+          "ventureWebsite": null,
+          "sector": "Sustainability",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/6/",
+          "profile": "https://researchpark.illinois.edu/hinetics/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Hisia Space",
+      "normalizedName": "hisia space",
+      "existingSeedCompanyId": "hisia-space",
+      "sourceObservations": [
+        {
+          "connector": "research-park-1",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+          "profile": "https://researchpark.illinois.edu/hisia-space/",
+          "ventureWebsite": null,
+          "sector": "Software, AI and Analytics · Sustainability",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Hourglass Medical",
+      "normalizedName": "hourglass medical",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/hourglass-medical/",
+          "ventureWebsite": null,
+          "sector": "Electronics and Hardware",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Identomat",
+      "normalizedName": "identomat",
+      "existingSeedCompanyId": "identomat",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/identomat/",
+          "ventureWebsite": null,
+          "sector": "Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+          "profile": "https://researchpark.illinois.edu/identomat/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Illinois Ventures",
+      "normalizedName": "illinois ventures",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/6/",
+          "profile": "https://researchpark.illinois.edu/illinois-ventures/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Ion Grove",
+      "normalizedName": "ion grove",
+      "existingSeedCompanyId": "ion-grove",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/ion-grove/",
+          "ventureWebsite": null,
+          "sector": "Sustainability",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/ion-grove/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Iridescent Sensors",
+      "normalizedName": "iridescent sensors",
+      "existingSeedCompanyId": "iridescent-sensors",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/iridescent-sensors/",
+          "ventureWebsite": null,
+          "sector": "Electronics and Hardware",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/iridescent-sensors/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "KeaneTech",
+      "normalizedName": "keanetech",
+      "existingSeedCompanyId": "keanetech",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/keanetech/",
+          "ventureWebsite": null,
+          "sector": "Electronics and Hardware",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/keanetech/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Kocree",
+      "normalizedName": "kocree",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/kocree/",
+          "ventureWebsite": null,
+          "sector": "Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+          "profile": "https://researchpark.illinois.edu/kocree/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Lanward",
+      "normalizedName": "lanward",
+      "existingSeedCompanyId": "lanward",
+      "sourceObservations": [
+        {
+          "connector": "research-park-1",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+          "profile": "https://researchpark.illinois.edu/lanward/",
+          "ventureWebsite": null,
+          "sector": "Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/lanward/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "MFWireless",
+      "normalizedName": "mfwireless",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/mfwireless/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "MicroMGX",
+      "normalizedName": "micromgx",
+      "existingSeedCompanyId": "micromgx",
+      "sourceObservations": [
+        {
+          "connector": "research-park-3",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/3/",
+          "profile": "https://researchpark.illinois.edu/micromgx/",
+          "ventureWebsite": null,
+          "sector": "AgTech",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Mobius Scientific, Inc.",
+      "normalizedName": "mobius scientific inc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/mobius-scientific-inc/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Natrion",
+      "normalizedName": "natrion",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+          "profile": "https://researchpark.illinois.edu/natrion/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Novark North America LLC",
+      "normalizedName": "novark north america llc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/4/",
+          "profile": "https://researchpark.illinois.edu/novark-north-america-llc/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Panddi, Inc.",
+      "normalizedName": "panddi inc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/panddi-inc/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Phi Optics",
+      "normalizedName": "phi optics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-5",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/5/",
+          "profile": "https://researchpark.illinois.edu/phi-optics/",
+          "ventureWebsite": null,
+          "sector": "BioTech and Healthcare",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Photon Queue",
+      "normalizedName": "photon queue",
+      "existingSeedCompanyId": "photon-queue",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/photon-queue/",
+          "ventureWebsite": null,
+          "sector": "Electronics and Hardware",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/photon-queue/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "PowerBox Technology",
+      "normalizedName": "powerbox technology",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/powerbox-technologies/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Rational CyPhy Inc.",
+      "normalizedName": "rational cyphy inc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/rational-cyphy-inc/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Reconstruct",
+      "normalizedName": "reconstruct",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/reconstruct/",
+          "ventureWebsite": null,
+          "sector": "Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+          "profile": "https://researchpark.illinois.edu/reconstruct/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Second Chance Innovations",
+      "normalizedName": "second chance innovations",
+      "existingSeedCompanyId": "second-chance-innovations",
+      "sourceObservations": [
+        {
+          "connector": "research-park-1",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+          "profile": "https://researchpark.illinois.edu/second-chance-innovations/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/2/",
+          "profile": "https://researchpark.illinois.edu/second-chance-innovations/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Sensiboo",
+      "normalizedName": "sensiboo",
+      "existingSeedCompanyId": "sensiboo",
+      "sourceObservations": [
+        {
+          "connector": "research-park-1",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/",
+          "profile": "https://researchpark.illinois.edu/sensiboo/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/sensiboo/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "SolarMantle",
+      "normalizedName": "solarmantle",
+      "existingSeedCompanyId": "solarmantle",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/solarmantle/",
+          "ventureWebsite": null,
+          "sector": "Sustainability",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/solarmantle/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Soybean Innovation Lab, LLC",
+      "normalizedName": "soybean innovation lab llc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/soybean-innovation-lab-llc/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "StructureIQ",
+      "normalizedName": "structureiq",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-5",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/5/",
+          "profile": "https://researchpark.illinois.edu/structureiq/",
+          "ventureWebsite": null,
+          "sector": "Software, AI and Analytics",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/6/",
+          "profile": "https://researchpark.illinois.edu/structureiq/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Synergy Research Labs",
+      "normalizedName": "synergy research labs",
+      "existingSeedCompanyId": "synergy-research-labs",
+      "sourceObservations": [
+        {
+          "connector": "research-park-2",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/2/",
+          "profile": "https://researchpark.illinois.edu/synergy-research-labs/",
+          "ventureWebsite": null,
+          "sector": "Electronics and Hardware",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/3/",
+          "profile": "https://researchpark.illinois.edu/synergy-research-labs/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "TearDx, LLC",
+      "normalizedName": "teardx llc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "research-park-4",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/startup/page/4/",
+          "profile": "https://researchpark.illinois.edu/teardx-llc/",
+          "ventureWebsite": null,
+          "sector": "BioTech and Healthcare",
+          "cohort": null
+        },
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/page/5/",
+          "profile": "https://researchpark.illinois.edu/teardx-llc/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "ZoneForge Games",
+      "normalizedName": "zoneforge games",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "enterpriseworks-directory",
+          "sourceUrl": "https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/",
+          "profile": "https://researchpark.illinois.edu/zoneforge-games/",
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    }
+  ],
+  "collection": {
+    "researchParkObserved": 43,
+    "additionalResearchParkImportable": 14,
+    "candidateObservations": 56,
+    "distinctCandidates": 56,
+    "failures": 2,
+    "sourceCollectionComplete": false,
+    "note": "Observed source listings only; not verified full ecosystem census or automatic approval of new startup identities."
+  }
+}
