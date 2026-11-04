@@ -44,7 +44,7 @@ for(const invalid of [
 for(const value of ['',null,'short','abc!12345#', 'a'.repeat(500)]){
  test('invalid Codecov token shape is rejected without echoing the token',()=>{
   assert.throws(()=>validateEducationSecrets({...creds,CODECOV_TOKEN:value}),e=>
-   e.message.includes('CODECOV_TOKEN')&&!e.message.includes(String(value)));
+   e.message.includes('CODECOV_TOKEN')&&(!value||!e.message.includes(String(value))));
  });
 }
 test('read-only BrowserStack plan endpoint uses HTTP Basic Auth with exactly one request',async()=>{
