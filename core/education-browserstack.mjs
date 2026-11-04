@@ -3,10 +3,16 @@ import {publicVentureWebsite} from './source-security.mjs';
 /** Dependency-free W3C WebDriver client for BrowserStack mobile entry smoke. */
 const HUB='https://hub-cloud.browserstack.com/wd/hub';
 const SESSION=/^[A-Za-z0-9_-]{4,200}$/;
-export function browserstackConfig(env){
+/** Authentication-only view does not require a deployed public site. */
+export function browserstackCredentials(env){
  const username=env.IVR_BROWSERSTACK_USERNAME,accessKey=env.IVR_BROWSERSTACK_ACCESS_KEY;
- if(typeof username!=='string'||!username||typeof accessKey!=='string'||accessKey.length<10)
+ if(typeof username!=='string'||!username.trim()||typeof accessKey!=='string'||accessKey.length<10)
   throw Error('BrowserStack username/access key must be configured as GitHub Secrets');
+ if(/[:\r\n]/.test(username)||/[\r\n]/.test(accessKey))throw Error('Invalid BrowserStack credential format');
+ return {username,accessKey};
+}
+export function browserstackConfig(env){
+ const {username,accessKey}=browserstackCredentials(env);
  let target;
  try{target=new URL(publicVentureWebsite(env.IVR_BROWSERSTACK_SITE_URL));}
  catch{throw Error('BrowserStack target must be a public HTTPS site origin');}
@@ -70,4 +76,38 @@ export async function runBrowserstackSmoke(config,{fetcher=fetch}={}){
   try{await webdriver(fetcher,config,'DELETE',path,null);}
   catch{/* Session cleanup failure never hides a failed app smoke. */}
  }
+}
+
+/**
+ * Read-only plan call checks actual API authentication and Automate access
+ * without creating a mobile session or consuming a parallel slot.
+ * Never include credential material or raw provider response in logs.
+ */
+export async function verifyBrowserstackPlan(credentials,{fetcher=fetch}={}){
+ const {username,accessKey}=browserstackCredentials({
+  IVR_BROWSERSTACK_USERNAME:credentials?.username,
+  IVR_BROWSERSTACK_ACCESS_KEY:credentials?.accessKey
+ });
+ let response;
+ try{
+  response=await fetcher('https://api.browserstack.com/automate/plan.json',{
+   method:'GET',
+   redirect:'error',
+   headers:{
+    Authorization:'Basic '+Buffer.from(username+':'+accessKey).toString('base64'),
+    Accept:'application/json'
+   },
+   signal:AbortSignal.timeout(15000)
+  });
+ }catch{throw Error('BrowserStack plan verification transport failed');}
+ if(!response.ok)throw Error('BrowserStack plan verification failed (HTTP '+response.status+')');
+ let plan;
+ try{plan=await response.json();}catch{throw Error('BrowserStack plan verification returned invalid JSON');}
+ if(!plan||typeof plan.automate_plan!=='string'||!Number.isFinite(Number(plan.parallel_sessions_max_allowed)))
+  throw Error('BrowserStack returned an unexpected Automate plan response');
+ return {
+  verified:true,
+  plan:plan.automate_plan.slice(0,80),
+  parallelSessionsMax:Number(plan.parallel_sessions_max_allowed)
+ };
 }
