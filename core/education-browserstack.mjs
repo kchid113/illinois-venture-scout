@@ -65,7 +65,7 @@ export async function runBrowserstackSmoke(config,{fetcher=fetch}={}){
  try{
   await webdriver(fetcher,config,'POST',path+'/url',{url:config.target});
   const result=await webdriver(fetcher,config,'POST',path+'/execute/sync',{
-   script:"return {ready:document.readyState,body:!!document.body,validEntry:/Illinois Venture Radar|Sign in with ChatGPT|Sign in to ChatGPT/i.test(document.title+' '+(document.body?.innerText||'').slice(0,1000))};",
+   script:"return {ready:document.readyState,body:!!document.body,validEntry:/Illinois Venture Radar|Sign in with ChatGPT|Sign in to ChatGPT|Cloudflare Access|One-time PIN/i.test(document.title+' '+(document.body?.innerText||'').slice(0,1000))};",
    args:[]
   });
   const state=result?.value;

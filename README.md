@@ -8,6 +8,26 @@ Every important claim should answer three questions: **What is being claimed? Wh
 
 > Illinois Venture Radar is an independent research project. It is not affiliated with or endorsed by the University of Illinois. Screening results express alignment with user-entered criteria and do not predict investment returns.
 
+## Deploy independently using GitHub Actions + Cloudflare
+
+**GitHub is the source of truth for new deployments.** The standalone
+Cloudflare Workers + D1 distribution is built from `vite.cloudflare.config.ts`
+and deployed only by the manual
+[`Deploy Illinois Venture Radar to Cloudflare`](.github/workflows/cloudflare-deploy.yml)
+workflow on `main`.
+
+The GitHub deployment uses **Cloudflare Access** for verified sign-in and is
+completely independent of the older managed ChatGPT Sites deployment. It uses
+a dedicated D1 database and never imports private research data from Sites.
+The existing managed-Sites build files are retained for backwards compatibility,
+but they are **not used** by the GitHub Cloudflare deploy workflow.
+
+**Read [the standalone GitHub deployment runbook](docs/cloudflare-github-deployment.md)**
+for required GitHub variables (Cloudflare account, Access team domain and
+application audience), guarded initial D1 creation and manual deployment.
+Merging code does not automatically publish a Worker; the workflow must be
+dispatched on `main` after Cloudflare Access is configured.
+
 ## Project goals
 
 - **Help VCs source deals across campus:** discover student-founded, incubated, independently operated and university-linked ventures using primary-source evidence rather than university endorsement as a ranking signal.
