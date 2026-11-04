@@ -10,6 +10,8 @@ on:
       - scripts/collect-live-sources.mjs
       - scripts/validate-live-snapshot.mjs
       - core/catalog-snapshot.mjs
+      - core/source-adapters.mjs
+      - data/otm-manually-observed-2026-11-04.json
 
 permissions:
   contents: write

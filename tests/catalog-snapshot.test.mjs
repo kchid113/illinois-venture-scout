@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {reconcileCatalogs,renderSQL} from '../core/catalog-snapshot.mjs';
+import {parseIVentureCandidates} from '../core/source-adapters.mjs';
 
 const time='2026-11-04T12:00:00.000Z';
 const original=[{slug:'acme',name:'Acme Labs',profile:'https://researchpark.illinois.edu/acme/'}];
@@ -63,4 +64,26 @@ test('SQL renders values with safe quoting and preserves idempotent source state
  }finally{db.close();}
  assert.throws(()=>renderSQL([{sql:'SELECT ?',values:[]}]),/placeholder/);
  assert.throws(()=>renderSQL([{sql:'SELECT ?',values:[{}]}]),/Unexpected SQL/);
+});
+
+
+test('real Sitefinity iVenture accordion HTML stages each cohort venture with linked identity',()=>{
+ const html=String.raw`<ilw-accordion>
+ <ilw-accordion-panel><h3 slot='summary'>iVenture 11</h3>
+ <p><strong><a href="https://venture-a.example.org/">Venture A</a></strong><br />Builds medical technology.</p>
+ <p><strong>Venture B</strong><br />Works on robotics.</p>
+ </ilw-accordion-panel>
+ <ilw-accordion-panel><h3 slot='summary'>iVenture 10</h3>
+ <p><strong>Venture C</strong><br/>Develops energy storage.</p>
+ </ilw-accordion-panel>
+ <ilw-accordion-panel><h3 slot='summary'>Post-iVenture</h3>
+ <p><strong>Not a cohort startup</strong><br/>Outside all official named cohorts.</p>
+ </ilw-accordion-panel></ilw-accordion>`;
+ const rows=parseIVentureCandidates(html,[{id:'venture-b',name:'Venture B'}],time);
+ assert.deepEqual(rows.map(x=>x.companyName),['Venture A','Venture B','Venture C']);
+ assert.deepEqual(rows.map(x=>x.payload.cohort),[11,11,10]);
+ assert.equal(rows[0].payload.ventureWebsite,'https://venture-a.example.org/');
+ assert.equal(rows[1].payload.ventureWebsite,null);
+ assert.equal(rows[1].companyId,'venture-b');
+ assert.ok(rows.every(x=>x.sourceUrl==='https://iventure.illinois.edu/startups'));
 });

@@ -221,3 +221,19 @@ creation with supported primary-source identity. News, NIH/USAspending awards
 and GitHub releases remain enrichment of already verified companies, not
 replacement company directories. No live production data changes happen from
 a GitHub branch or PR alone. See the patch report for rollout and limitations.
+
+### Live official-catalog snapshot and additive import artifacts
+
+The [live source-collection report](docs/live-source-collection.md) describes
+the executed GitHub Actions workflow that retrieves the real Research Park,
+EnterpriseWorks and iVenture directories, reconciles them with the original 29,
+and prepares additive D1 SQL plus review-only candidates. The initial capture
+retrieved **43 Research Park directory records (14 new)** and **56
+EnterpriseWorks observations**; iVenture's live accordion layout required a
+parser update. OTM currently forbids the automated crawler under its robots
+policy, so 45 publicly displayed startup names were **manually transcribed as
+pending review leads**, without bypassing that restriction.
+
+See `data/live-source-catalog.json` for the latest per-source counts,
+collection failures, deduplication and evidence links. These files do not
+automatically seed production or prove ecosystem completeness.

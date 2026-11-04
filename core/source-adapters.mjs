@@ -180,6 +180,27 @@ export function parseIVentureCandidates(html,companies,observedAt){
    observedAt
   });
  }
+ if(!candidates.length){
+  for(const match of markup.matchAll(/<ilw-accordion-panel[^>]*>([\s\S]*?)<\/ilw-accordion-panel>/gi)){
+   const block=match[1],heading=block.match(/<h3[^>]*>([\s\S]*?)<\/h3>/i);
+   const label=text(heading?.[1]||'').match(/^iVenture\s+(\d{1,2})$/i);
+   if(!label)continue;
+   const cohort=Number(label[1]);
+   for(const row of block.matchAll(/<p[^>]*>\s*<strong[^>]*>([\s\S]*?)<\/strong>([\s\S]*?)<\/p>/gi)){
+    const name=text(row[1]).trim();
+    if(name.length<3||name.length>125)continue;
+    const link=row[1].match(/href=["']([^"']+)["']/i);
+    let ventureWebsite=null;
+    try{if(link)ventureWebsite=publicVentureWebsite(link[1]);}catch{}
+    const matched=matchCompany(name,companies),description=text(row[2]).slice(0,180);
+    candidates.push({connector:'iventure-cohorts',externalId:'cohort-'+cohort+':'+normalizeCompanyName(name),
+     sourceUrl:config.url,title:name+' — iVenture cohort '+cohort,publisher:config.publisher,
+     excerpt:('Official iVenture cohort '+cohort+' listing names '+name+'. '+description).slice(0,440),
+     companyName:name,companyId:matched?.id||null,eventDate:null,
+     payload:{recordType:'iventure-cohort',cohort,ventureWebsite},observedAt});
+   }
+  }
+ }
  if(!candidates.length)throw Error('iVenture cohort listing layout changed or produced no venture headings; review before import');
  return [...new Map(candidates.map(c=>[c.externalId,c])).values()];
 }

@@ -75,9 +75,12 @@ until service authentication is deliberately implemented and validated.
 - OTM layout parsing supports recognized sector headings, structured startup
   cards and bold-name paragraph entries. If a site changes its HTML, review
   the resulting counts and fixtures. Do not invent entries to meet a number.
-- This patch does not claim to have crawled live upstream pages in CI, created
-  the entire catalog in a production D1 instance, or verified every company's
-  current status. Independent staging verification remains required.
+- The additional [live catalog collection](live-source-collection.md)
+  **does** run real upstream checks in a separate GitHub Actions job, writes
+  date-stamped source inventories and validates additive SQL in isolated SQLite.
+  Automated OTM access is disallowed by robots; the separate public-page
+  transcription is explicitly manual and review-only. The generated files do
+  **not** change production D1 or verify all companies' current status.
 
 ## Tests and safeguards
 
