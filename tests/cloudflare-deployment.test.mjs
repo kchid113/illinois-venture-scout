@@ -80,7 +80,7 @@ test('GitHub Cloudflare deploy preflight rejects absent or invalid Access settin
   cwd:process.cwd(),env:bad,encoding:'utf8',timeout:10000
  });
  assert.notEqual(result.status,0);
- assert.match(result.stderr,/Access/);
+ assert.match(result.stderr,/IVR_ACCESS_TEAM_DOMAIN|IVR_ACCESS_AUD/);
  assert.ok(!result.stderr.includes(token));
 });
 test('GitHub Cloudflare deploy preflight accepts safe placeholders without contacting provider',()=>{
