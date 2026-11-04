@@ -34,7 +34,7 @@ export default defineConfig(async()=>{
      d1_databases:[{
       binding:'DB',database_name:'illinois-venture-radar',
       database_id:databaseId,
-      migrations_dir:'../../drizzle'
+      migrations_dir:'./drizzle'
      }],
      vars:{
       IVR_ACCESS_TEAM_DOMAIN:teamDomain,
