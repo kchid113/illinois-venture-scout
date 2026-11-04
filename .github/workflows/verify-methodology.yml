@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         with:
           version: 11.25.0
       - uses: actions/setup-node@v4
@@ -54,7 +54,7 @@ jobs:
       IVR_ACCESS_AUD: 'test_audience_policy_1234567890'
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         with:
           version: 11.25.0
       - uses: actions/setup-node@v4
