@@ -5,6 +5,43 @@ supersedes the original 29-record test-fixture-only status. The updated
 collector is `scripts/collect-live-sources.mjs` and its workflow is
 `.github/workflows/collect-live-sources.yml`.
 
+## Actual November 4, 2026 collection results
+
+The GitHub-hosted collector retrieved and validated this **real** inventory:
+
+| Source | Rows observed | Capture status |
+| --- | ---: | --- |
+| Research Park startup directory, pages 1–5 | 43 | Live, 5/5 pages |
+| EnterpriseWorks directory, pages 1–6 | 56 | Live, 6/6 pages |
+| iVenture named cohorts 1–11 | 142 | Live, all 11 named cohorts |
+| OTM startup page | 45 | Manually observed from the public listing; automated access blocked by robots |
+| **Total source observations** | **286** | Mixed live and documented manual |
+
+The source records reconcile to **241 unique normalized names**, including
+all 29 original reviewed Research Park companies. **Fourteen** additional
+canonical Research Park profiles have additive import statements. The other
+source adapters produce **243 Pending review candidates**, not 243
+automatically approved startups. A total of **212 normalized names** do not
+exactly match the original 29. This group includes the 14 new Research Park
+companies and other source-only leads; it is not a count of confirmed
+investable companies.
+
+The generated SQL passed a fresh SQLite execution with both tracked D1
+migrations, the original seed, foreign keys, zero new financing claims and
+repeat-import idempotency checks. All GitHub Actions data-validation steps
+passed. The final dataset is stored in
+[data/live-source-catalog.json](../data/live-source-catalog.json),
+[data/live-source-research-park-import.sql](../data/live-source-research-park-import.sql)
+and [data/live-source-candidates.sql](../data/live-source-candidates.sql).
+
+**Completeness limitation:** The OTM endpoint disallows the automated
+crawler. Its public page's text claims more than 60 active IP startups but
+visibly names 45; the remainder are unknown, not guessed. This manifest
+correctly reports `sourceCollectionComplete: false` until that gap can be
+resolved with a permitted source. A name on a historical iVenture cohort
+does not establish current operations, legal entity status or venture
+investability.
+
 ## Outputs
 
 - `data/live-source-catalog.json`: machine-readable observed source inventory,
