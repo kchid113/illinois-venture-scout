@@ -1,4 +1,5 @@
 import {refreshTargets,refreshConfiguration} from '../core/refresh-schedule.mjs';
+import {reportHoneybadgerSuccess} from '../core/education-monitoring.mjs';
 /**
  * GitHub Actions scheduler: invokes the deployed application's protected refresh API.
  * No secrets or live data are written to the Git repository.
@@ -24,3 +25,12 @@ for(const connector of targets){
  }catch(error){failed++;console.error(`${connector}: ${error instanceof Error?error.message:'failed'}`);}
 }
 if(failed)throw Error(`${failed}/${targets.length} refresh connector(s) failed. Inspect the application's ingestion_jobs and GitHub Actions logs.`);
+/*
+ * A manual successful run must NOT suppress an alert for a missing scheduled
+ * run. Send exactly one heartbeat after the complete scheduled run succeeds.
+ */
+if((process.env.IVR_CONNECTOR||'scheduled')==='scheduled'&&process.env.IVR_HONEYBADGER_CHECKIN_URL){
+ await reportHoneybadgerSuccess(process.env.IVR_HONEYBADGER_CHECKIN_URL);
+ console.log('Scheduled refresh heartbeat acknowledged');
+}
+

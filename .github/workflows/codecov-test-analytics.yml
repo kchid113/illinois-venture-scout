@@ -1,0 +1,35 @@
+name: Codecov Student Pack test analytics
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  junit:
+    name: Node test analytics for Codecov
+    # Repository token was verified in the Patch 4 live connection workflow.
+    # Runs on main pushes and explicitly requested workflow_dispatch events.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Export Node test results as JUnit
+        run: |
+          mkdir -p artifacts
+          node --test --test-reporter=junit --test-reporter-destination=artifacts/junit.xml tests/*.test.mjs
+      - name: Publish test results to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          report_type: test_results
+          files: ./artifacts/junit.xml
+          disable_search: true
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}

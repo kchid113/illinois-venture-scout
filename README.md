@@ -167,3 +167,19 @@ Pull Request #2 has a [comprehensive QA report](docs/patch-2-qa-report.md) cover
 ### Combined Patch 1 + Patch 2 regression audit
 
 After merging Patch 2 into `main`, the original directory ingestion, research exports, screening, GitHub release provenance, new iVenture/EnterpriseWorks reviews, source scheduling, private-workspace data and additive migrations were tested together. See the [integrated QA report](docs/integrated-qa-report.md) for the full test matrix, verified GitHub Actions results, cross-cutting fixes and the staging/browser checks that are still required before deployment.
+
+
+### Patch 4 — optional GitHub Education developer tooling
+
+Patch 4 prepares six integrations for eligible GitHub Student Developer Pack users **without storing credentials, changing trusted ChatGPT authentication, or migrating D1**:
+
+- **Honeybadger:** missing-run alerting for the scheduled official-source refresher; a successful scheduled run sends one heartbeat, failures and manual runs never do.
+- **Simple Analytics:** production-only, explicit opt-in to aggregated, redacted page analytics. Private research, account, company and comparison routes are excluded.
+- **BrowserStack Automate Mobile:** explicit, manual W3C WebDriver real-device check of the public entry/sign-in gate, with guaranteed remote-session cleanup.
+- **Codecov:** optional JUnit test analytics upload from GitHub Actions, with the existing tests still authoritative.
+- **GitHub Codespaces:** Node 22, pnpm 11.25.0, frozen lockfile and forwarded development ports.
+- **Dependabot:** bounded weekly review PRs for application and workflow dependencies.
+
+All third-party integrations are **disabled or unconnected by default**. The complete offer selection, setup instructions, which API keys remain to be supplied, limitations, and security controls are documented in [Patch 4 — GitHub Education integrations](docs/patch-4-education-pack.md).
+
+Never put API keys, Honeybadger check-in URLs, or BrowserStack access keys in GitHub source, issues, PR comments, or chat messages. Configure them in **Settings → Secrets and variables → Actions**, then enable each workflow deliberately. The hosted private ChatGPT Site is not redeployed by a GitHub branch.
