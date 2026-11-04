@@ -16,7 +16,7 @@ jobs:
   credentials:
     name: Check secrets and BrowserStack API (no mobile session)
     # Only a deliberate manual dispatch targeting the protected default branch.
-    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
