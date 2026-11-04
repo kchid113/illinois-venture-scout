@@ -36,11 +36,17 @@ if(!Array.isArray(dbs)||dbs.length!==1||dbs[0].binding!=='DB'||
  throw Error('Cloudflare Worker manifest does not match intended database and Access policy');
 if(typeof body.main!=='string'||!body.main||path.isAbsolute(body.main)||
  typeof dbs[0].migrations_dir!=='string')throw Error('Invalid Worker entry or migration directory');
-try{
- await access(path.resolve(path.dirname(file),body.main));
- await access(path.resolve(path.dirname(file),dbs[0].migrations_dir,'0000_first_drax.sql'));
- await access(path.resolve(path.dirname(file),dbs[0].migrations_dir,'0001_source_refresh.sql'));
-}catch{throw Error('Cloudflare Worker entrypoint or versioned migrations not present');}
+const rootFromManifest=path.dirname(file);
+const workerEntry=path.resolve(rootFromManifest,body.main);
+const migrationDir=path.resolve(rootFromManifest,dbs[0].migrations_dir);
+for(const [label,filename] of [
+ ['entrypoint',workerEntry],
+ ['migration 0000',path.join(migrationDir,'0000_first_drax.sql')],
+ ['migration 0001',path.join(migrationDir,'0001_source_refresh.sql')]
+]){
+ try{await access(filename);}
+ catch{throw Error('Cloudflare build missing '+label+' at '+path.relative(root,filename));}
+}
 if(process.env.GITHUB_ENV)await appendFile(process.env.GITHUB_ENV,
  'IVR_WORKER_CONFIG='+path.relative(root,file)+'\n');
 console.log('Standalone Cloudflare Worker manifest and D1/Access bindings verified');
