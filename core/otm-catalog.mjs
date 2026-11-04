@@ -46,7 +46,13 @@ function validName(name){
   /^[\p{L}\p{N}]/u.test(name)&&!/[<>@]/.test(name);
 }
 export function parseOTMStartupCatalog(html,companies,observedAt){
- const markup=String(html),found=new Map();
+ const source=String(html);
+ // Restrict heading discovery to the page's main content. Navigation and
+ // footer headings are never startup entries, even if a sector was active.
+ const main=source.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1];
+ const markup=(main||source).replace(/<nav\b[^>]*>[\s\S]*?<\/nav>/gi,'')
+  .replace(/<footer\b[^>]*>[\s\S]*?<\/footer>/gi,'');
+ const found=new Map();
  function add(name,block,sector=null,entryUrl=null){
   name=text(name).replace(/\s+/g,' ').trim();
   if(!validName(name))return;
