@@ -31,7 +31,7 @@ jobs:
       IVR_ADMIN_EMAIL: ${{ vars.IVR_ADMIN_EMAIL }}
       IVR_ALLOW_CREATE_D1: ${{ inputs.create_d1 && 'true' || 'false' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 11.25.0
