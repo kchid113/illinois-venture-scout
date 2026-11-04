@@ -53,7 +53,7 @@ for(const patch of [
  });
 }
 for(const payload of [null,[],1,'OK',true,NaN,undefined,Object.create(null)]){
- test('refresh response refuses malformed JSON result '+String(payload),()=>{
+ test('refresh response refuses malformed JSON result '+(payload&&typeof payload==='object'?'object:'+Object.prototype.toString.call(payload):String(payload)),()=>{
   assert.throws(()=>validateRefreshResponse(connector,payload),/Refresh endpoint/);
  });
 }
