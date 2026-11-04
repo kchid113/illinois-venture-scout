@@ -8,6 +8,11 @@ on:
         required: true
         default: false
         type: boolean
+      import_source_catalog:
+        description: 'Import prepared source catalog into D1 (new directory companies + pending review leads)'
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -66,6 +71,20 @@ jobs:
           pnpm exec wrangler d1 execute DB --remote --config "$IVR_WORKER_CONFIG" --file data/seed.sql
       - name: Deploy independently authenticated Worker
         run: pnpm exec wrangler deploy --config "$IVR_WORKER_CONFIG"
+      - name: Validate source catalog and prepare D1-safe transactional import
+        if: ${{ inputs.import_source_catalog }}
+        run: |
+          node scripts/validate-live-snapshot.mjs
+          node scripts/prepare-d1-catalog-import.mjs
+      - name: Record existing D1 Time Travel bookmark before source import
+        if: ${{ inputs.import_source_catalog && steps.database.outputs.created != 'true' }}
+        run: pnpm exec wrangler d1 time-travel info DB --config "$IVR_WORKER_CONFIG"
+      - name: Import source-backed startup companies and pending review candidates
+        if: ${{ inputs.import_source_catalog }}
+        run: pnpm exec wrangler d1 execute DB --remote --config "$IVR_WORKER_CONFIG" --file .catalog-import-d1.sql
+      - name: Display non-sensitive post-import D1 counts
+        if: ${{ inputs.import_source_catalog }}
+        run: pnpm exec wrangler d1 execute DB --remote --config "$IVR_WORKER_CONFIG" --command "SELECT (SELECT COUNT(*) FROM companies) AS public_companies, (SELECT COUNT(*) FROM source_candidates WHERE status='Pending') AS pending_source_candidates"
       - name: Next action
         run: |
           echo "Worker code deployed. Confirm Cloudflare Zero Trust Access protects the Worker and its workers.dev hostname."
