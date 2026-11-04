@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {runInNewContext} from 'node:vm';
 import {spawnSync} from 'node:child_process';
 import {honeybadgerCheckinUrl,reportHoneybadgerSuccess} from '../core/education-monitoring.mjs';
 import {browserstackConfig,browserstackCapabilities,runBrowserstackSmoke} from '../core/education-browserstack.mjs';
+import {publicAnalyticsPath} from '../core/analytics-policy.mjs';
+import {browserstackCredentials,verifyBrowserstackPlan} from '../core/education-browserstack.mjs';
 
 const good='https://api.honeybadger.io/v1/check_in/testCaseABCD1234';
 const eu='https://eu-api.honeybadger.io/v1/check_in/hbp_ABCxyz1234/daily-refresh';
@@ -153,28 +154,28 @@ test('BrowserStack enabled without credentials fails before any remote request',
  assert.notEqual(r.status,0);
  assert.match(r.stderr,/username\/access key/);
 });
-test('Simple Analytics has an explicit default-off production gate and no client user identifier',()=>{
- const layout=read('app/layout.tsx');
+test('Simple Analytics is operator opt-in and only sends explicit safe pageviews',()=>{
+ const layout=read('app/layout.tsx'),client=read('components/education-analytics.tsx');
  assert.match(layout,/IVR_SIMPLE_ANALYTICS_ENABLED==='true'/);
  assert.match(layout,/NODE_ENV==='production'/);
- assert.match(layout,/data-collect-dnt="false"/);
- assert.match(layout,/data-ignore-pages=/);
- assert.match(layout,/data-path-overwriter="ivrAnalyticsPath"/);
+ assert.match(client,/data-auto-collect="false"/);
+ assert.match(client,/data-collect-dnt="false"/);
+ assert.match(client,/data-ignore-metrics="referrer,utm,session/);
+ assert.match(client,/publicAnalyticsPath\(pathname\)/);
+ assert.match(client,/window\.sa_pageview\(safePath\)/);
+ assert.ok(!client.includes('window.location.pathname'));
  assert.ok(!layout.includes('user.email'));
  assert.ok(!layout.includes('userId'));
 });
-test('Simple Analytics path redaction never forwards arbitrary user, company or notes paths',()=>{
- const context={window:{}};
- runInNewContext(read('public/ivr-analytics-path.js'),context);
- const normalize=context.window.ivrAnalyticsPath;
- assert.equal(normalize({path:'/'}),'/overview');
- assert.equal(normalize({path:'/discover'}),'/discover');
- assert.equal(normalize({path:'/methodology'}),'/methodology');
- for(const raw of ['/companies/secret-company','/research','/settings','/watchlists','/api/private?user=abc','/user/alice@example.com','/funding/1234','/']){
-  const result=normalize({path:raw});
-  assert.ok(!result.includes('secret-company')&&!result.includes('alice')&&!result.includes('1234'));
- }
- assert.equal(normalize({path:'/companies/secret-company'}),'/private-workspace');
+test('Simple Analytics tracking strictly excludes unapproved and private paths',()=>{
+ for(const path of ['/','/overview','/discover','/activity','/sources','/methodology'])
+  assert.equal(typeof publicAnalyticsPath(path),'string');
+ for(const path of [
+  '/companies/secret-company','/research','/settings','/watchlists','/api/private?user=abc',
+  '/user/alice@example.com','/funding/1234','/discover/secret','/compare',
+  '/discover?search=private','/overview/#sensitive','/methodology?trace=123',null,undefined,{},1
+ ])assert.equal(publicAnalyticsPath(path),null);
+ assert.equal(publicAnalyticsPath('/'),'/overview');
 });
 test('Codecov and BrowserStack workflows require explicit opt-in and use GitHub Secrets',()=>{
  const codecov=read('.github/workflows/codecov-test-analytics.yml'),
