@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "observedAt": "2026-11-04T18:22:16.546Z",
+  "observedAt": "2026-11-04T18:31:36.197Z",
   "seedCompanyCount": 29,
   "sourceChecks": [
     {
@@ -72,9 +72,8 @@
     {
       "connector": "iventure-cohorts",
       "url": "https://iventure.illinois.edu/startups",
-      "status": "failed",
-      "count": 0,
-      "error": "iVenture cohort listing layout changed or produced no venture headings; review before import"
+      "status": "collected",
+      "count": 142
     },
     {
       "connector": "otm-startups",
@@ -84,8 +83,8 @@
       "error": "Source robots policy disallows requested path"
     }
   ],
-  "sourceObservations": 99,
-  "uniqueNormalizedNames": 62,
+  "sourceObservations": 286,
+  "uniqueNormalizedNames": 241,
   "additionalResearchParkNames": [
     {
       "slug": "hourglass-medical",
@@ -176,6 +175,23 @@
   "completeness": false,
   "companies": [
     {
+      "name": "1st Wrld",
+      "normalizedName": "1st wrld",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "AgAnswers.ai",
       "normalizedName": "aganswers ai",
       "existingSeedCompanyId": "aganswers-ai",
@@ -199,6 +215,23 @@
       ],
       "sourceCount": 2,
       "manualIdentityReview": false
+    },
+    {
+      "name": "AgriWater Corp.",
+      "normalizedName": "agriwater corp",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
     },
     {
       "name": "AgWizard LLC",
@@ -243,6 +276,40 @@
       "manualIdentityReview": true
     },
     {
+      "name": "Allergenius Baking Company",
+      "normalizedName": "allergenius baking company",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Amber Agriculture",
+      "normalizedName": "amber agriculture",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.amber.ag/",
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "AmnioAlert",
       "normalizedName": "amnioalert",
       "existingSeedCompanyId": "amnioalert",
@@ -278,6 +345,40 @@
           "profile": "https://researchpark.illinois.edu/amplified-hr/",
           "ventureWebsite": null,
           "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Aptimmune",
+      "normalizedName": "aptimmune",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://aptimmune.com/",
+          "sector": "Agriculture & Animal Health",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Aqueous Solutions",
+      "normalizedName": "aqueous solutions",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.gwb.com/",
+          "sector": "Energy & Environment",
           "cohort": null
         }
       ],
@@ -327,6 +428,74 @@
       "manualIdentityReview": true
     },
     {
+      "name": "Ascent Integrated",
+      "normalizedName": "ascent integrated",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://ascentitech.com/",
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "ASL Aspire",
+      "normalizedName": "asl aspire",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.aslaspire.com/",
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Atlas",
+      "normalizedName": "atlas",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Autonomic Energy Systems",
+      "normalizedName": "autonomic energy systems",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Ball Photonics, Inc.",
       "normalizedName": "ball photonics inc",
       "existingSeedCompanyId": null,
@@ -338,6 +507,23 @@
           "ventureWebsite": null,
           "sector": null,
           "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Bilder",
+      "normalizedName": "bilder",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 3
         }
       ],
       "sourceCount": 1,
@@ -419,6 +605,74 @@
       "manualIdentityReview": false
     },
     {
+      "name": "Boxdrop",
+      "normalizedName": "boxdrop",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Bundle",
+      "normalizedName": "bundle",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "By All Means",
+      "normalizedName": "by all means",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://byallmeansba.com/pages/about-us",
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "BYLD Innovations",
+      "normalizedName": "byld innovations",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.byld-innovations.com/",
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Cache Energy",
       "normalizedName": "cache energy",
       "existingSeedCompanyId": null,
@@ -444,6 +698,74 @@
       "manualIdentityReview": true
     },
     {
+      "name": "Cadenza Bio",
+      "normalizedName": "cadenza bio",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.cadenza.bio/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Campus Ventures",
+      "normalizedName": "campus ventures",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "CamUX",
+      "normalizedName": "camux",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Career Advancement Exchange",
+      "normalizedName": "career advancement exchange",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Cascade Dynamics",
       "normalizedName": "cascade dynamics",
       "existingSeedCompanyId": null,
@@ -455,6 +777,74 @@
           "ventureWebsite": null,
           "sector": null,
           "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cast21",
+      "normalizedName": "cast21",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.cast21.com/",
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Catch Globe",
+      "normalizedName": "catch globe",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cayuga Biotech",
+      "normalizedName": "cayuga biotech",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.cayugabiotech.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cedar Technologies",
+      "normalizedName": "cedar technologies",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 2
         }
       ],
       "sourceCount": 1,
@@ -478,6 +868,74 @@
       "manualIdentityReview": true
     },
     {
+      "name": "Chairdrop",
+      "normalizedName": "chairdrop",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Charmworks",
+      "normalizedName": "charmworks",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.hpccharm.com/",
+          "sector": "Software & Information Technologies",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "ChipStack",
+      "normalizedName": "chipstack",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.chipstack.ai/",
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Citispace",
+      "normalizedName": "citispace",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Cleanslate Robotics",
       "normalizedName": "cleanslate robotics",
       "existingSeedCompanyId": null,
@@ -495,6 +953,23 @@
       "manualIdentityReview": true
     },
     {
+      "name": "ClimeCast",
+      "normalizedName": "climecast",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Cohesive Manufacturing",
       "normalizedName": "cohesive manufacturing",
       "existingSeedCompanyId": null,
@@ -506,6 +981,108 @@
           "ventureWebsite": null,
           "sector": null,
           "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Convey",
+      "normalizedName": "convey",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Corvae",
+      "normalizedName": "corvae",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Creasion",
+      "normalizedName": "creasion",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "CreatoRain",
+      "normalizedName": "creatorain",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://creatorain.com/",
+          "sector": null,
+          "cohort": 11
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Credence Cleantech",
+      "normalizedName": "credence cleantech",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://credencecleantech.com/",
+          "sector": null,
+          "cohort": 11
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cut to the Case",
+      "normalizedName": "cut to the case",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 3
         }
       ],
       "sourceCount": 1,
@@ -534,6 +1111,40 @@
         }
       ],
       "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cygnus Photonics",
+      "normalizedName": "cygnus photonics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.cygnusphoton.com/",
+          "sector": "Physical Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Cystetic Medicines",
+      "normalizedName": "cystetic medicines",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://cysteticmedicines.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
       "manualIdentityReview": true
     },
     {
@@ -587,6 +1198,74 @@
       "manualIdentityReview": false
     },
     {
+      "name": "Datapull",
+      "normalizedName": "datapull",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "DeepWalk Research",
+      "normalizedName": "deepwalk research",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.deepwalk.com/",
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Depix",
+      "normalizedName": "depix",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.depix.ai/",
+          "sector": "Software & Information Technologies",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Dibbs",
+      "normalizedName": "dibbs",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "DigiFarmz",
       "normalizedName": "digifarmz",
       "existingSeedCompanyId": null,
@@ -597,6 +1276,176 @@
           "profile": "https://researchpark.illinois.edu/digifarmz/",
           "ventureWebsite": null,
           "sector": null,
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Digiphy",
+      "normalizedName": "digiphy",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Diopter",
+      "normalizedName": "diopter",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://diopter.ai/",
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "DisplayOne",
+      "normalizedName": "displayone",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "DoubleSpot",
+      "normalizedName": "doublespot",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://doublespot.ai/",
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Earnest Agriculture",
+      "normalizedName": "earnest agriculture",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.earnest.ag/",
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "EarthSense",
+      "normalizedName": "earthsense",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.earthsense.co/",
+          "sector": "Agriculture & Animal Health",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Earthworm",
+      "normalizedName": "earthworm",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Eden Park Illumination",
+      "normalizedName": "eden park illumination",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.edenpark.com/",
+          "sector": "Physical Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Electrokare",
+      "normalizedName": "electrokare",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.electrokare.com/",
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "ElectronInks, Inc",
+      "normalizedName": "electroninks inc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://electroninks.com/",
+          "sector": "Physical Sciences",
           "cohort": null
         }
       ],
@@ -627,6 +1476,57 @@
       ],
       "sourceCount": 2,
       "manualIdentityReview": false
+    },
+    {
+      "name": "Elion Therapeutics",
+      "normalizedName": "elion therapeutics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://eliontx.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "EmoNet",
+      "normalizedName": "emonet",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://emonet.ai/",
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Epicore Biosystems",
+      "normalizedName": "epicore biosystems",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.epicorebiosystems.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
     },
     {
       "name": "Epivara",
@@ -694,6 +1594,91 @@
       ],
       "sourceCount": 2,
       "manualIdentityReview": false
+    },
+    {
+      "name": "Every Day is a Yay",
+      "normalizedName": "every day is a yay",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://everydayisayay.com/",
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Exowear",
+      "normalizedName": "exowear",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Faaslahpal",
+      "normalizedName": "faaslahpal",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Fast Track",
+      "normalizedName": "fast track",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Flipword",
+      "normalizedName": "flipword",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
     },
     {
       "name": "ForgeBee",
@@ -771,6 +1756,91 @@
       "manualIdentityReview": true
     },
     {
+      "name": "FuelGo",
+      "normalizedName": "fuelgo",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Fusen",
+      "normalizedName": "fusen",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Galileo Innovations",
+      "normalizedName": "galileo innovations",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Gates AgOne",
+      "normalizedName": "gates agone",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.gatesagone.org/",
+          "sector": "Agriculture & Animal Health",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Geni",
+      "normalizedName": "geni",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://geni.zone/",
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "GigaCrop",
       "normalizedName": "gigacrop",
       "existingSeedCompanyId": "gigacrop",
@@ -794,6 +1864,23 @@
       ],
       "sourceCount": 2,
       "manualIdentityReview": false
+    },
+    {
+      "name": "Global Food and Ag Network",
+      "normalizedName": "global food and ag network",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://foodmarketmaker.com/",
+          "sector": "Agriculture & Animal Health",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
     },
     {
       "name": "Globi Social",
@@ -832,10 +1919,103 @@
           "ventureWebsite": null,
           "sector": "BioTech and Healthcare",
           "cohort": null
+        },
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://glucosentient.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": false
+    },
+    {
+      "name": "Gourmates",
+      "normalizedName": "gourmates",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 2
         }
       ],
       "sourceCount": 1,
-      "manualIdentityReview": false
+      "manualIdentityReview": true
+    },
+    {
+      "name": "GrayKea",
+      "normalizedName": "graykea",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "GrayMatters",
+      "normalizedName": "graymatters",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Great Mind Exchange",
+      "normalizedName": "great mind exchange",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Gridscale",
+      "normalizedName": "gridscale",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
     },
     {
       "name": "HabiTerre",
@@ -857,9 +2037,51 @@
           "ventureWebsite": null,
           "sector": null,
           "cohort": null
+        },
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.habiterre.com/",
+          "sector": "Agriculture & Animal Health",
+          "cohort": null
         }
       ],
-      "sourceCount": 2,
+      "sourceCount": 3,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Hawa",
+      "normalizedName": "hawa",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 11
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Haylon Technologies",
+      "normalizedName": "haylon technologies",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://haylontech.com/",
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
       "manualIdentityReview": true
     },
     {
@@ -888,6 +2110,23 @@
       "manualIdentityReview": false
     },
     {
+      "name": "Hemorhythmics",
+      "normalizedName": "hemorhythmics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "HexaF Innovations",
       "normalizedName": "hexaf innovations",
       "existingSeedCompanyId": "hexaf-innovations",
@@ -911,6 +2150,23 @@
       ],
       "sourceCount": 2,
       "manualIdentityReview": false
+    },
+    {
+      "name": "HexNest",
+      "normalizedName": "hexnest",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
     },
     {
       "name": "Hinetics",
@@ -972,6 +2228,23 @@
       "manualIdentityReview": true
     },
     {
+      "name": "Idana",
+      "normalizedName": "idana",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Identomat",
       "normalizedName": "identomat",
       "existingSeedCompanyId": "identomat",
@@ -997,6 +2270,23 @@
       "manualIdentityReview": false
     },
     {
+      "name": "IlliniBox",
+      "normalizedName": "illinibox",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Illinois Ventures",
       "normalizedName": "illinois ventures",
       "existingSeedCompanyId": null,
@@ -1008,6 +2298,57 @@
           "ventureWebsite": null,
           "sector": null,
           "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Inspirit IoT, Inc",
+      "normalizedName": "inspirit iot inc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://inspirit-iot.com/",
+          "sector": "Software & Information Technologies",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "IntelinAir",
+      "normalizedName": "intelinair",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.intelinair.com/",
+          "sector": "Agriculture & Animal Health",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "InvoGenix",
+      "normalizedName": "invogenix",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.invogenix.app/",
+          "sector": null,
+          "cohort": 11
         }
       ],
       "sourceCount": 1,
@@ -1058,9 +2399,17 @@
           "ventureWebsite": null,
           "sector": null,
           "cohort": null
+        },
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.iridescentsensors.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
         }
       ],
-      "sourceCount": 2,
+      "sourceCount": 3,
       "manualIdentityReview": false
     },
     {
@@ -1089,6 +2438,40 @@
       "manualIdentityReview": false
     },
     {
+      "name": "Kinesid Therapeutics",
+      "normalizedName": "kinesid therapeutics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Klink!",
+      "normalizedName": "klink",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://klink.social/",
+          "sector": null,
+          "cohort": 11
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Kocree",
       "normalizedName": "kocree",
       "existingSeedCompanyId": null,
@@ -1111,6 +2494,57 @@
         }
       ],
       "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Kofman Technologies",
+      "normalizedName": "kofman technologies",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "kWh",
+      "normalizedName": "kwh",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.kwhelectric.com/",
+          "sector": null,
+          "cohort": 11
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "LaneTrax",
+      "normalizedName": "lanetrax",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.lanetrax.app/",
+          "sector": null,
+          "cohort": 11
+        }
+      ],
+      "sourceCount": 1,
       "manualIdentityReview": true
     },
     {
@@ -1137,6 +2571,193 @@
       ],
       "sourceCount": 2,
       "manualIdentityReview": false
+    },
+    {
+      "name": "LocknSell",
+      "normalizedName": "locknsell",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Loop Health",
+      "normalizedName": "loop health",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.loophealth.com/",
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Lumnis AI",
+      "normalizedName": "lumnis ai",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Lumnis Capital",
+      "normalizedName": "lumnis capital",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Lumos",
+      "normalizedName": "lumos",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "MakerGirl",
+      "normalizedName": "makergirl",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://makergirl.org/",
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Mallo",
+      "normalizedName": "mallo",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Medius Ventures",
+      "normalizedName": "medius ventures",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Menu3",
+      "normalizedName": "menu3",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Mesh++",
+      "normalizedName": "mesh",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://meshplusplus.com/",
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "MetaFrazo",
+      "normalizedName": "metafrazo",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.metafrazo.ai/",
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
     },
     {
       "name": "MFWireless",
@@ -1167,9 +2788,17 @@
           "ventureWebsite": null,
           "sector": "AgTech",
           "cohort": null
+        },
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.micromgx.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
         }
       ],
-      "sourceCount": 1,
+      "sourceCount": 2,
       "manualIdentityReview": false
     },
     {
@@ -1190,6 +2819,74 @@
       "manualIdentityReview": true
     },
     {
+      "name": "Multicoreware",
+      "normalizedName": "multicoreware",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://multicorewareinc.com/",
+          "sector": "Software & Information Technologies",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "MyMetrics",
+      "normalizedName": "mymetrics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "MyTyde",
+      "normalizedName": "mytyde",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "NASADYA",
+      "normalizedName": "nasadya",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Natrion",
       "normalizedName": "natrion",
       "existingSeedCompanyId": null,
@@ -1201,6 +2898,99 @@
           "ventureWebsite": null,
           "sector": null,
           "cohort": null
+        },
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.natrion.co/",
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "NeonCrate",
+      "normalizedName": "neoncrate",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Neuolux",
+      "normalizedName": "neuolux",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.neurolux.org/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Nitronic",
+      "normalizedName": "nitronic",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.nitronic.co/",
+          "sector": "Agriculture & Animal Health",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "NoshBox",
+      "normalizedName": "noshbox",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.noshboxapp.com/",
+          "sector": null,
+          "cohort": 11
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Nouvo",
+      "normalizedName": "nouvo",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
         }
       ],
       "sourceCount": 1,
@@ -1224,6 +3014,142 @@
       "manualIdentityReview": true
     },
     {
+      "name": "NutraMaize",
+      "normalizedName": "nutramaize",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.nutramaize.com/",
+          "sector": "Agriculture & Animal Health",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Objective",
+      "normalizedName": "objective",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Octane Technologies",
+      "normalizedName": "octane technologies",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Omnipher",
+      "normalizedName": "omnipher",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://omnipher.com/",
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Optech",
+      "normalizedName": "optech",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Optivolt",
+      "normalizedName": "optivolt",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://optivolt.com/",
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "OSAZ",
+      "normalizedName": "osaz",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://skin.byosaz.com/",
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Own It Technologies",
+      "normalizedName": "own it technologies",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Panddi, Inc.",
       "normalizedName": "panddi inc",
       "existingSeedCompanyId": null,
@@ -1241,6 +3167,91 @@
       "manualIdentityReview": true
     },
     {
+      "name": "Panthea Health",
+      "normalizedName": "panthea health",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Pathlit",
+      "normalizedName": "pathlit",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://landing.pathlit.com/",
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Pattern Insight",
+      "normalizedName": "pattern insight",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://patterninsight.com/",
+          "sector": "Software & Information Technologies",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Pearl Bio",
+      "normalizedName": "pearl bio",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.pearlbio.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "PhantomCor",
+      "normalizedName": "phantomcor",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Phi Optics",
       "normalizedName": "phi optics",
       "existingSeedCompanyId": null,
@@ -1252,6 +3263,31 @@
           "ventureWebsite": null,
           "sector": "BioTech and Healthcare",
           "cohort": null
+        },
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://phioptics.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "PhinD",
+      "normalizedName": "phind",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://phind.pro/",
+          "sector": null,
+          "cohort": 10
         }
       ],
       "sourceCount": 1,
@@ -1283,6 +3319,57 @@
       "manualIdentityReview": false
     },
     {
+      "name": "PhotoniCare",
+      "normalizedName": "photonicare",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://photoni.care/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Platform",
+      "normalizedName": "platform",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "PlayTogether",
+      "normalizedName": "playtogether",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://playtogether.gg/",
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "PowerBox Technology",
       "normalizedName": "powerbox technology",
       "existingSeedCompanyId": null,
@@ -1293,6 +3380,133 @@
           "profile": "https://researchpark.illinois.edu/powerbox-technologies/",
           "ventureWebsite": null,
           "sector": null,
+          "cohort": null
+        },
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.powerboxtech.com/",
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 2,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Privy Track",
+      "normalizedName": "privy track",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "PSYONIC",
+      "normalizedName": "psyonic",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.psyonic.io/",
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Punchline UIUC",
+      "normalizedName": "punchline uiuc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Qbitus",
+      "normalizedName": "qbitus",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "QuillBot",
+      "normalizedName": "quillbot",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://quillbot.com/",
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Rank Dynamics",
+      "normalizedName": "rank dynamics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.rankdynamics.com/",
+          "sector": "Software & Information Technologies",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Rapicure Solutions",
+      "normalizedName": "rapicure solutions",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.rapicuresolutions.com/",
+          "sector": "Physical Sciences",
           "cohort": null
         }
       ],
@@ -1342,6 +3556,193 @@
       "manualIdentityReview": true
     },
     {
+      "name": "Reconstruct, Inc",
+      "normalizedName": "reconstruct inc",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.reconstructinc.com/",
+          "sector": "Software & Information Technologies",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Red Clover",
+      "normalizedName": "red clover",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Renal Track",
+      "normalizedName": "renal track",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Resolv",
+      "normalizedName": "resolv",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "ReveryAI",
+      "normalizedName": "reveryai",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.revery.ai/",
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Revive Biotech",
+      "normalizedName": "revive biotech",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://revivebiotech.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Rhaeos",
+      "normalizedName": "rhaeos",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.rhaeos.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "RingWing",
+      "normalizedName": "ringwing",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Rising Sprouts",
+      "normalizedName": "rising sprouts",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "SakuraMed",
+      "normalizedName": "sakuramed",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.sakuramedtech.com/",
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Salam Kisan",
+      "normalizedName": "salam kisan",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.salamkisan.com/",
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Second Chance Innovations",
       "normalizedName": "second chance innovations",
       "existingSeedCompanyId": "second-chance-innovations",
@@ -1361,9 +3762,17 @@
           "ventureWebsite": null,
           "sector": null,
           "cohort": null
+        },
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.linkedin.com/company/second-chance-innovations/",
+          "sector": null,
+          "cohort": 11
         }
       ],
-      "sourceCount": 2,
+      "sourceCount": 3,
       "manualIdentityReview": false
     },
     {
@@ -1392,6 +3801,108 @@
       "manualIdentityReview": false
     },
     {
+      "name": "Shape Dimensions",
+      "normalizedName": "shape dimensions",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Shepherd Telematics",
+      "normalizedName": "shepherd telematics",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Sibel",
+      "normalizedName": "sibel",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://sibelhealth.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Slay'd",
+      "normalizedName": "slay d",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "SnapClips",
+      "normalizedName": "snapclips",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://snapclips.com/",
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "SnooperBooper",
+      "normalizedName": "snooperbooper",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "SolarMantle",
       "normalizedName": "solarmantle",
       "existingSeedCompanyId": "solarmantle",
@@ -1417,6 +3928,23 @@
       "manualIdentityReview": false
     },
     {
+      "name": "Sound of Molecules",
+      "normalizedName": "sound of molecules",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.soundofmolecules.com/",
+          "sector": null,
+          "cohort": 11
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Soybean Innovation Lab, LLC",
       "normalizedName": "soybean innovation lab llc",
       "existingSeedCompanyId": null,
@@ -1428,6 +3956,57 @@
           "ventureWebsite": null,
           "sector": null,
           "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Speakeasy",
+      "normalizedName": "speakeasy",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "SpectroClick",
+      "normalizedName": "spectroclick",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.spectroclick.com/",
+          "sector": "Energy & Environment",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Spotlight",
+      "normalizedName": "spotlight",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
         }
       ],
       "sourceCount": 1,
@@ -1459,6 +4038,91 @@
       "manualIdentityReview": true
     },
     {
+      "name": "SUS Clinicals",
+      "normalizedName": "sus clinicals",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://susclinicals.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "SwaTaleem Foundation",
+      "normalizedName": "swataleem foundation",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.swataleem.org/",
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Swimable",
+      "normalizedName": "swimable",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Sylly",
+      "normalizedName": "sylly",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Symmetry Wood",
+      "normalizedName": "symmetry wood",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.symmetrywood.com/",
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "Synergy Research Labs",
       "normalizedName": "synergy research labs",
       "existingSeedCompanyId": "synergy-research-labs",
@@ -1482,6 +4146,23 @@
       ],
       "sourceCount": 2,
       "manualIdentityReview": false
+    },
+    {
+      "name": "TAVO",
+      "normalizedName": "tavo",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.tavosleep.com/",
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
     },
     {
       "name": "TearDx, LLC",
@@ -1509,6 +4190,431 @@
       "manualIdentityReview": true
     },
     {
+      "name": "The Inclusive Companion Series",
+      "normalizedName": "the inclusive companion series",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "The Mouve",
+      "normalizedName": "the mouve",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 1
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Therapalz",
+      "normalizedName": "therapalz",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 2
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "TooTak",
+      "normalizedName": "tootak",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://tootak.org/en/home/",
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Top Tier Lessons",
+      "normalizedName": "top tier lessons",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Trala",
+      "normalizedName": "trala",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://trala.com/",
+          "sector": null,
+          "cohort": 3
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Transportation Engineering Solutions and Technologies",
+      "normalizedName": "transportation engineering solutions and technologies",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.testsustainability.com/",
+          "sector": "Physical Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Trvise",
+      "normalizedName": "trvise",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.trvise.com/",
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "tulip.",
+      "normalizedName": "tulip",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.tulip.markets/",
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Turkbox",
+      "normalizedName": "turkbox",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Vanquish Oncology",
+      "normalizedName": "vanquish oncology",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://vanquishoncology.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Verge",
+      "normalizedName": "verge",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Vitrix Health",
+      "normalizedName": "vitrix health",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "VOC Health",
+      "normalizedName": "voc health",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://vochealth.com/",
+          "sector": "Healthcare & Life Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Voribe",
+      "normalizedName": "voribe",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "VRtuMind",
+      "normalizedName": "vrtumind",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 6
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "WeHearYou",
+      "normalizedName": "wehearyou",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://wehearyouopensdoors.com/",
+          "sector": null,
+          "cohort": 8
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "X-CelePrint, Ltd.",
+      "normalizedName": "x celeprint ltd",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://x-celeprint.com/",
+          "sector": "Physical Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "X-Display Co Technology",
+      "normalizedName": "x display co technology",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.xdisplay.com/",
+          "sector": "Physical Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "X-Time",
+      "normalizedName": "x time",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.x-time.org/",
+          "sector": null,
+          "cohort": 9
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Xchanje",
+      "normalizedName": "xchanje",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 7
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Xerion Materials",
+      "normalizedName": "xerion materials",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "otm-startups",
+          "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+          "profile": null,
+          "ventureWebsite": "https://xerionbattery.com/",
+          "sector": "Physical Sciences",
+          "cohort": null
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "yoTally",
+      "normalizedName": "yotally",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 10
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "YouMatter Studios",
+      "normalizedName": "youmatter studios",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": null,
+          "sector": null,
+          "cohort": 4
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
+      "name": "Yummy Future",
+      "normalizedName": "yummy future",
+      "existingSeedCompanyId": null,
+      "sourceObservations": [
+        {
+          "connector": "iventure-cohorts",
+          "sourceUrl": "https://iventure.illinois.edu/startups",
+          "profile": null,
+          "ventureWebsite": "https://www.yummy-future.com/",
+          "sector": null,
+          "cohort": 5
+        }
+      ],
+      "sourceCount": 1,
+      "manualIdentityReview": true
+    },
+    {
       "name": "ZoneForge Games",
       "normalizedName": "zoneforge games",
       "existingSeedCompanyId": null,
@@ -1529,9 +4635,10 @@
   "collection": {
     "researchParkObserved": 43,
     "additionalResearchParkImportable": 14,
-    "candidateObservations": 56,
-    "distinctCandidates": 56,
-    "failures": 2,
+    "candidateObservations": 243,
+    "distinctCandidates": 243,
+    "manuallyTranscribedOTM": 45,
+    "failures": 1,
     "sourceCollectionComplete": false,
     "note": "Observed source listings only; not verified full ecosystem census or automatic approval of new startup identities."
   }
