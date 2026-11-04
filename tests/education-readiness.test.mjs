@@ -154,13 +154,14 @@ test('Simple Analytics script is manual-only with no query/referrer/session dime
  assert.ok(!client.includes('data-path-overwriter'));
  assert.ok(!repoFile('app/layout.tsx').includes('scripts.simpleanalyticscdn.com'));
 });
-test('Codecov workflow uses valid action v5 test-results inputs and no implicit upload on every push',()=>{
+test('Codecov workflow uses verified action v5 inputs and uploads on main pushes',()=>{
  const wf=repoFile('.github/workflows/codecov-test-analytics.yml');
  assert.match(wf,/report_type: test_results/);
  assert.ok(!wf.includes('report-type: test_results'));
  assert.match(wf,/fail_ci_if_error: true/);
  assert.match(wf,/secrets\.CODECOV_TOKEN/);
- assert.match(wf,/vars\.IVR_CODECOV_ENABLED == 'true'/);
+ assert.match(wf,/branches:/);
+ assert.match(wf,/\- main/);
 });
 test('education readiness workflow is restricted to trusted PRs and never sends a Honeybadger check-in',()=>{
  const wf=repoFile('.github/workflows/education-pack-readiness.yml');
