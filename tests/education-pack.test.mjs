@@ -177,10 +177,11 @@ test('Simple Analytics tracking strictly excludes unapproved and private paths',
  ])assert.equal(publicAnalyticsPath(path),null);
  assert.equal(publicAnalyticsPath('/'),'/overview');
 });
-test('Codecov and BrowserStack workflows require explicit opt-in and use GitHub Secrets',()=>{
+test('Codecov uploads on main with verified token; BrowserStack stays manual and opt-in',()=>{
  const codecov=read('.github/workflows/codecov-test-analytics.yml'),
   browser=read('.github/workflows/browserstack-mobile-smoke.yml');
- assert.match(codecov,/vars\.IVR_CODECOV_ENABLED == 'true'/);
+ assert.match(codecov,/branches:/);
+ assert.match(codecov,/\- main/);
  assert.match(codecov,/secrets\.CODECOV_TOKEN/);
  assert.match(codecov,/codecov\/codecov-action@v5/);
  assert.match(codecov,/report_type: test_results/);
