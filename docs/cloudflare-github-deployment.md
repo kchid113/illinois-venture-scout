@@ -81,6 +81,42 @@ personal/private ChatGPT Sites data is copied to the standalone deployment.
 The Worker URL is displayed by Wrangler in the deployment job. For ordinary
 deployments after initial provision, leave `create_d1=false`.
 
+## Import the expanded live-source catalog with the deployment
+
+The source-coverage PR is merged and the live collector generated an additive
+source dataset. The initial snapshot contains **43 canonical Research Park
+company records in total** (29 original + 14 new), plus **243 Pending**
+source leads from EnterpriseWorks, iVenture and the manually reviewed public
+OTM page. These are *not* 243 newly approved companies.
+
+The manual deployment workflow has a second input:
+`import_source_catalog` (**false by default**). Set it to `true` in the
+same **main-branch** run that provisions/updates the independently hosted
+Worker. If D1 is newly created, set `create_d1=true` as well. The workflow
+first applies migrations and seeds the 29 baseline records only for a newly
+created database, then validates both catalog SQL files in an isolated SQLite
+test and transforms them into a **single D1-compatible implicit transaction**
+without explicit `BEGIN TRANSACTION` or `COMMIT` wrappers. It imports the 14
+direct new Research Park directory profiles and stages 243 candidates as
+`Pending` for administrator review. Existing published claims and workspace
+notes are not erased. The import is idempotent, but it is still a production
+database write: check the account and selected D1 database before running.
+
+For an existing D1, the workflow prints its current **Time Travel bookmark**
+before the import. Do not perform a global database restore casually: a
+restore overwrites newer writes and private workspace changes. An existing
+D1 without the baseline seed cannot accept linked candidates; seed/migration
+state must be fixed first, with a reviewed plan. No Cloudflare API token is
+written to import files.
+
+Cloudflare documentation:
+https://developers.cloudflare.com/d1/best-practices/import-export-data/
+https://developers.cloudflare.com/d1/reference/time-travel/
+
+After the deployment, sign in as the configured administrator and review
+`Pending` candidates in Settings. Only candidates supported by exact
+identity evidence should be approved or explicitly created as companies.
+
 ## Post-deployment checks
 
 - Open the Worker URL in a clean browser. Cloudflare Access should require

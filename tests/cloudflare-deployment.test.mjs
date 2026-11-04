@@ -107,3 +107,14 @@ test('GitHub workflow is manual main-only and never exports provider secrets to 
  assert.match(yml,/wrangler d1 migrations apply DB --remote/);
  assert.match(yml,/steps\.database\.outputs\.created == 'true'/);
 });
+
+test('expanded live catalog import requires an explicit main-only opt-in and D1-compatible preparation',()=>{
+ const yml=readFileSync(new URL('../.github/workflows/cloudflare-deploy.yml',import.meta.url),'utf8');
+ assert.match(yml,/import_source_catalog:/);
+ assert.match(yml,/if: \${\{ inputs\.import_source_catalog \}\}/);
+ assert.match(yml,/node scripts\/validate-live-snapshot\.mjs/);
+ assert.match(yml,/node scripts\/prepare-d1-catalog-import\.mjs/);
+ assert.match(yml,/wrangler d1 execute DB --remote --config "\$IVR_WORKER_CONFIG" --file \.catalog-import-d1\.sql/);
+ assert.match(yml,/wrangler d1 time-travel info DB/);
+ assert.doesNotMatch(yml,/\n\s+push:/);
+});
