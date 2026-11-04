@@ -103,11 +103,14 @@ export async function verifyBrowserstackPlan(credentials,{fetcher=fetch}={}){
  if(!response.ok)throw Error('BrowserStack plan verification failed (HTTP '+response.status+')');
  let plan;
  try{plan=await response.json();}catch{throw Error('BrowserStack plan verification returned invalid JSON');}
- if(!plan||typeof plan.automate_plan!=='string'||!Number.isFinite(Number(plan.parallel_sessions_max_allowed)))
+ if(!plan||typeof plan.automate_plan!=='string'||!Number.isInteger(Number(plan.parallel_sessions_max_allowed)))
   throw Error('BrowserStack returned an unexpected Automate plan response');
+ const parallelSlots=Number(plan.parallel_sessions_max_allowed);
+ if(parallelSlots<=0||!plan.automate_plan.toLowerCase().includes('mobile'))
+  throw Error('BrowserStack account is authenticated but Automate Mobile plan or capacity is not active');
  return {
   verified:true,
   plan:plan.automate_plan.slice(0,80),
-  parallelSessionsMax:Number(plan.parallel_sessions_max_allowed)
+  parallelSessionsMax:parallelSlots
  };
 }
