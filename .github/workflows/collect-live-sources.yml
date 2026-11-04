@@ -1,0 +1,55 @@
+name: Capture live UIUC startup catalogs (review only)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/full-uiuc-source-coverage
+    paths:
+      - .github/workflows/collect-live-sources.yml
+      - scripts/collect-live-sources.mjs
+      - scripts/validate-live-snapshot.mjs
+      - core/catalog-snapshot.mjs
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-uiuc-source-snapshot
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    name: Fetch, reconcile and stage official live catalogs
+    if: ${{ github.ref == 'refs/heads/feature/full-uiuc-source-coverage' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch primary-source directories using robots and fixed-origin restrictions
+        run: node scripts/collect-live-sources.mjs
+      - name: Validate generated SQL against real SQLite schema and reviewed seed
+        run: node scripts/validate-live-snapshot.mjs
+      - name: Save source-backed dataset as a downloadable review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: uiuc-live-catalog-review
+          path: |
+            data/live-source-catalog.json
+            data/live-source-research-park-import.sql
+            data/live-source-candidates.sql
+          retention-days: 30
+      - name: Commit reviewed-stage observation files only to the feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/live-source-catalog.json data/live-source-research-park-import.sql data/live-source-candidates.sql
+          if git diff --cached --quiet; then
+            echo "No changes in live observations."
+          else
+            git commit -m "data: capture live UIUC catalog observations for human review"
+            git push origin HEAD:feature/full-uiuc-source-coverage
+          fi
