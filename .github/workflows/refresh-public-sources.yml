@@ -35,7 +35,7 @@ concurrency:
 jobs:
   refresh:
     name: Refresh official source adapters
-    if: ${{ vars.IVR_AUTOMATION_ENABLED == 'true' }}
+    if: ${{ github.ref == 'refs/heads/main' && vars.IVR_AUTOMATION_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
