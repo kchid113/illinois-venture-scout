@@ -163,9 +163,11 @@ test('Codecov workflow uses verified action v5 inputs and uploads on main pushes
  assert.match(wf,/branches:/);
  assert.match(wf,/\- main/);
 });
-test('education readiness workflow is restricted to trusted PRs and never sends a Honeybadger check-in',()=>{
+test('education readiness workflow is manual, main-only and never sends a Honeybadger check-in',()=>{
  const wf=repoFile('.github/workflows/education-pack-readiness.yml');
- assert.match(wf,/github\.event\.pull_request\.head\.repo\.full_name == github\.repository/);
+ assert.match(wf,/github\.ref == 'refs\/heads\/main'/);
+ assert.match(wf,/workflow_dispatch/);
+ assert.ok(!/^\s+pull_request:/m.test(wf));
  assert.match(wf,/scripts\/education-readiness\.mjs/);
  assert.match(wf,/secrets\.IVR_HONEYBADGER_CHECKIN_URL/);
  assert.match(wf,/report_type: test_results/);

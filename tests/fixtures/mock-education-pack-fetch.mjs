@@ -7,7 +7,7 @@ globalThis.fetch=async(url,opts={})=>{
   process.stdout.write('MOCK_SOURCE '+data.connector+'\n');
   if(process.env.IVR_TEST_FAIL_CONNECTOR===data.connector)
    return new Response(JSON.stringify({error:'source temporarily unavailable'}),{status:502});
-  return new Response(JSON.stringify({observed:2,imported:0,staged:1,deferred:0}),{status:200});
+  return new Response(JSON.stringify({connector:data.connector,jobId:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',observed:2,imported:0,staged:1,deferred:0}),{status:200});
  }
  if(['api.honeybadger.io','eu-api.honeybadger.io'].includes(u.hostname)){
   if(opts.method!=='GET'||opts.redirect!=='error'||opts.body)throw Error('Invalid monitoring request');

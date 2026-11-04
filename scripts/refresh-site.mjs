@@ -1,5 +1,6 @@
 import {refreshTargets,refreshConfiguration} from '../core/refresh-schedule.mjs';
 import {reportHoneybadgerSuccess} from '../core/education-monitoring.mjs';
+import {validateRefreshResponse,refreshHttpError} from '../core/refresh-contract.mjs';
 /**
  * GitHub Actions scheduler: invokes the deployed application's protected refresh API.
  * No secrets or live data are written to the Git repository.
@@ -19,8 +20,10 @@ for(const connector of targets){
   const response=await fetch(new URL('/api/admin/refresh',base),{
    method:'POST',headers,redirect:'error',signal:AbortSignal.timeout(115000),body:JSON.stringify({connector})
   });
-  const result=await response.json().catch(()=>({error:'non-JSON response (site authentication may be blocking requests)'}));
-  if(!response.ok)throw Error(`HTTP ${response.status}: ${String(result.error||'refresh rejected').slice(0,250)}`);
+  if(!response.ok)throw refreshHttpError(response.status);
+  // Even an HTTP 200 can be a proxy login page or a JSON error.
+  const payload=await response.json().catch(()=>null);
+  const result=validateRefreshResponse(connector,payload);
   console.log(`${connector}: observed=${result.observed} imported=${result.imported} staged=${result.staged} deferred=${result.deferred}`);
  }catch(error){failed++;console.error(`${connector}: ${error instanceof Error?error.message:'failed'}`);}
 }

@@ -11,5 +11,5 @@ globalThis.fetch=async(url,options={})=>{
  process.stdout.write('MOCK_REFRESH '+JSON.stringify({path:endpoint.pathname,connector:payload.connector})+'\n');
  if(process.env.IVR_TEST_FAIL_CONNECTOR===payload.connector)
   return new Response(JSON.stringify({error:'Upstream source unavailable'}),{status:503,headers:{'Content-Type':'application/json'}});
- return new Response(JSON.stringify({observed:3,imported:1,staged:2,deferred:0}),{status:200,headers:{'Content-Type':'application/json'}});
+ return new Response(JSON.stringify({connector:payload.connector,jobId:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',observed:3,imported:1,staged:2,deferred:0}),{status:200,headers:{'Content-Type':'application/json'}});
 };

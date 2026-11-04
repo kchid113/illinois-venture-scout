@@ -1,16 +1,8 @@
 name: Education Pack live connection verification
 
+# Secret-bearing provider requests must never run on pull_request (including
+# Dependabot PRs, for which GitHub deliberately withholds repository secrets).
 on:
-  pull_request:
-    paths:
-      - 'core/education-*.mjs'
-      - 'core/analytics-policy.mjs'
-      - 'components/education-analytics.tsx'
-      - 'scripts/education-readiness.mjs'
-      - 'scripts/browserstack-smoke.mjs'
-      - '.github/workflows/education-pack-readiness.yml'
-      - '.github/workflows/codecov-test-analytics.yml'
-      - 'tests/education-*.test.mjs'
   workflow_dispatch:
 
 permissions:
@@ -23,8 +15,8 @@ concurrency:
 jobs:
   credentials:
     name: Check secrets and BrowserStack API (no mobile session)
-    # Never expose repository secrets to untrusted fork PRs.
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository }}
+    # Only a deliberate manual dispatch targeting the protected default branch.
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

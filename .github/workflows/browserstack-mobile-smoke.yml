@@ -13,7 +13,7 @@ concurrency:
 jobs:
   smoke:
     name: Real-device public entry and sign-in smoke
-    if: ${{ vars.IVR_BROWSERSTACK_ENABLED == 'true' }}
+    if: ${{ github.ref == 'refs/heads/main' && vars.IVR_BROWSERSTACK_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
