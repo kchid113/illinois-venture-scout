@@ -12,8 +12,9 @@ permissions:
 jobs:
   junit:
     name: Node test analytics for Codecov
-    # Repository token was verified in the Patch 4 live connection workflow.
-    # Runs on main pushes and explicitly requested workflow_dispatch events.
+    # The secret-bearing upload must run only on the protected default branch.
+    # A manual dispatch targeting feature/PR branches must never expose tokens.
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
