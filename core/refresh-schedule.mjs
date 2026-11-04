@@ -4,7 +4,7 @@ import {publicVentureWebsite} from './source-security.mjs';
 /** Central source schedule policy, independent of GitHub Actions and HTTP. */
 export const SOURCE_REFRESH_ORDER=Object.freeze([
  'research-park-news','illinois-news','iventure-cohorts','enterpriseworks-directory',
- 'research-park-1','research-park-2','research-park-3','otm-startups',
+ 'research-park-1','research-park-2','research-park-3','research-park-4','research-park-5','otm-startups',
  'nih-reporter','usaspending','github-releases'
 ]);
 if(!SOURCE_REFRESH_ORDER.every(x=>CONNECTORS.includes(x))||SOURCE_REFRESH_ORDER.length!==CONNECTORS.length)

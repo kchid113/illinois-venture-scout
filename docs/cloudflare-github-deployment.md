@@ -96,6 +96,26 @@ deployments after initial provision, leave `create_d1=false`.
   `IVR_ADMIN_TOKEN` securely set on the running Worker and the GitHub
   refresh workflow; they're **not** enabled by this deployment.
 
+## Full startup-catalog discovery after initial deployment
+
+The reviewed 29-company seed is a starting sample, not the complete UIUC
+ecosystem. After deploying the full-source-coverage patch and signing in as
+the configured `IVR_ADMIN_EMAIL`, open **Settings** and choose
+**Discover from all 8 official startup catalogs**. This safely triggers
+Research Park pages 1–5, EnterpriseWorks directory pages, iVenture cohorts,
+and the OTM startup directory in sequence.
+
+Research Park adds canonical directory records directly. EnterpriseWorks,
+iVenture and OTM discoveries are **pending candidates** until explicitly
+reviewed and, for unmatched ventures, created through trusted identity checks.
+The review queue is paginated 50 at a time. Review source counts and failed
+provider requests rather than treating a completed action as census proof.
+News, federal awards and GitHub releases require verified recipient/repository
+identities and are not complete catalogs of startups.
+
+See [Full-source coverage patch](full-source-coverage-patch.md). Merging this
+patch does not fetch upstream sources or seed a running application.
+
 ## Safety and boundaries
 
 - No build/preview tests send secrets to Cloudflare or change production.

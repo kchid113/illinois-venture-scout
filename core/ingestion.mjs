@@ -102,7 +102,7 @@ export async function assertRobots(fetcher=fetch,{paths=['/category/tenant-direc
  return delay;
 }
 /** Invalid pagination is an error, never silently clamped. */
-export async function collectDirectory({pages=3,startPage=1,fetcher=fetch,onPage=()=>{},wait=ms=>new Promise(resolve=>setTimeout(resolve,ms))}={}){
+export async function collectDirectory({pages=5,startPage=1,fetcher=fetch,onPage=()=>{},wait=ms=>new Promise(resolve=>setTimeout(resolve,ms))}={}){
  if(!Number.isInteger(pages)||!Number.isInteger(startPage)||pages<1||startPage<1||pages>5||startPage>5||startPage+pages-1>5)
   throw Error('Invalid directory page count or range');
  const paths=Array.from({length:pages},(_,i)=>'/category/tenant-directory/startup/'+(startPage+i===1?'':'page/'+(startPage+i)+'/'));

@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "sourceUrl": "https://otm.illinois.edu/browse-technologies-startups/startups",
+  "observedOn": "2026-11-04",
+  "observationMethod": "Manual review of publicly rendered official OTM startup page; automated crawler forbidden by provider robots policy",
+  "pageClaim": "More than 60 active UIUC IP-based startups according to the official page; the accessible rendered list contained 45 distinct named entries.",
+  "records": [
+    {
+      "name": "Aptimmune",
+      "sector": "Agriculture & Animal Health",
+      "ventureWebsite": "https://aptimmune.com/"
+    },
+    {
+      "name": "EarthSense",
+      "sector": "Agriculture & Animal Health",
+      "ventureWebsite": "https://www.earthsense.co/"
+    },
+    {
+      "name": "Gates AgOne",
+      "sector": "Agriculture & Animal Health",
+      "ventureWebsite": "https://www.gatesagone.org/"
+    },
+    {
+      "name": "Global Food and Ag Network",
+      "sector": "Agriculture & Animal Health",
+      "ventureWebsite": "https://foodmarketmaker.com/"
+    },
+    {
+      "name": "Habiterre",
+      "sector": "Agriculture & Animal Health",
+      "ventureWebsite": "https://www.habiterre.com/"
+    },
+    {
+      "name": "IntelinAir",
+      "sector": "Agriculture & Animal Health",
+      "ventureWebsite": "https://www.intelinair.com/"
+    },
+    {
+      "name": "Nitronic",
+      "sector": "Agriculture & Animal Health",
+      "ventureWebsite": "https://www.nitronic.co/"
+    },
+    {
+      "name": "NutraMaize",
+      "sector": "Agriculture & Animal Health",
+      "ventureWebsite": "https://www.nutramaize.com/"
+    },
+    {
+      "name": "Aqueous Solutions",
+      "sector": "Energy & Environment",
+      "ventureWebsite": "https://www.gwb.com/"
+    },
+    {
+      "name": "SpectroClick",
+      "sector": "Energy & Environment",
+      "ventureWebsite": "https://www.spectroclick.com/"
+    },
+    {
+      "name": "Cadenza Bio",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://www.cadenza.bio/"
+    },
+    {
+      "name": "Cayuga Biotech",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://www.cayugabiotech.com/"
+    },
+    {
+      "name": "Cystetic Medicines",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://cysteticmedicines.com/"
+    },
+    {
+      "name": "Elion Therapeutics",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://eliontx.com/"
+    },
+    {
+      "name": "Epicore Biosystems",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://www.epicorebiosystems.com/"
+    },
+    {
+      "name": "GlucoSentient",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://glucosentient.com/"
+    },
+    {
+      "name": "Hemorhythmics",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": null
+    },
+    {
+      "name": "Iridescent Sensors",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://www.iridescentsensors.com/"
+    },
+    {
+      "name": "Kinesid Therapeutics",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": null
+    },
+    {
+      "name": "MicroMGx",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://www.micromgx.com/"
+    },
+    {
+      "name": "Neuolux",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://www.neurolux.org/"
+    },
+    {
+      "name": "Pearl Bio",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://www.pearlbio.com/"
+    },
+    {
+      "name": "Phi Optics",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://phioptics.com/"
+    },
+    {
+      "name": "PhotoniCare",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://photoni.care/"
+    },
+    {
+      "name": "Revive Biotech",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://revivebiotech.com/"
+    },
+    {
+      "name": "Rhaeos",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://www.rhaeos.com/"
+    },
+    {
+      "name": "Sibel",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://sibelhealth.com/"
+    },
+    {
+      "name": "SUS Clinicals",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://susclinicals.com/"
+    },
+    {
+      "name": "Vanquish Oncology",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://vanquishoncology.com/"
+    },
+    {
+      "name": "VOC Health",
+      "sector": "Healthcare & Life Sciences",
+      "ventureWebsite": "https://vochealth.com/"
+    },
+    {
+      "name": "Cygnus Photonics",
+      "sector": "Physical Sciences",
+      "ventureWebsite": "https://www.cygnusphoton.com/"
+    },
+    {
+      "name": "Eden Park Illumination",
+      "sector": "Physical Sciences",
+      "ventureWebsite": "https://www.edenpark.com/"
+    },
+    {
+      "name": "ElectronInks, Inc",
+      "sector": "Physical Sciences",
+      "ventureWebsite": "https://electroninks.com/"
+    },
+    {
+      "name": "Rapicure Solutions",
+      "sector": "Physical Sciences",
+      "ventureWebsite": "https://www.rapicuresolutions.com/"
+    },
+    {
+      "name": "Transportation Engineering Solutions and Technologies",
+      "sector": "Physical Sciences",
+      "ventureWebsite": "https://www.testsustainability.com/"
+    },
+    {
+      "name": "X-CelePrint, Ltd.",
+      "sector": "Physical Sciences",
+      "ventureWebsite": "https://x-celeprint.com/"
+    },
+    {
+      "name": "X-Display Co Technology",
+      "sector": "Physical Sciences",
+      "ventureWebsite": "https://www.xdisplay.com/"
+    },
+    {
+      "name": "Xerion Materials",
+      "sector": "Physical Sciences",
+      "ventureWebsite": "https://xerionbattery.com/"
+    },
+    {
+      "name": "Charmworks",
+      "sector": "Software & Information Technologies",
+      "ventureWebsite": "https://www.hpccharm.com/"
+    },
+    {
+      "name": "Depix",
+      "sector": "Software & Information Technologies",
+      "ventureWebsite": "https://www.depix.ai/"
+    },
+    {
+      "name": "Inspirit IoT, Inc",
+      "sector": "Software & Information Technologies",
+      "ventureWebsite": "https://inspirit-iot.com/"
+    },
+    {
+      "name": "Multicoreware",
+      "sector": "Software & Information Technologies",
+      "ventureWebsite": "https://multicorewareinc.com/"
+    },
+    {
+      "name": "Pattern Insight",
+      "sector": "Software & Information Technologies",
+      "ventureWebsite": "https://patterninsight.com/"
+    },
+    {
+      "name": "Rank Dynamics",
+      "sector": "Software & Information Technologies",
+      "ventureWebsite": "https://www.rankdynamics.com/"
+    },
+    {
+      "name": "Reconstruct, Inc",
+      "sector": "Software & Information Technologies",
+      "ventureWebsite": "https://www.reconstructinc.com/"
+    }
+  ],
+  "sourceStatus": "manual-unverified-company-identity",
+  "notes": "Names and linked sites as displayed in the official source, not proof of current licensing, capital, or legal entity status. Do not automatically publish as companies."
+}

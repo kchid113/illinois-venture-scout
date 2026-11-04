@@ -2,9 +2,16 @@ import {digest} from './ingestion.mjs';
 import {officialSourceUrl,publicVentureWebsite,trustedOfficialProfile,publishedDate} from './source-security.mjs';
 
 export const CONNECTORS=Object.freeze([
- 'research-park-1','research-park-2','research-park-3',
+ 'research-park-1','research-park-2','research-park-3','research-park-4','research-park-5',
  'research-park-news','illinois-news','otm-startups',
  'nih-reporter','usaspending','github-releases','iventure-cohorts','enterpriseworks-directory'
+]);
+
+/** Sources that publish an identifiable startup directory or named cohort.
+ * News/award/release adapters enrich known identities; they are not startup censuses. */
+export const STARTUP_CATALOG_CONNECTORS=Object.freeze([
+ 'research-park-1','research-park-2','research-park-3','research-park-4','research-park-5',
+ 'enterpriseworks-directory','iventure-cohorts','otm-startups'
 ]);
 
 export function normalizeCompanyName(name){
@@ -23,7 +30,7 @@ export function mentionsCompany(title,name){
 }
 export async function candidateStatements(candidate,observedAt){
  const {connector,externalId,sourceUrl,title,publisher,excerpt,companyName=null,companyId=null,eventDate=null,payload={}}=candidate;
- if(!CONNECTORS.includes(connector)||connector.startsWith('research-park-')&&/^research-park-[123]$/.test(connector)||connector==='github-releases')throw Error('Invalid candidate connector');
+ if(!CONNECTORS.includes(connector)||connector.startsWith('research-park-')&&/^research-park-[1-5]$/.test(connector)||connector==='github-releases')throw Error('Invalid candidate connector');
  const url=officialSourceUrl(sourceUrl,connector);
  const bounded=(v,max)=>typeof v==='string'&&v.trim().length>0&&v.length<=max;
  if(!bounded(externalId,250)||!bounded(title,350)||!bounded(publisher,180)||!bounded(excerpt,1200))
@@ -103,4 +110,26 @@ export async function newEnterpriseWorksCompany(candidate,reviewedAt){
  if(!name||name.length>130||/[\x00-\x1f<>]/.test(name)||!/^[\p{L}\p{N}]/u.test(name))throw Error('Unreviewable venture name');
  const id='enterpriseworks-'+normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70)+'-'+candidate.id.slice(0,8);
  return {companyId:id,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[id,name,official,reviewedAt,reviewedAt]}};
+}
+
+
+/**
+ * A previously unseen OTM startup requires a human creation decision and a
+ * canonical website actually linked from the official listing. The directory
+ * alone never proves university ownership, funding, or licensed IP status.
+ */
+export async function newOTMCompany(candidate,reviewedAt){
+ if(candidate.connector!=='otm-startups'||candidate.status!=='Pending'||candidate.company_id)
+  throw Error('Only unmatched pending OTM startup entries can create a venture');
+ officialSourceUrl(candidate.source_url,'otm-startups');
+ const payload=JSON.parse(candidate.payload||'{}');
+ if(payload.recordType!=='otm-startup-listing'||typeof payload.ventureWebsite!=='string')
+  throw Error('Official OTM listing has no linked venture website; identity review required');
+ const website=publicVentureWebsite(payload.ventureWebsite);
+ const name=String(candidate.company_name||'').trim();
+ if(!name||name.length>130||/[\x00-\x1f<>]/.test(name)||!/^[\p{L}\p{N}]/u.test(name))
+  throw Error('Unreviewable OTM startup name');
+ const slug=normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70);
+ const companyId='otm-'+slug+'-'+candidate.id.slice(0,8);
+ return {companyId,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[companyId,name,website,reviewedAt,reviewedAt]}};
 }

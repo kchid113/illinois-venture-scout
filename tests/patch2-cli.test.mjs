@@ -36,7 +36,7 @@ test('one unavailable provider causes a visible failed job but no skipped remain
  const found=[...r.stdout.matchAll(/MOCK_REFRESH (\{[^\n]+\})/g)].map(x=>JSON.parse(x[1]).connector);
  assert.deepEqual(found,[...SOURCE_REFRESH_ORDER]);
  assert.match(r.stderr,/iventure-cohorts: HTTP 503/);
- assert.match(r.stderr,/1\/11 refresh connector\(s\) failed/);
+ assert.ok(r.stderr.includes(`1/${SOURCE_REFRESH_ORDER.length} refresh connector(s) failed`));
  assert.ok(!r.stderr.includes(secret));
 });
 test('the CLI rejects unsupported requested source before making network calls',()=>{

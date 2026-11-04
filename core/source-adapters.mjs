@@ -1,4 +1,5 @@
 import {text} from './ingestion.mjs';
+import {parseOTMStartupCatalog} from './otm-catalog.mjs';
 import {matchCompany,mentionsCompany,normalizeCompanyName} from './source-candidates.mjs';
 import {officialSourceUrl,publicVentureWebsite,trustedOfficialProfile,publishedDate} from './source-security.mjs';
 
@@ -98,28 +99,7 @@ export function parseNewsCandidates(html,connector,companies,observedAt){
  * company rather than inventing a university IP licensing relationship.
  */
 export function parseOTMCandidates(html,companies,observedAt){
- const config=OFFICIAL_LISTINGS['otm-startups'];
- const cards=[...String(html).matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/gi)].map(x=>x[0]);
- cards.push(...[...String(html).matchAll(/<li\b[^>]*class=["'][^"']*(?:startup|portfolio|venture)[^"']*["'][^>]*>[\s\S]*?<\/li>/gi)].map(x=>x[0]));
- const result=[];
- for(const card of cards.slice(0,120)){
-  const a=card.match(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/i);
-  if(!a)continue;
-  let entry;try{entry=new URL(a[1],config.url);}catch{continue;}
-  if(entry.protocol!=='https:'||!['otm.illinois.edu','www.otm.illinois.edu'].includes(entry.hostname)||
-     entry.username||entry.password||entry.hash||entry.search)continue;
-  const title=normalizeCompanyName(text(a[2]));
-  if(title.length<4)continue;
-  const m=companies.filter(c=>normalizeCompanyName(c.name)===title);
-  if(m.length!==1)continue;
-  const company=m[0];
-  result.push({connector:'otm-startups',externalId:'otm:'+company.id,sourceUrl:config.url,
-   title:company.name+' listed in the OTM startup directory',publisher:config.publisher,
-   excerpt:'Official OTM startup listing entry identifies '+company.name+'. Verify the current IP status before approval.',
-   companyName:company.name,companyId:company.id,eventDate:null,
-   payload:{recordType:'otm-listing',listingUrl:config.url,entryUrl:entry.href},observedAt});
- }
- return [...new Map(result.map(x=>[x.externalId,x])).values()];
+ return parseOTMStartupCatalog(html,companies,observedAt);
 }
 async function postOfficialJSON(connector,payload,fetcher=fetch){
  const endpoint=validateEndpoint(OFFICIAL_API[connector],OFFICIAL_API[connector]);
@@ -199,6 +179,27 @@ export function parseIVentureCandidates(html,companies,observedAt){
    eventDate:null,payload:{recordType:'iventure-cohort',cohort,ventureWebsite},
    observedAt
   });
+ }
+ if(!candidates.length){
+  for(const match of markup.matchAll(/<ilw-accordion-panel[^>]*>([\s\S]*?)<\/ilw-accordion-panel>/gi)){
+   const block=match[1],heading=block.match(/<h3[^>]*>([\s\S]*?)<\/h3>/i);
+   const label=text(heading?.[1]||'').match(/^iVenture\s+(\d{1,2})$/i);
+   if(!label)continue;
+   const cohort=Number(label[1]);
+   for(const row of block.matchAll(/<p[^>]*>\s*<strong[^>]*>([\s\S]*?)<\/strong>([\s\S]*?)<\/p>/gi)){
+    const name=text(row[1]).trim();
+    if(name.length<3||name.length>125)continue;
+    const link=row[1].match(/href=["']([^"']+)["']/i);
+    let ventureWebsite=null;
+    try{if(link)ventureWebsite=publicVentureWebsite(link[1]);}catch{}
+    const matched=matchCompany(name,companies),description=text(row[2]).slice(0,180);
+    candidates.push({connector:'iventure-cohorts',externalId:'cohort-'+cohort+':'+normalizeCompanyName(name),
+     sourceUrl:config.url,title:name+' — iVenture cohort '+cohort,publisher:config.publisher,
+     excerpt:('Official iVenture cohort '+cohort+' listing names '+name+'. '+description).slice(0,440),
+     companyName:name,companyId:matched?.id||null,eventDate:null,
+     payload:{recordType:'iventure-cohort',cohort,ventureWebsite},observedAt});
+   }
+  }
  }
  if(!candidates.length)throw Error('iVenture cohort listing layout changed or produced no venture headings; review before import');
  return [...new Map(candidates.map(c=>[c.externalId,c])).values()];
