@@ -7,6 +7,13 @@ export const CONNECTORS=Object.freeze([
  'nih-reporter','usaspending','github-releases','iventure-cohorts','enterpriseworks-directory'
 ]);
 
+/** Sources that publish an identifiable startup directory or named cohort.
+ * News/award/release adapters enrich known identities; they are not startup censuses. */
+export const STARTUP_CATALOG_CONNECTORS=Object.freeze([
+ 'research-park-1','research-park-2','research-park-3','research-park-4','research-park-5',
+ 'enterpriseworks-directory','iventure-cohorts','otm-startups'
+]);
+
 export function normalizeCompanyName(name){
  return String(name||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
 }
@@ -103,4 +110,26 @@ export async function newEnterpriseWorksCompany(candidate,reviewedAt){
  if(!name||name.length>130||/[\x00-\x1f<>]/.test(name)||!/^[\p{L}\p{N}]/u.test(name))throw Error('Unreviewable venture name');
  const id='enterpriseworks-'+normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70)+'-'+candidate.id.slice(0,8);
  return {companyId:id,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[id,name,official,reviewedAt,reviewedAt]}};
+}
+
+
+/**
+ * A previously unseen OTM startup requires a human creation decision and a
+ * canonical website actually linked from the official listing. The directory
+ * alone never proves university ownership, funding, or licensed IP status.
+ */
+export async function newOTMCompany(candidate,reviewedAt){
+ if(candidate.connector!=='otm-startups'||candidate.status!=='Pending'||candidate.company_id)
+  throw Error('Only unmatched pending OTM startup entries can create a venture');
+ officialSourceUrl(candidate.source_url,'otm-startups');
+ const payload=JSON.parse(candidate.payload||'{}');
+ if(payload.recordType!=='otm-startup-listing'||typeof payload.ventureWebsite!=='string')
+  throw Error('Official OTM listing has no linked venture website; identity review required');
+ const website=publicVentureWebsite(payload.ventureWebsite);
+ const name=String(candidate.company_name||'').trim();
+ if(!name||name.length>130||/[\x00-\x1f<>]/.test(name)||!/^[\p{L}\p{N}]/u.test(name))
+  throw Error('Unreviewable OTM startup name');
+ const slug=normalizeCompanyName(name).replace(/\s+/g,'-').slice(0,70);
+ const companyId='otm-'+slug+'-'+candidate.id.slice(0,8);
+ return {companyId,statement:{sql:"INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)",values:[companyId,name,website,reviewedAt,reviewedAt]}};
 }

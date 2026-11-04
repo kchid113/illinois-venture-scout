@@ -5,7 +5,7 @@ import {Radar as RadarIcon,LayoutDashboard,Search,Activity,Bookmark,Columns3,Fil
 import {Dialog} from 'radix-ui';
 import {MetricInfo,Methodology} from './metric-info';
 import {METRICS,FIELD_METRICS,PROFILE_FIELDS,supportedProfileClaims} from '@/core/methodology.mjs';
-import {CONNECTORS} from '@/core/source-candidates.mjs';
+import {CONNECTORS,STARTUP_CATALOG_CONNECTORS} from '@/core/source-candidates.mjs';
 import {report,thesisFit,csv,screeningSnapshot} from '@/core/records.mjs';
 type Evidence={id:string;source_id:string;excerpt:string;url:string;title:string;publisher:string;published_at:string|null;retrieved_at:string;last_checked:string;accessibility:string;method?:string;verified_at?:string;relationship?:string;type?:string};
 type Claim={id:string;field:string;value:string;classification:string;status:string;evidence:Evidence[]};
@@ -75,11 +75,35 @@ type SourceCandidate={id:string;connector:string;source_url:string;publisher:str
 function SettingsPage({heading,local,admin,summary,reload}:{heading:(a:string,b:string,c:string,d?:React.ReactNode)=>React.ReactNode;local:boolean;admin:boolean;summary:Summary;reload:()=>Promise<void>}){
  const [status,setStatus]=useState(''),[busy,setBusy]=useState(false);
  const [connector,setConnector]=useState('research-park-1'),[candidates,setCandidates]=useState<SourceCandidate[]>([]),[reviewError,setReviewError]=useState('');
- const loadCandidates=useCallback(async()=>{if(!admin)return;const r=await request<{candidates:SourceCandidate[]}>('/api/admin/candidates');setCandidates(r.candidates);},[admin]);
- useEffect(()=>{if(!admin)return;let active=true;void request<{candidates:SourceCandidate[]}>('/api/admin/candidates').then(r=>{if(active)setCandidates(r.candidates);}).catch(e=>{if(active)setReviewError(e instanceof Error?e.message:'Review queue unavailable');});return()=>{active=false;};},[admin]);
+ const [candidatePage,setCandidatePage]=useState(1),[pendingCount,setPendingCount]=useState(0);
+ const loadCandidates=useCallback(async()=>{if(!admin)return;const r=await request<{candidates:SourceCandidate[];total:number}>('/api/admin/candidates?page='+candidatePage);setCandidates(r.candidates);setPendingCount(r.total);},[admin,candidatePage]);
+ useEffect(()=>{if(!admin)return;let active=true;void request<{candidates:SourceCandidate[];total:number}>('/api/admin/candidates?page='+candidatePage).then(r=>{if(active){setCandidates(r.candidates);setPendingCount(r.total);}}).catch(e=>{if(active)setReviewError(e instanceof Error?e.message:'Review queue unavailable');});return()=>{active=false;};},[admin,candidatePage]);
  async function runAdmin(action:string){setBusy(true);setStatus('Working…');try{const r=await request<{count:number}>('/api/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action})});setStatus(`Successfully imported ${r.count} records.`);await reload();}catch(e){setStatus(e instanceof Error?e.message:'Failed');}finally{setBusy(false);}}
  async function runRefresh(){setBusy(true);setStatus(`Checking ${connector}…`);try{const r=await request<{observed:number;imported:number;staged:number;deferred:number}>('/api/admin/refresh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({connector})});setStatus(`Observed ${r.observed}, imported ${r.imported}, queued ${r.staged} new review candidates, deferred ${r.deferred}.`);await Promise.all([reload(),loadCandidates()]);}catch(e){setStatus(e instanceof Error?e.message:'Refresh failed');}finally{setBusy(false);}}
- async function reviewCandidate(id:string,decision:'approve'|'reject'|'create'){setBusy(true);setReviewError('');try{await request('/api/admin/candidates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,decision})});await Promise.all([loadCandidates(),reload()]);setStatus(`Candidate ${decision==='approve'?'approved and cited':'rejected'}.`);}catch(e){setReviewError(e instanceof Error?e.message:'Review failed');}finally{setBusy(false);}}
+ async function runCatalogBackfill(){
+  if(!admin)return;
+  setBusy(true);setReviewError('');
+  let observed=0,imported=0,staged=0;
+  const failures:string[]=[];
+  for(const [i,source] of STARTUP_CATALOG_CONNECTORS.entries()){
+   setStatus('Checking official startup catalogs '+(i+1)+'/'+STARTUP_CATALOG_CONNECTORS.length+': '+source);
+   try{
+    const result=await request<{observed:number;imported:number;staged:number}>('/api/admin/refresh',{
+     method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({connector:source})
+    });
+    observed+=result.observed;imported+=result.imported;staged+=result.staged;
+   }catch(e){failures.push(source+': '+(e instanceof Error?e.message:'Refresh failed'));}
+  }
+  try{
+   setCandidatePage(1);
+   await Promise.all([reload(),loadCandidates()]);
+   setStatus('Catalog discovery finished: '+observed+' source entries observed, '+imported+
+    ' imported directly from Research Park, '+staged+' new review candidates. '+
+    (failures.length?'Incomplete sources: '+failures.join('; '):'All configured catalogs checked. Approve staged ventures before they appear in Discover.'));
+  }catch(e){setStatus(e instanceof Error?e.message:'Catalog refresh results unavailable');}
+  finally{setBusy(false);}
+ }
+ async function reviewCandidate(id:string,decision:'approve'|'reject'|'create'){setBusy(true);setReviewError('');try{await request('/api/admin/candidates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,decision})});await Promise.all([loadCandidates(),reload()]);setStatus(`Candidate ${decision==='approve'?'approved and cited':decision==='create'?'added after review':'rejected'}.`);}catch(e){setReviewError(e instanceof Error?e.message:'Review failed');}finally{setBusy(false);}}
  return <>{heading('WORKSPACE CONFIGURATION','Settings','Research storage, data refreshes, and operational transparency.')}
  <div className="profile-grid">
   <section className="panel padded"><h2>Research storage</h2><p>{local?'Device-local mode: notes, watchlists, and saved searches are stored in this browser.':'Signed-in mode: notes, watchlists, and saved searches are stored in your private database workspace.'}</p>
@@ -90,7 +114,9 @@ function SettingsPage({heading,local,admin,summary,reload}:{heading:(a:string,b:
   <section className="panel padded"><h2>{admin?'Administrator controls':'Data operations'}</h2><p className="muted">{admin?'Your account is authorized to refresh source data.':'An authorized administrator manages source refreshes.'}</p>
    <div className="stack"><button disabled={busy||!admin} onClick={()=>void runAdmin('refresh')}><RefreshCw size={16}/>Refresh original directory page 1</button><button disabled={busy||!admin} onClick={()=>void runAdmin('seed')}>Import reviewed initial records</button></div>
    <h3>Public-source refresh <MetricInfo metric="freshness" lastChecked={summary.lastChecked}/></h3>
-   <p className="muted">Research Park startup pages import documented tenant facts. Broader EnterpriseWorks incubator listings, iVenture cohort ventures, news, OTM and federal-award candidates remain pending until reviewed. NIH and USAspending require a separately verified recipient identity.</p>
+   <p className="muted">Research Park startup pages 1–5 import documented tenant facts. EnterpriseWorks, iVenture and OTM startup directory entries are staged for review when new. News and federal-award connectors enrich verified identities; they are not complete startup directories.</p>
+   <div className="stack"><button disabled={busy||!admin} onClick={()=>void runCatalogBackfill()}><RefreshCw size={16}/>Discover from all 8 official startup catalogs</button></div>
+   <p className="muted">This makes sequential, rate-limited requests to the configured sources. New EnterpriseWorks, iVenture and OTM startups are not published until you explicitly review them.</p>
    <div className="row" style={{flexWrap:'wrap',marginTop:10}}>
     <select aria-label="Refresh source" value={connector} disabled={busy||!admin} onChange={e=>setConnector(e.target.value)}>{CONNECTORS.map((id:string)=><option key={id} value={id}>{id}</option>)}</select>
     <button disabled={busy||!admin} onClick={()=>void runRefresh()}><RefreshCw size={16}/>Refresh selected source</button>
@@ -99,13 +125,18 @@ function SettingsPage({heading,local,admin,summary,reload}:{heading:(a:string,b:
   </section>
  </div>
  {admin&&<section className="panel padded" style={{marginTop:18}}>
-  <h2>Pending source review <span className="pill">{candidates.length}</span></h2>
-  <p className="muted">These are leads, not published facts. Approving a news mention verifies only the mention, not financing or commercial success. Unmatched EnterpriseWorks directory ventures and iVenture cohort ventures require explicit review before addition. An ecosystem connection never implies university ownership, backing, or investment.</p>
+  <h2>Pending source review <span className="pill">{pendingCount}</span></h2>
+  <div className="row" style={{flexWrap:'wrap',marginBottom:12}}>
+   <span className="muted">Page {candidatePage} of {Math.max(1,Math.ceil(pendingCount/50))} · {pendingCount} pending candidates</span>
+   <button disabled={busy||candidatePage<=1} onClick={()=>setCandidatePage(p=>Math.max(1,p-1))}>Previous page</button>
+   <button disabled={busy||candidatePage*50>=pendingCount} onClick={()=>setCandidatePage(p=>p+1)}>Next page</button>
+  </div>
+  <p className="muted">These are leads, not published facts. Approving a news mention verifies only the mention, not financing or commercial success. Unmatched EnterpriseWorks, iVenture and OTM-listed ventures require explicit review before addition. Only entries with a trusted linked identity can be created. An ecosystem connection never implies university ownership, backing, or investment.</p>
   {reviewError&&<p role="alert" className="error">{reviewError}. Apply the additive source-refresh database migration if this workspace has not been upgraded.</p>}
   {candidates.length?candidates.map(c=><div className="claim-row" key={c.id}>
    <div className="row" style={{flexWrap:'wrap'}}><strong>{c.title}</strong><span className="tag">{c.connector}</span><span className="tag">{c.company_name||'Unmatched'}</span></div>
    <p>{c.excerpt}</p><p className="muted">{c.publisher} · Observed {date(c.observed_at)} · Original event {date(c.event_date)}</p>
-   <div className="row" style={{flexWrap:'wrap'}}><a className="button" href={c.source_url} target="_blank" rel="noopener noreferrer">Read official source <ExternalLink size={14}/></a>{c.reviewUrl&&<a className="button" href={c.reviewUrl} target="_blank" rel="noopener noreferrer">Inspect venture profile <ExternalLink size={14}/></a>}<button disabled={busy||!c.company_id} onClick={()=>void reviewCandidate(c.id,'approve')}>Approve sourced claim</button>{c.canCreate&&<button disabled={busy} onClick={()=>void reviewCandidate(c.id,'create')}>{c.connector==='enterpriseworks-directory'?'Add reviewed EnterpriseWorks venture':'Add reviewed iVenture venture'}</button>}<button disabled={busy} onClick={()=>void reviewCandidate(c.id,'reject')}>Reject</button></div>
+   <div className="row" style={{flexWrap:'wrap'}}><a className="button" href={c.source_url} target="_blank" rel="noopener noreferrer">Read official source <ExternalLink size={14}/></a>{c.reviewUrl&&<a className="button" href={c.reviewUrl} target="_blank" rel="noopener noreferrer">Inspect venture profile <ExternalLink size={14}/></a>}<button disabled={busy||!c.company_id} onClick={()=>void reviewCandidate(c.id,'approve')}>Approve sourced claim</button>{c.canCreate&&<button disabled={busy} onClick={()=>void reviewCandidate(c.id,'create')}>{c.connector==='enterpriseworks-directory'?'Add reviewed EnterpriseWorks venture':c.connector==='otm-startups'?'Add reviewed OTM startup':'Add reviewed iVenture venture'}</button>}<button disabled={busy} onClick={()=>void reviewCandidate(c.id,'reject')}>Reject</button></div>
   </div>):<p className="muted">No pending candidates. New source observations will appear here after refresh.</p>}
  </section>}
  </>;

@@ -1,4 +1,5 @@
 import {text} from './ingestion.mjs';
+import {parseOTMStartupCatalog} from './otm-catalog.mjs';
 import {matchCompany,mentionsCompany,normalizeCompanyName} from './source-candidates.mjs';
 import {officialSourceUrl,publicVentureWebsite,trustedOfficialProfile,publishedDate} from './source-security.mjs';
 
@@ -98,28 +99,7 @@ export function parseNewsCandidates(html,connector,companies,observedAt){
  * company rather than inventing a university IP licensing relationship.
  */
 export function parseOTMCandidates(html,companies,observedAt){
- const config=OFFICIAL_LISTINGS['otm-startups'];
- const cards=[...String(html).matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/gi)].map(x=>x[0]);
- cards.push(...[...String(html).matchAll(/<li\b[^>]*class=["'][^"']*(?:startup|portfolio|venture)[^"']*["'][^>]*>[\s\S]*?<\/li>/gi)].map(x=>x[0]));
- const result=[];
- for(const card of cards.slice(0,120)){
-  const a=card.match(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/i);
-  if(!a)continue;
-  let entry;try{entry=new URL(a[1],config.url);}catch{continue;}
-  if(entry.protocol!=='https:'||!['otm.illinois.edu','www.otm.illinois.edu'].includes(entry.hostname)||
-     entry.username||entry.password||entry.hash||entry.search)continue;
-  const title=normalizeCompanyName(text(a[2]));
-  if(title.length<4)continue;
-  const m=companies.filter(c=>normalizeCompanyName(c.name)===title);
-  if(m.length!==1)continue;
-  const company=m[0];
-  result.push({connector:'otm-startups',externalId:'otm:'+company.id,sourceUrl:config.url,
-   title:company.name+' listed in the OTM startup directory',publisher:config.publisher,
-   excerpt:'Official OTM startup listing entry identifies '+company.name+'. Verify the current IP status before approval.',
-   companyName:company.name,companyId:company.id,eventDate:null,
-   payload:{recordType:'otm-listing',listingUrl:config.url,entryUrl:entry.href},observedAt});
- }
- return [...new Map(result.map(x=>[x.externalId,x])).values()];
+ return parseOTMStartupCatalog(html,companies,observedAt);
 }
 async function postOfficialJSON(connector,payload,fetcher=fetch){
  const endpoint=validateEndpoint(OFFICIAL_API[connector],OFFICIAL_API[connector]);

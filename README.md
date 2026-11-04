@@ -92,7 +92,7 @@ In ChatGPT's managed environment use `sites-preview start <absolute-project-dire
 ## Data ingestion and refresh
 
 ```sh
-pnpm ingest -- 3    # Fetch pages 1–3, up to a hard maximum of 5
+pnpm ingest -- 5    # Fetch all five currently listed Research Park startup pages
 pnpm seed          # Prepare SQL from reviewed data/import.json and profile-evidence.json
 ```
 
@@ -203,3 +203,21 @@ Patch 4 prepares six integrations for eligible GitHub Student Developer Pack use
 All third-party integrations are **disabled or unconnected by default**. The complete offer selection, setup instructions, which API keys remain to be supplied, limitations, and security controls are documented in [Patch 4 — GitHub Education integrations](docs/patch-4-education-pack.md).
 
 Never put API keys, Honeybadger check-in URLs, or BrowserStack access keys in GitHub source, issues, PR comments, or chat messages. Configure them in **Settings → Secrets and variables → Actions**, then enable each workflow deliberately. The hosted private ChatGPT Site is not redeployed by a GitHub branch.
+
+
+## Full-source discovery patch (review-first)
+
+The checked-in **29-company initial seed remains unchanged** until a separate,
+source-reviewed import is authorized. The new
+[`feature/full-uiuc-source-coverage` patch](docs/full-source-coverage-patch.md)
+adds Research Park startup pages 4–5, discovers OTM startups absent from the
+current database, and exposes all pending source candidates through paginated
+administrative review. It also adds an **admin-triggered full catalog discovery**
+button in Settings, covering Research Park, EnterpriseWorks, iVenture and OTM.
+
+New OTM, EnterpriseWorks and iVenture entries do not automatically become
+public company records. They need exact-identity approval or explicit reviewed
+creation with supported primary-source identity. News, NIH/USAspending awards
+and GitHub releases remain enrichment of already verified companies, not
+replacement company directories. No live production data changes happen from
+a GitHub branch or PR alone. See the patch report for rollout and limitations.

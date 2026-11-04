@@ -1,4 +1,4 @@
-import {approvalStatements,newIVentureCompany,newEnterpriseWorksCompany,normalizeCompanyName} from './source-candidates.mjs';
+import {approvalStatements,newIVentureCompany,newEnterpriseWorksCompany,newOTMCompany,normalizeCompanyName} from './source-candidates.mjs';
 import {publicVentureWebsite,trustedOfficialProfile} from './source-security.mjs';
 
 /** A typed policy error keeps HTTP status mapping out of business rules. */
@@ -38,14 +38,15 @@ export async function decideSourceCandidate(db,{id,decision,actor='administrator
   if(!companyId)throw new ReviewError('An exact company match is required before approval',422);
   verifyIdentity(candidate,existing);
  }else if(decision==='create'){
-  if(companyId||!['iventure-cohorts','enterpriseworks-directory'].includes(candidate.connector))
-   throw new ReviewError('Only unmatched official cohort/incubator records can create ventures',422);
+  if(companyId||!['iventure-cohorts','enterpriseworks-directory','otm-startups'].includes(candidate.connector))
+   throw new ReviewError('Only unmatched official cohort, incubator or OTM startup records can create ventures',422);
   let planned;
   try{planned=candidate.connector==='iventure-cohorts'?
-   await newIVentureCompany(candidate,now):await newEnterpriseWorksCompany(candidate,now);
+   await newIVentureCompany(candidate,now):candidate.connector==='enterpriseworks-directory'?
+   await newEnterpriseWorksCompany(candidate,now):await newOTMCompany(candidate,now);
   }catch(e){throw new ReviewError(String(e instanceof Error?e.message:e),422);}
   const profile=planned.statement.values[2];
-  if(candidate.connector==='iventure-cohorts')publicVentureWebsite(profile);
+  if(candidate.connector!=='enterpriseworks-directory')publicVentureWebsite(profile);
   else trustedOfficialProfile(profile);
   requireUniqueNewVenture(candidate,existing,profile);
   if(existing.some(c=>c.id===planned.companyId))throw new ReviewError('Generated company ID already exists',409);

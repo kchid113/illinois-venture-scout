@@ -12,8 +12,14 @@ async function runStatements(db,statements){
 }
 async function stageCandidate(db,candidate,observedAt){
  const statement=await candidateStatements(candidate,observedAt);
- const existing=await results(db,'SELECT id FROM source_candidates WHERE id=?',statement.id);
- if(existing.length){await db.prepare('UPDATE source_candidates SET last_checked=? WHERE id=?').bind(observedAt,statement.id).run();return false;}
+ const existing=await results(db,'SELECT id,status,company_id FROM source_candidates WHERE id=?',statement.id);
+ if(existing.length){
+  // Newly verified exact matches can attach to an earlier pending observation.
+  // Approved/rejected decisions remain immutable across repeat refreshes.
+  await db.prepare("UPDATE source_candidates SET last_checked=?,company_id=CASE WHEN status='Pending' AND company_id IS NULL THEN ? ELSE company_id END WHERE id=?")
+   .bind(observedAt,candidate.companyId||null,statement.id).run();
+  return false;
+ }
  await db.prepare(statement.sql).bind(...statement.values).run();return true;
 }
 function verifiedIdentities(rows,field){
@@ -78,7 +84,7 @@ export async function refreshConnector(db,connector,{fetcher=fetch,now=new Date(
     "SELECT DISTINCT c.id,c.company_id,c.field,c.value,c.classification,c.status,e.relationship,co.name FROM claims c JOIN evidence e ON e.claim_id=c.id JOIN companies co ON co.id=c.company_id WHERE c.field=? AND c.status='Published' AND c.classification='Verified factual' AND e.relationship='supports'",
     field),field);
    // Enrichment must never search awards by a similar-sounding company name alone.
-   for(const mapping of mappings.slice(0,5)){
+   for(const mapping of mappings){
     const c={id:mapping.company_id,name:mapping.name};
     const candidates=connector==='nih-reporter'?
      await nihCandidates(c,mapping.value,now,fetcher):
@@ -87,10 +93,10 @@ export async function refreshConnector(db,connector,{fetcher=fetch,now=new Date(
     for(const candidate of candidates){if(await stageCandidate(db,candidate,now))staged++;}
     await sleep(1200);
    }
-   if(mappings.length>5)skipped=mappings.length-5;
+
   }else if(connector==='github-releases'){
    const mappings=await results(db,
-    "SELECT DISTINCT c.id,c.company_id,c.field,c.value,c.status FROM claims c JOIN evidence e ON e.claim_id=c.id WHERE c.field='repository' AND c.status='Published' AND c.classification='Verified factual' AND e.relationship='supports' LIMIT 5");
+    "SELECT DISTINCT c.id,c.company_id,c.field,c.value,c.status FROM claims c JOIN evidence e ON e.claim_id=c.id WHERE c.field='repository' AND c.status='Published' AND c.classification='Verified factual' AND e.relationship='supports'");
    for(const mapping of mappings){
     const releases=await githubReleases({...mapping,evidence:[{source_id:'verified-identity',relationship:'supports'}]},fetcher);
     seen+=releases.length;
