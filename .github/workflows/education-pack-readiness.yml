@@ -1,0 +1,65 @@
+name: Education Pack live connection verification
+
+on:
+  pull_request:
+    paths:
+      - 'core/education-*.mjs'
+      - 'core/analytics-policy.mjs'
+      - 'components/education-analytics.tsx'
+      - 'scripts/education-readiness.mjs'
+      - 'scripts/browserstack-smoke.mjs'
+      - '.github/workflows/education-pack-readiness.yml'
+      - '.github/workflows/codecov-test-analytics.yml'
+      - 'tests/education-*.test.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ivr-education-readiness-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  credentials:
+    name: Check secrets and BrowserStack API (no mobile session)
+    # Never expose repository secrets to untrusted fork PRs.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify provider secret bindings and read-only BrowserStack account
+        env:
+          IVR_HONEYBADGER_CHECKIN_URL: ${{ secrets.IVR_HONEYBADGER_CHECKIN_URL }}
+          IVR_BROWSERSTACK_USERNAME: ${{ secrets.IVR_BROWSERSTACK_USERNAME }}
+          IVR_BROWSERSTACK_ACCESS_KEY: ${{ secrets.IVR_BROWSERSTACK_ACCESS_KEY }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: node scripts/education-readiness.mjs
+
+  codecov-connection:
+    name: Upload real JUnit results to Codecov
+    needs: credentials
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Generate genuine full-suite JUnit results
+        run: |
+          mkdir -p artifacts
+          node --test --test-reporter=junit --test-reporter-destination=artifacts/junit.xml tests/*.test.mjs
+      - name: Upload Codecov test results with repository token
+        uses: codecov/codecov-action@v5
+        with:
+          report_type: test_results
+          files: ./artifacts/junit.xml
+          disable_search: true
+          fail_ci_if_error: true
+          disable_telem: true
+          token: ${{ secrets.CODECOV_TOKEN }}
