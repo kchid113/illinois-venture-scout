@@ -5,7 +5,7 @@
  * query string, or send it to any host other than Honeybadger's API.
  */
 export function honeybadgerCheckinUrl(value){
- if(typeof value!=='string'||!value)throw Error('Honeybadger check-in URL is not configured');
+ if(typeof value!=='string'||!value||value!==value.trim())throw Error('Honeybadger check-in URL is not configured or contains whitespace');
  let url;try{url=new URL(value);}catch{throw Error('Invalid Honeybadger check-in URL');}
  if(url.protocol!=='https:'||
     !['api.honeybadger.io','eu-api.honeybadger.io'].includes(url.hostname)||
