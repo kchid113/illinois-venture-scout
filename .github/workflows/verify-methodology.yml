@@ -16,7 +16,7 @@ jobs:
     name: Unit and SQLite provenance checks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -27,7 +27,7 @@ jobs:
     name: Typecheck, lint and production build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 11.25.0
@@ -53,7 +53,7 @@ jobs:
       IVR_ACCESS_TEAM_DOMAIN: 'https://test-venture.cloudflareaccess.com'
       IVR_ACCESS_AUD: 'test_audience_policy_1234567890'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 11.25.0
