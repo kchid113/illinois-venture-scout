@@ -67,3 +67,12 @@ jobs:
         run: pnpm exec vite build --config vite.cloudflare.config.ts
       - name: Check standalone build without any Cloudflare credentials
         run: node scripts/cloudflare-build-check.mjs
+      - name: Apply actual versioned migrations to disposable local D1
+        run: pnpm exec wrangler d1 migrations apply DB --local --config dist/server/wrangler.json --persist-to .wrangler/state
+      - name: Generate reviewed SQL and apply idempotent local seed twice
+        run: |
+          pnpm seed
+          pnpm exec wrangler d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file data/seed.sql
+          pnpm exec wrangler d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file data/seed.sql
+      - name: Verify real D1 query and all reviewed source counts
+        run: node scripts/cloudflare-local-db-check.mjs
