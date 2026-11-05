@@ -3,7 +3,7 @@ import {useEffect,useState} from 'react';
 import {ArrowRight,ArrowUpRight,Check,ClipboardList,ExternalLink,Mail,ShieldCheck,UserRound,Link2} from 'lucide-react';
 import {founderOutreach,parsePrivateContact,validatePrivateContact} from '@/core/founder-outreach.mjs';
 
-type Evidence={id:string;source_id:string;relationship?:string;url:string;publisher:string;title:string;last_checked?:string;excerpt:string};
+type Evidence={id:string;source_id:string;relationship?:string;url:string;publisher:string;title:string;published_at:string|null;retrieved_at:string;last_checked:string;accessibility:string;excerpt:string};
 type Claim={id:string;field:string;value:string;status:string;classification:string;evidence:Evidence[]};
 type Company={id:string;name:string;profile?:string;updated_at:string;claims:Claim[];signals?:{id:string;description:string;event_date:string|null}[]};
 type Props={company:Company;privateContact?:string;onSaveContact:(value:string)=>Promise<boolean>;citation:(c?:Claim)=>React.ReactNode;onSources:()=>void;onSignals:()=>void};
