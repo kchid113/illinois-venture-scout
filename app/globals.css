@@ -8,3 +8,208 @@
 .profile-facts>div{min-width:0;overflow-wrap:anywhere}
 .profile-facts small{display:inline-block;margin-left:5px;color:#768996;font-size:10px}
 .gaps .tiny-dot{background:#4c9185}
+
+
+/* -------------------------------------------------------------------------
+   Illinois Venture Radar — Option A / UIUC-inspired investor workspace
+   Brand tokens: Illinois navy #13294b, Illinois orange #ff5f05.
+   ------------------------------------------------------------------------- */
+:root{
+ --navy:#13294b;--navy-deep:#091b36;--navy-soft:#243e65;
+ --orange:#ff5f05;--orange-hover:#e95300;
+ --teal:#e85911;--muted:#677489;--border:#e3e9f1;--bg:#f5f7fb;
+}
+body{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;color:#1d2c44;line-height:1.58;background:var(--bg);-webkit-font-smoothing:antialiased}
+h1,h2,h3{color:var(--navy);font-weight:700}
+h1{font-size:32px;letter-spacing:-1.2px;line-height:1.18}
+h2{font-size:17px;letter-spacing:-.35px}
+button,.button{border-radius:9px;border-color:#dce4ee;color:#183052;font-weight:600;min-height:37px;transition:background .15s,border-color .15s,color .15s,transform .15s}
+button:hover,.button:hover{background:#f3f6fc;border-color:#c5d3e4;color:var(--navy)}
+.primary,.button.primary{background:var(--orange);color:#fff;border-color:var(--orange);box-shadow:0 4px 12px rgba(255,95,5,.12)}
+.primary:hover,.button.primary:hover{background:var(--orange-hover);border-color:var(--orange-hover);color:#fff}
+input,select,textarea{border-radius:9px;border-color:#d9e3ef}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:3px solid rgba(255,95,5,.42);outline-offset:2px}
+.sidebar{width:248px;background:linear-gradient(165deg,#091b36 0%,#13294b 55%,#0b2042 100%);border-right:1px solid #1b365f;padding:27px 16px 0;color:#e9f0fc}
+.brand{color:#fff;font-size:20px;padding:0 8px;gap:11px}
+.brandmark.illinois-i{background:transparent;border:2px solid #f7ede6;box-shadow:inset 0 0 0 2px var(--orange);color:var(--orange);font-family:Georgia,serif;font-weight:900;font-size:31px;padding:0;width:38px;height:43px;display:flex;align-items:center;justify-content:center;line-height:1;border-radius:3px;text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff}
+.brand-sub{font-size:10px;letter-spacing:1.45px;color:#c9d7e8}
+.workspace-label{color:#9bacbf;margin-top:32px;margin-bottom:18px}
+.workspace-label .tiny-dot{background:var(--orange)}
+.nav-link{color:#c5d4e7;border-radius:8px;font-size:13px;padding:11px 12px;margin:3px 0}
+.nav-link:hover{background:rgba(255,255,255,.09);color:#fff}
+.nav-link.active{background:var(--orange);color:#fff}
+.nav-link.active svg{stroke:#fff}
+.nav-count{background:#294268;color:#f2f6fb}
+.sidebar .nav-count{background:rgba(255,255,255,.18);color:#fff}
+.method-card{background:rgba(255,255,255,.06);border-color:#28466c;color:#d4dfed}
+.method-card strong{color:#fff}
+.method-card p{color:#b4c4d7}
+.method-card a{color:#ffb47c}
+.account{border-top-color:#2b4063;color:#ebf2fb}
+.account small{color:#a8b8ce}
+.avatar{background:#2d466b;color:#f4f7fb;border-color:#45648f}
+.main-shell{margin-left:248px}
+.topbar{height:70px;background:#fff;color:#8390a3;border-color:#e3e9f1}
+.topbar strong{font-weight:650;color:var(--navy)}
+.live-label .tiny-dot{background:var(--orange)}
+main{padding-top:28px}
+.panel{border:1px solid var(--border);border-radius:13px;box-shadow:0 2px 12px rgba(19,41,75,.035)}
+.panel-heading a,.strong,.company-name a,.saved-search{color:var(--navy)}
+.panel-heading a:hover,.company-name a:hover{color:var(--orange)}
+.pill,.tag{border-radius:6px}
+.tag{background:#f0f4fa;border-color:#e0e9f6;color:#294469}
+.tag.amber{background:#fff3e9;border-color:#ffdac2;color:#b74a0d}
+.eyebrow{letter-spacing:1.9px;color:#e45d17;font-weight:750}
+.trust-banner{background:#fff9f4;border-color:#ffdfc9;color:#7c513c;border-radius:10px}
+.trust-banner strong{color:#813f17}
+.trust-banner a{color:#bb4807}
+.metric{border-radius:11px;border-color:var(--border);padding:21px 24px}
+.metric strong{font-size:32px;font-weight:750;color:var(--navy)}
+.metric svg{color:var(--orange)}
+.metric>div{color:#64778f}
+.tiny-dot{background:var(--orange)}
+.unknown-dot{border-color:#c8d3e1}
+.bar-track>div{background:var(--orange)}
+.source-chip{background:#fff1e9;border-color:#ffdcc4;color:#a6450a}
+.icon-button.saved{color:var(--orange)}
+.tabs .active{color:var(--orange);border-bottom:3px solid var(--orange)}
+.profile-heading h1{font-size:34px}
+.profile-heading{align-items:center}
+.profile-actions .contact-jump{background:var(--orange);border-color:var(--orange);color:#fff}
+.profile-actions .contact-jump:hover{background:var(--orange-hover);color:#fff}
+.monogram.color-0{background:#fff1e5;color:#c44e04}
+.monogram.color-1{background:#e6effa;color:#1d4b8e}
+.monogram.color-2{background:#edf2fa;color:#2b4568}
+.monogram.color-3{background:#fff1e5;color:#c44e04}
+.monogram.color-4{background:#e7edf8;color:#36588e}
+.evidence-count .tiny-dot{background:var(--orange)}
+.evidence-panel .publisher .square-icon{color:var(--orange)}
+
+/* Option A hero: a single decisive call-to-action and illustrated campus dome. */
+.ivr-hero{min-height:420px;position:relative;isolation:isolate;overflow:hidden;margin-bottom:21px;border-radius:17px;background:radial-gradient(ellipse at 81% 89%,rgba(255,95,5,.24),transparent 48%),linear-gradient(112deg,#0b1e3e 0%,#122f57 61%,#173c69 100%);box-shadow:0 13px 32px rgba(13,36,69,.14);color:#fff;display:flex;align-items:stretch}
+.ivr-hero::after{content:"";position:absolute;right:-66px;top:-140px;width:430px;height:430px;border:1px solid rgba(255,127,44,.12);border-radius:50%;pointer-events:none}
+.ivr-hero-copy{position:relative;z-index:2;width:65%;max-width:745px;padding:47px 44px 29px}
+.ivr-hero-eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:2.1px;color:#e5edfa;font-weight:700}
+.hero-accent-line{height:2px;width:24px;background:var(--orange)}
+.ivr-hero h1{color:#fff;font-weight:800;font-size:clamp(32px,3.8vw,54px);line-height:1.11;letter-spacing:-2px;max-width:670px;margin:24px 0 15px}
+.ivr-hero h1 span{color:var(--orange)}
+.ivr-hero-copy>p{color:#d9e5f4;font-size:14px;line-height:1.75;max-width:520px}
+.ivr-hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:25px 0 34px}
+.ivr-hero-actions .button{padding:12px 18px;min-height:46px;font-size:12px}
+.ivr-hero-actions .hero-secondary{color:#fff;border-color:#8295b2;background:rgba(255,255,255,.035)}
+.ivr-hero-actions .hero-secondary:hover{background:rgba(255,255,255,.12);border-color:#fff;color:#fff}
+.ivr-hero-features{display:flex;align-items:center;gap:22px;border-top:1px solid rgba(255,255,255,.17);padding-top:17px}
+.ivr-hero-features>span{display:grid;grid-template-columns:20px auto;column-gap:8px;align-items:center;font-weight:750;font-size:12px;color:#fff}
+.ivr-hero-features svg{color:#ff8d42;grid-row:span 2}
+.ivr-hero-features small{grid-column:2;color:#b5c8df;font-size:10px}
+.illinois-hero-art{position:absolute;z-index:1;right:-5%;bottom:-5px;width:52%;height:auto;max-height:100%;pointer-events:none;filter:drop-shadow(0 10px 17px rgba(0,0,0,.2))}
+
+/* More complete, evidence-linked VC company pages. */
+.company-overview{display:flex;flex-direction:column;gap:18px;margin-bottom:16px}
+.overview-intro-grid{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(330px,1fr);gap:18px;align-items:stretch}
+.company-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.company-footer-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);gap:18px}
+.company-overview .panel{overflow:visible}
+.company-overview .padded{padding:28px}
+.company-overview h2{font-size:19px;line-height:1.3;margin:0 0 14px}
+.company-overview h3{font-size:13px;color:var(--navy)}
+.company-overview .eyebrow{margin-bottom:12px}
+.company-story-text{font-size:15px;color:#30425b;line-height:1.85;max-width:760px;margin:5px 0 13px}
+.company-story .company-key-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:25px}
+.company-key-facts .deep-fact{border-radius:10px;background:#f4f7fb;padding:13px;min-width:0}
+.company-key-facts .deep-fact-label{font-size:10px}
+.company-story .technology-note{border-left:3px solid var(--orange);margin-top:23px;padding:2px 0 2px 14px}
+.technology-note strong{color:var(--navy)}
+.technology-note p{color:#56677d;margin-top:4px}
+.deep-fact{display:block;min-width:0}
+.deep-fact-label{display:block;color:#708097;font-size:11px;font-weight:700;letter-spacing:.25px;margin-bottom:5px}
+.deep-fact-entry{font-size:12px;line-height:1.65;overflow-wrap:anywhere}
+.deep-fact-entry strong{color:#263b58;font-weight:650}
+.deep-fact-entry small{font-size:10px;color:#8b96a6;margin-top:3px}
+.unknown-value{color:#8692a3;font-size:12px;font-weight:500;font-style:italic}
+.deep-section .deep-fact{border-top:1px solid #ecf0f5;padding:14px 0}
+.deep-section .deep-fact:first-of-type{margin-top:8px}
+.deep-section .deep-fact:last-child{padding-bottom:0}
+.fact-note{font-size:11px;color:#7e8b9d;margin-top:15px;line-height:1.7}
+.outreach-heading>p{color:#7a889b;font-size:12px;max-width:480px;line-height:1.65;margin-bottom:15px}
+.founder-contact-panel{background:linear-gradient(165deg,#fff 50%,#fff9f4 100%);border-top:3px solid var(--orange)}
+.founder-contact-panel .outreach-heading h2{margin-bottom:9px}
+.founder-names{border-left:3px solid var(--orange);padding-left:12px;margin:14px 0}
+.founder-names>div{margin-bottom:6px}
+.contact-action-stack{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.contact-action-stack .button{min-width:0;min-height:40px;font-size:11px;text-align:left;white-space:normal}
+.contact-action-stack .contact-direct{background:var(--orange);color:white;border-color:var(--orange)}
+.contact-action-stack .contact-direct:hover{background:var(--orange-hover);color:white}
+.contact-unverified{color:#68798f;font-size:11px;line-height:1.65;margin:7px 0}
+.private-contact{border-top:1px solid #e9e0d8;margin-top:20px;padding-top:16px}
+.private-contact .private-contact-header{justify-content:space-between;align-items:flex-start;gap:12px}
+.private-contact h3{margin:0 0 3px}
+.private-contact-header small{font-size:10px;color:#8290a3;line-height:1.6}
+.private-contact-header button{padding:6px 9px;font-size:10px;min-height:31px}
+.private-contact-summary{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:13px}
+.private-contact-summary a{display:inline-flex;align-items:center;gap:6px;color:#b14f14;text-decoration:underline;overflow-wrap:anywhere}
+.private-contact-summary p{font-size:11px;white-space:pre-wrap;color:#58697f}
+.private-contact-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+.private-contact-form label{display:flex;flex-direction:column;align-items:stretch;gap:4px;font-size:11px;font-weight:650;color:#52657b}
+.private-contact-form label:nth-child(3),.private-contact-form label:nth-child(4){grid-column:1/-1}
+.private-contact-form input,.private-contact-form textarea{width:100%;max-width:100%;font-size:12px}
+.private-contact-form .primary,.private-contact-form .error{grid-column:1/-1}
+.private-contact-form .primary{justify-self:start}
+.source-summary-number{font-size:32px;font-weight:800;color:var(--navy);margin-bottom:14px;line-height:1.1}
+.source-summary-number span{display:block;color:#78869a;font-size:11px;font-weight:500;margin-top:5px}
+.evidence-summary-link{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px solid #edf0f5;color:#2a4465;font-size:11px}
+.evidence-summary-link>span{flex:1;min-width:0}
+.evidence-summary-link strong{display:block;font-size:11px}
+.evidence-summary-link small{overflow-wrap:anywhere;font-size:10px}
+.evidence-summary-link>svg:first-child{color:var(--orange)}
+.evidence-summary-link:hover{color:var(--orange)}
+.evidence-summary .full{margin-top:15px}
+.diligence-gaps{padding:0;list-style:none;margin:17px 0 0}
+.diligence-gaps li{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid #edf0f5;flex-wrap:wrap}
+.diligence-gaps li>span:nth-child(2){flex:1;color:#314962;font-weight:650}
+.diligence-gaps small{font-size:10px}
+.gap-dot{width:9px;height:9px;border-radius:50%;border:2px solid #c5d0de;background:#fff;flex-shrink:0}
+.gap-dot.resolved{border-color:#ff5f05;background:#ff5f05}
+.next-steps p{color:#65778e;margin:6px 0 19px;font-size:12px;line-height:1.8}
+.next-steps .full{margin:10px 0}
+.full{width:100%}
+@media(max-width:1250px){
+ .overview-intro-grid{grid-template-columns:1fr}
+ .company-story .company-key-facts{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .ivr-hero-copy{width:73%}
+ .illinois-hero-art{opacity:.52}
+}
+@media(max-width:1150px){
+ .sidebar{width:214px}
+ .main-shell{margin-left:214px}
+ .ivr-hero-copy{padding:37px 31px 27px}
+ .ivr-hero h1{font-size:clamp(29px,4vw,42px)}
+ .ivr-hero-features{gap:12px}
+}
+@media(max-width:850px){
+ .sidebar{width:248px}
+ .main-shell{margin-left:0}
+ .company-detail-grid,.company-footer-grid{grid-template-columns:1fr}
+ .ivr-hero-copy{width:87%;max-width:none}
+ .illinois-hero-art{right:-20%;width:65%;opacity:.28}
+}
+@media(max-width:550px){
+ .ivr-hero{min-height:auto;border-radius:12px}
+ .ivr-hero-copy{width:100%;padding:31px 23px 20px}
+ .ivr-hero h1{font-size:32px;letter-spacing:-1.3px}
+ .ivr-hero-eyebrow{font-size:8px;letter-spacing:1.1px}
+ .ivr-hero-copy>p{font-size:12px}
+ .ivr-hero-actions{margin:22px 0}
+ .ivr-hero-features{gap:12px;justify-content:space-between;flex-wrap:wrap}
+ .ivr-hero-features small{display:none}
+ .ivr-hero-features>span{font-size:10px}
+ .illinois-hero-art{width:90%;right:-37%;opacity:.16}
+ .company-story .company-key-facts{grid-template-columns:1fr}
+ .company-overview .padded{padding:20px}
+ .overview-intro-grid{grid-template-columns:minmax(0,1fr)}
+ .private-contact-form{grid-template-columns:1fr}
+ .private-contact-form label{grid-column:1/-1}
+ .profile-heading{align-items:flex-start}
+ .profile-actions{width:100%;margin-left:0}
+ .profile-actions .contact-jump{flex:1}
+}
