@@ -1,5 +1,5 @@
 'use client';
-import {useEffect,useState} from 'react';
+import {useState} from 'react';
 import {ArrowRight,ArrowUpRight,Check,ClipboardList,ExternalLink,Mail,ShieldCheck,UserRound,Link2} from 'lucide-react';
 import {founderOutreach,parsePrivateContact,validatePrivateContact} from '@/core/founder-outreach.mjs';
 
@@ -27,11 +27,10 @@ function ContactPanel({company,privateValue,onSave,citation}:{company:Company;pr
  const [draft,setDraft]=useState(empty);
  const [editing,setEditing]=useState(false),[saving,setSaving]=useState(false),[error,setError]=useState('');
  const privateRecord=parsePrivateContact(privateValue);
- useEffect(()=>{
-  const previous=parsePrivateContact(privateValue);
-  setDraft(previous||{name:'',email:'',profile:'',notes:''});
-  setEditing(false);setError('');
- },[privateValue,company.id]);
+ const toggleEdit=()=>{
+  if(!editing){setDraft(privateRecord||empty);setError('');}
+  setEditing(!editing);
+ };
  async function persist(){
   setError('');setSaving(true);
   try{
@@ -68,7 +67,7 @@ function ContactPanel({company,privateValue,onSave,citation}:{company:Company;pr
   <div className="private-contact">
    <div className="row private-contact-header">
     <div><h3>Your private contact book</h3><small>Saved only in your research workspace. Analyst-entered, not a public claim.</small></div>
-    <button onClick={()=>setEditing(!editing)}>{editing?'Close':'Add / edit contact'}</button>
+    <button onClick={toggleEdit}>{editing?'Close':'Add / edit contact'}</button>
    </div>
    {privateRecord&&!editing&&<div className="private-contact-summary">
     {privateRecord.name&&<strong>{privateRecord.name}</strong>}
