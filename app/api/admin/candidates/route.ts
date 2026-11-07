@@ -1,13 +1,14 @@
 import {NextRequest,NextResponse} from 'next/server';
 import {z} from 'zod';
 import {isAdmin} from '@/lib/admin';
+import {getInvestorUser} from '@/lib/auth';
 import {all,database} from '@/lib/radar';
 import {decideSourceCandidate,ReviewError} from '@/core/review-service.mjs';
 import {publicVentureWebsite,trustedOfficialProfile} from '@/core/source-security.mjs';
 export const dynamic='force-dynamic';
 
 export async function GET(req:NextRequest){
- if(!await isAdmin(req))return NextResponse.json({error:'Administrator authorization required'},{status:401});
+ if(!await isAdmin())return NextResponse.json({error:'Administrator authorization required'},{status:401});
  const requested=Number(req.nextUrl.searchParams.get('page')||'1');
  if(!Number.isSafeInteger(requested)||requested<1||requested>10000)
   return NextResponse.json({error:'Invalid review page'},{status:400});
@@ -34,12 +35,14 @@ export async function GET(req:NextRequest){
 
 const body=z.object({id:z.string().regex(/^[a-f0-9]{64}$/),decision:z.enum(['approve','reject','create'])}).strict();
 export async function POST(req:NextRequest){
- if(!await isAdmin(req))return NextResponse.json({error:'Administrator authorization required'},{status:401});
- if(req.headers.has('origin')&&req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});
+ if(!await isAdmin())return NextResponse.json({error:'Administrator authorization required'},{status:401});
+ if(req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});
+ const actor=await getInvestorUser();
+ if(!actor)return NextResponse.json({error:'Sign in required'},{status:401});
  const parsed=body.safeParse(await req.json().catch(()=>null));
  if(!parsed.success)return NextResponse.json({error:'Invalid review action'},{status:400});
  try{
-  return NextResponse.json(await decideSourceCandidate(database(),{id:parsed.data.id,decision:parsed.data.decision}));
+  return NextResponse.json(await decideSourceCandidate(database(),{id:parsed.data.id,decision:parsed.data.decision,actor:actor.userId}));
  }catch(error){
   const status=error instanceof ReviewError?error.status:500;
   return NextResponse.json({error:error instanceof Error?error.message:'Review failed'},{status});

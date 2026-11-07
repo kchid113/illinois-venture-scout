@@ -4,15 +4,15 @@ export async function recordStatements(r) {
  safeUrl(r.sourceUrl);safeUrl(r.profile);if(!r.slug||!r.name||!r.retrievedAt)throw Error('Invalid record');
  const s=await digest(r.sourceUrl), now=r.retrievedAt,hash=r.contentHash||await digest(JSON.stringify({...r,retrievedAt:undefined}));const ops=[];
  const add=(sql,...values)=>ops.push({sql,values});
- add('INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET updated_at=MAX(companies.updated_at,excluded.updated_at)',r.slug,r.name,r.profile,now,now);
+ add('INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET updated_at=GREATEST(companies.updated_at,excluded.updated_at)',r.slug,r.name,r.profile,now,now);
  add('INSERT INTO sources(id,url,title,publisher,type,retrieved_at,last_checked,hash,published_at) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(url) DO UPDATE SET last_checked=excluded.last_checked,hash=excluded.hash,accessibility=\'Accessible\'',s,r.sourceUrl,r.title,r.publisher,'University directory',now,now,hash,r.publicationDate);
- add('INSERT OR IGNORE INTO source_history(id,source_id,hash,observed_at,summary) VALUES(?,?,?,?,?)',await digest(s+hash),s,hash,now,`Observed source version: ${r.title}`);
+ add('INSERT INTO source_history(id,source_id,hash,observed_at,summary) VALUES(?,?,?,?,?) ON CONFLICT DO NOTHING',await digest(s+hash),s,hash,now,`Observed source version: ${r.title}`);
  const fields=[['name',r.name,'Verified factual'],['affiliation',r.affiliation,'Verified factual'],['description',r.description,'Company-reported'],['sector',r.sector,'Verified factual'],['website',r.website,'Verified factual']];
  for(const [field,value,classification] of fields){if(!value)continue;const id=await digest(r.slug+field+value);
- add("INSERT OR IGNORE INTO claims(id,company_id,field,value,classification,status,first_observed,verified_at) VALUES(?,?,?,?,?,'Published',?,?)",id,r.slug,field,value,classification,now,now);
+ add("INSERT INTO claims(id,company_id,field,value,classification,status,first_observed,verified_at) VALUES(?,?,?,?,?,'Published',?,?) ON CONFLICT DO NOTHING",id,r.slug,field,value,classification,now,now);
  add("INSERT INTO evidence(id,claim_id,source_id,excerpt,method,verified_at) VALUES(?,?,?,?,?,?) ON CONFLICT(claim_id,source_id) DO UPDATE SET verified_at=excluded.verified_at",await digest(id+s),id,s,field==='description'?value.slice(0,180):r.excerpt,'Directory taxonomy / bounded text extraction',now);
  add("UPDATE claims SET status='Conflicting' WHERE company_id=? AND field=? AND status IN ('Published','Conflicting') AND (SELECT count(*) FROM claims WHERE company_id=? AND field=? AND status IN ('Published','Conflicting'))>1",r.slug,field,r.slug,field);
- if(field==='affiliation')add('INSERT OR IGNORE INTO affiliations(id,company_id,claim_id,university,type,status) VALUES(?,?,?,?,?,?)',id,r.slug,id,'University of Illinois Urbana-Champaign',value,'Source-backed');
+ if(field==='affiliation')add('INSERT INTO affiliations(id,company_id,claim_id,university,type,status) VALUES(?,?,?,?,?,?) ON CONFLICT DO NOTHING',id,r.slug,id,'University of Illinois Urbana-Champaign',value,'Source-backed');
  }
  return ops;
 }

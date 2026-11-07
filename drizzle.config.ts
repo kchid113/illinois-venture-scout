@@ -1,7 +1,7 @@
-import { defineConfig } from "drizzle-kit";
-
+import {defineConfig} from 'drizzle-kit';
 export default defineConfig({
-  out: "./drizzle",
-  schema: "./db/schema.ts",
-  dialect: "sqlite",
+ schema:'./db/schema.ts',
+ out:'./supabase/drizzle-generated',
+ dialect:'postgresql',
+ dbCredentials:{url:process.env.DATABASE_URL||'postgres://localhost:5432/illinois_venture_radar'}
 });
