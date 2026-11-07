@@ -1,11 +1,12 @@
-import test from 'node:test';
+import test,{after} from 'node:test';
 import assert from 'node:assert/strict';
 import postgres from 'postgres';
-import {database,all,parameterize} from '../db/postgres.mjs';
+import {database,all,parameterize,closeDatabase} from '../db/postgres.mjs';
 import {decideSourceCandidate} from '../core/review-service.mjs';
 const uri=process.env.DATABASE_URL;
 const integrated=(name,fn)=>test(name,{skip:!uri},fn);
 const sql=uri?postgres(uri,{max:1,prepare:false,ssl:false}):null;
+after(async()=>{if(sql)await sql.end();await closeDatabase();});
 const uuidA='6d6e901a-91e1-4af7-aee4-1dd56349e191';
 const uuidB='ee087cac-d3aa-4a68-b4b2-f3abac7df179';
 test('Postgres placeholders do not transform question marks in quoted source text',()=>{
@@ -39,7 +40,7 @@ integrated('database batch rolls back all writes when a later statement fails',a
   d.prepare('INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)').bind(key,'Test fixture','https://fixture.invalid','now','now'),
   d.prepare('INSERT INTO companies(id,name,profile,first_observed,updated_at) VALUES(?,?,?,?,?)').bind(key,'Duplicate','https://another.invalid','now','now')
  ]));
- assert.equal((await all('SELECT count(*) n FROM companies WHERE id=?',key))[0].n,0);
+ assert.equal(Number((await all('SELECT count(*) n FROM companies WHERE id=?',key))[0].n),0);
 });
 integrated('Supabase workspace policies protect each investor at the actual database boundary',async()=>{
  await sql.unsafe('INSERT INTO auth.users(id) VALUES($1),($2) ON CONFLICT DO NOTHING',[uuidA,uuidB]);
