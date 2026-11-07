@@ -12,7 +12,7 @@ import profiles from '@/data/profile-evidence.json';
 export const dynamic='force-dynamic';
 export async function GET(req:NextRequest){if(!await isAdmin())return NextResponse.json({error:'Administrator token required'},{status:401});return NextResponse.json({jobs:await all('SELECT * FROM ingestion_jobs ORDER BY started_at DESC'),review:await all("SELECT * FROM claims WHERE status IN ('Conflicting','Pending')"),broken:await all("SELECT * FROM sources WHERE accessibility!='Accessible'"),audit:await all('SELECT * FROM audit ORDER BY created_at DESC LIMIT 50')});}
 const input=z.object({action:z.enum(['seed','refresh','reject','github']),claimId:z.string().max(100).optional()});
-export async function POST(req:NextRequest){if(!await isAdmin())return NextResponse.json({error:'Administrator token required'},{status:401});if(req.headers.has('origin')&&req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});const parsed=input.safeParse(await req.json());if(!parsed.success)return NextResponse.json({error:'Invalid request'},{status:400});const {action,claimId}=parsed.data;
+export async function POST(req:NextRequest){if(!await isAdmin())return NextResponse.json({error:'Administrator token required'},{status:401});if(req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});const parsed=input.safeParse(await req.json());if(!parsed.success)return NextResponse.json({error:'Invalid request'},{status:400});const {action,claimId}=parsed.data;
  if(action==='refresh'){
   try{
    const result=await refreshConnector(database(),'research-park-1');
