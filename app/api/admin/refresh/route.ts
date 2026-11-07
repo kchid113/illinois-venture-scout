@@ -8,7 +8,7 @@ export const dynamic='force-dynamic';
 const schema=z.object({connector:z.enum(CONNECTORS as [string,...string[]])}).strict();
 export async function POST(req:NextRequest){
  if(!await isAdmin())return NextResponse.json({error:'Administrator authorization required'},{status:401});
- if(req.headers.has('origin')&&req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});
+ if(req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});
  const parsed=schema.safeParse(await req.json().catch(()=>null));
  if(!parsed.success)return NextResponse.json({error:'Specify an allowed public data source'},{status:400});
  try{return NextResponse.json(await refreshConnector(database(),parsed.data.connector));}
