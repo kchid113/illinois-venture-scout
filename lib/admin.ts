@@ -1,3 +1,10 @@
-import {env} from 'cloudflare:workers';
-import {getChatGPTUser} from '@/app/chatgpt-auth';
-export async function isAdmin(request?:Request){const config=env as Cloudflare.Env & {ADMIN_TOKEN?:string;ADMIN_EMAIL?:string};if(request&&config.ADMIN_TOKEN&&config.ADMIN_TOKEN.length>=32&&request.headers.get('authorization')===`Bearer ${config.ADMIN_TOKEN}`)return true;const user=await getChatGPTUser();return !!user&&!!config.ADMIN_EMAIL&&user.email.toLowerCase()===config.ADMIN_EMAIL.toLowerCase();}
+import {getInvestorUser} from '@/lib/auth';
+import {all} from '@/lib/radar';
+
+/** Roles are assigned only by the database owner in Supabase; never by email or JWT metadata. */
+export async function isAdmin(){
+ const user=await getInvestorUser();
+ if(!user)return false;
+ const rows=await all('SELECT role FROM investor_roles WHERE user_id=?',user.userId);
+ return rows[0]?.role==='admin';
+}

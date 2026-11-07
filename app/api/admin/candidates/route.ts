@@ -7,7 +7,7 @@ import {publicVentureWebsite,trustedOfficialProfile} from '@/core/source-securit
 export const dynamic='force-dynamic';
 
 export async function GET(req:NextRequest){
- if(!await isAdmin(req))return NextResponse.json({error:'Administrator authorization required'},{status:401});
+ if(!await isAdmin())return NextResponse.json({error:'Administrator authorization required'},{status:401});
  const requested=Number(req.nextUrl.searchParams.get('page')||'1');
  if(!Number.isSafeInteger(requested)||requested<1||requested>10000)
   return NextResponse.json({error:'Invalid review page'},{status:400});
@@ -34,7 +34,7 @@ export async function GET(req:NextRequest){
 
 const body=z.object({id:z.string().regex(/^[a-f0-9]{64}$/),decision:z.enum(['approve','reject','create'])}).strict();
 export async function POST(req:NextRequest){
- if(!await isAdmin(req))return NextResponse.json({error:'Administrator authorization required'},{status:401});
+ if(!await isAdmin())return NextResponse.json({error:'Administrator authorization required'},{status:401});
  if(req.headers.has('origin')&&req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});
  const parsed=body.safeParse(await req.json().catch(()=>null));
  if(!parsed.success)return NextResponse.json({error:'Invalid review action'},{status:400});

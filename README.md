@@ -1,239 +1,88 @@
 # Illinois Venture Radar
 
-**VC discovery and evidence-backed diligence for startups across the University of Illinois Urbana-Champaign ecosystem.**
+An independent, source-backed UIUC startup discovery and VC diligence application.
 
-Illinois Venture Radar is an **independent VC research tool** for discovering companies across the University of Illinois Urbana-Champaign (UIUC) entrepreneurial ecosystem. The mission is **not** to promote university-owned, university-backed, or officially endorsed companies. Instead, it helps investors find and investigate promising ventures wherever a sourced UIUC ecosystem connection exists: Research Park, student or alumni founders, EnterpriseWorks Incubator, iVenture Accelerator, independent startup teams, or businesses supported by university research, technology licensing, and other programs. These paths can overlap, but no ownership or financing relationship is inferred.
+## Single production stack
 
-Every important claim should answer three questions: **What is being claimed? Where did it come from? What remains unknown?** The platform keeps sources and supporting excerpts alongside company records, separates company-reported statements from documented facts and analyst interpretation, and explains how its classifications and screening calculations work.
+- **GitHub** — version control and a single CI workflow.
+- **Vercel** — native Next.js 16 application, API routes and scheduled source refresh.
+- **Supabase** — PostgreSQL database, verified investor authentication, and private workspace Row Level Security.
 
-> Illinois Venture Radar is an independent research project. It is not affiliated with or endorsed by the University of Illinois. Screening results express alignment with user-entered criteria and do not predict investment returns.
+No Cloudflare Worker, D1, Wrangler, Zero Trust or managed ChatGPT Sites dependencies.
+Investor sign-in is invitation-only. Company evidence, startup discovery, filtering, comparisons,
+watchlists, founder outreach, citations, source review and data export are preserved.
 
-## Deploy independently using GitHub Actions + Cloudflare
+## Vercel and Supabase setup
 
-**GitHub is the source of truth for new deployments.** The standalone
-Cloudflare Workers + D1 distribution is built from `vite.cloudflare.config.ts`
-and deployed only by the manual
-[`Deploy Illinois Venture Radar to Cloudflare`](.github/workflows/cloudflare-deploy.yml)
-workflow on `main`.
+Follow [docs/vercel-supabase-deployment.md](docs/vercel-supabase-deployment.md).
+First connect an **isolated development Supabase project** to your Vercel preview.
+Do not connect production until the PostgreSQL validation and separate-user security tests pass.
 
-The GitHub deployment uses **Cloudflare Access** for verified sign-in and is
-completely independent of the older managed ChatGPT Sites deployment. It uses
-a dedicated D1 database and never imports private research data from Sites.
-The existing managed-Sites build files are retained for backwards compatibility,
-but they are **not used** by the GitHub Cloudflare deploy workflow.
+### Environment variables
 
-**Read [the standalone GitHub deployment runbook](docs/cloudflare-github-deployment.md)**
-for required GitHub variables (Cloudflare account, Access team domain and
-application audience), guarded initial D1 creation and manual deployment.
-Merging code does not automatically publish a Worker; the workflow must be
-dispatched on `main` after Cloudflare Access is configured.
-
-## Project goals
-
-- **Help VCs source deals across campus:** discover student-founded, incubated, independently operated and university-linked ventures using primary-source evidence rather than university endorsement as a ranking signal.
-- **Make discovery useful:** find companies by their documented products, sectors, and ecosystem relationships.
-- **Make research auditable:** connect claims to original sources, publication and retrieval dates, excerpts, verification classifications, and conflicting evidence.
-- **Make uncertainty visible:** show missing information as unknown; never guess funding, stage, traction, or university ownership.
-- **Support a repeatable workflow:** save watchlists, private notes, searches, comparisons, reports, and reproducible screening snapshots.
-- **Build toward responsible monitoring:** add reviewed source integrations and event updates while preserving provenance and avoiding invented signals.
-
-A Research Park tenant, EnterpriseWorks directory listing or iVenture cohort establishes a specific, source-supported ecosystem connection. None automatically establishes university ownership, a spinout, university equity backing, licensed IP, venture funding received, or investment readiness.
-
-## Typical workflow
-
-1. Search and filter company records in **Discover**.
-2. Open a profile and inspect the original evidence behind a sector, relationship, or product description.
-3. Save companies to a watchlist, record private diligence notes, and compare two to five companies.
-4. Enter research criteria and editable weights. Inspect each screening contribution and save an evidence snapshot.
-5. Export a cited Markdown report or comparison for further research.
-
-Information buttons throughout the app explain definitions, rules, source requirements, limitations, and freshness. The **Data Methodology** page publishes the versioned classification and metric registry.
-
-## Current release
-
-The initial dataset contains **29 real companies, 101 supported claims, and six original source URLs**, imported from official Research Park directory pages and selected profiles. These are a documented starting sample, not a census of Illinois startups. Company descriptions remain company-reported; funding, stage, business model, and commercial traction are often unavailable.
-
-The application runs as a private, authenticated Sites deployment. This repository contains the application source, schema, reviewed initial import, tests, and setup documentation. The hosted database and private user research are separate from the repository. Deploying this repository alone does not copy live user data or provision credentials.
-
-
-## Implemented product
-
-- A deployed, database-backed research application, not a static company dataset in the UI.
-- Discovery search across published claim values; sector and affiliation filters; alphabetical/recent sorting; pagination; table and card views.
-- 29 real startup directory records from three Research Park pages; the three specifically requested individual profiles were separately inspected and their website links recorded. No synthetic production companies.
-- Source, claim, evidence, affiliation, history, signal, ingestion job, review queue, audit, and user workspace tables with migrations, foreign keys and unique indexes.
-- Inline citations, accessible evidence drawer, original URLs, retrieval/check/publication dates, explicit unknowns, reported descriptions, and conflict preservation.
-- Multiple watchlists, private notes, workflow statuses, saved searches, thesis criteria, editable Markdown reports, and 2–5-company comparison with CSV/Markdown exports.
-- Manual directory ingestion, reviewed initial import, protected one-page refresh, job failures and repeat-safe imports.
-- GitHub releases adapter and protected ingestion action, gated on an existing source-backed repository identity claim. No company mappings have been verified yet; no engineering signals were invented.
-
-## Stack and important departure from the requested preference
-
-This implementation uses React 19, TypeScript, Next.js App Router APIs through the Sites-supplied **Vinext** runtime, Tailwind CSS, Radix Dialog, Drizzle, and **Cloudflare D1 (SQLite)**. Sites hosts the Worker, provisions the database, and supplies trusted sign-in identity headers. Dependencies are pinned by `pnpm-lock.yaml`.
-
-It is **not a PostgreSQL/Prisma deployment** and is **not currently Vercel-compatible**. Docker Compose/PostgreSQL migrations are not supplied because they would not run this application as implemented. A Vercel/Supabase port requires replacing `lib/radar.ts`, D1 batch writes, the schema dialect, Cloudflare imports, and Sites identity with a verified application session. Do not deploy this Worker behind an untrusted proxy that permits clients to forge the Sites identity headers.
-
-## Local development
-
-Node >=22.13 (Node 22's built-in SQLite test module is used). Install using the supported Sites dependency helper or `pnpm install --frozen-lockfile` in a standard environment.
-
-```sh
-pnpm build
-# Apply the schema once to the local database:
-node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_first_drax.sql
-# Prepare and apply reviewed initial data:
-pnpm seed
-node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file data/seed.sql
-pnpm dev
+```
+NEXT_PUBLIC_SUPABASE_URL=https://project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+DATABASE_URL=postgresql://postgres.project:password@pooler-host:6543/postgres
+CRON_SECRET=random-32-characters-or-more
 ```
 
-In ChatGPT's managed environment use `sites-preview start <absolute-project-directory>` rather than starting a second preview server. Local and deployed databases are separate. `.dev.vars` can contain local secrets; it is ignored by Git. See `.env.example` for key names. Anonymous local research is clearly labeled **Device-local** and remains in that browser. Signed-in hosted research is stored in D1 under the trusted Site-specific user ID. The current publication is private to its owner.
+Never commit actual credentials. Public Supabase project URL and publishable key are intended for client-side use; DATABASE_URL and CRON_SECRET are server-only.
 
-## Data ingestion and refresh
+### Local development
 
-```sh
-pnpm ingest -- 5    # Fetch all five currently listed Research Park startup pages
-pnpm seed          # Prepare SQL from reviewed data/import.json and profile-evidence.json
+Node.js 22.13+:
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
 ```
 
-The directory adapter checks robots.txt, waits at least 10 seconds between requests, identifies itself, enforces HTTPS/fixed origin, rejects redirects, bounds payload size, uses timeouts and bounded server-error retries, and stops on 403/429. If robots.txt is unavailable, it fails closed. Do not lower the polite request interval or bypass restrictions. Network source text is untrusted; HTML is stripped and never rendered as HTML. The initial directory snapshots were fetched live on November 1, 2026. Individual profile records were inspected through the web retrieval tool on the same day. Short supporting text and metadata are retained, not full raw articles.
+Create a Supabase project, copy the connection information into your local environment, then run:
 
-Extraction requires both **Startup** and **Tenant Directory** taxonomy. News-only posts and corporate-only tenants are excluded. EnterpriseWorks is assigned only from the explicit category. Social links, contact preambles and unrelated embedded news are excluded. A conservative parser deliberately leaves many descriptions blank rather than misattribute text. Review `data/import.json` before applying new CLI imports. `data/profile-evidence.json` records the separately inspected profiles, not automatically discovered financial facts.
-
-The protected administrative endpoint supports:
-
-- `POST /api/admin {"action":"seed"}`: initial reviewed source import, idempotent.
-- `POST /api/admin {"action":"refresh"}`: refresh directory page 1; the same adapter powers the CLI.
-- `POST /api/admin {"action":"reject","claimId":"…"}`: retain the claim but reject it and audit the correction.
-- `POST /api/admin {"action":"github","claimId":"…"}`: retrieve public releases only for a reviewed published `repository` claim with evidence.
-- `GET /api/admin`: jobs, conflicting/pending claims, broken sources and audit records.
-
-Administrative authorization requires either the configured `ADMIN_EMAIL` in a trusted Sites session or a >=32-character `ADMIN_TOKEN` bearer token. Browser mutations also validate Origin. Server secrets never enter the client bundle. The UI uses the signed-in administrator account; CLI automation can use the token. When calling a private Site from a service, Sites' separate `OAI-Sites-Authorization` header is also required. Obtain that supported service credential through Sites, never put it into source control or a schedule prompt.
-
-An opt-in GitHub Actions schedule now exists in `.github/workflows/refresh-public-sources.yml`, but it is DISABLED until repository variables, a production deployment, the additive migration, and secret credentials are configured. `scripts/refresh-site.mjs` invokes the protected hosted refresh endpoint; it does not use the browser or copy production data into GitHub. GitHub documentation reviewed: https://docs.github.com/en/rest/releases/releases and https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api. Public releases need no API key; unauthenticated quota is 60 requests/hour. The connector stops on API failures and preserves original release dates and source IDs. Never create a repository mapping by name similarity alone.
-
-## Schema and provenance
-
-See [docs/schema.md](docs/schema.md), [db/schema.ts](db/schema.ts), and [drizzle/0000_first_drax.sql](drizzle/0000_first_drax.sql).
-
-Imports are transactional per company in D1. Identity is keyed to the canonical source-profile slug. Claims deduplicate on company+predicate+value. Evidence joins claims to sources, preserves extraction method and short supporting text, and deduplicates claim/source pairs. Conflicting values are kept and visibly labeled rather than overwritten. Public queries require an evidence record and published/conflicting status. Unknown metrics have **no invented claim**, rather than a zero or guessed stage. Source history uses normalized record hashes for the initial snapshots and page content hashes on subsequent automated crawls. It is observation history, not a complete historical archive.
-
-Directory descriptions are **Company-reported**, even though reproduced by a university directory. Listing identity, taxonomy and university relationship are verified against the listing, not against independent corporate records. Absence of public funding data is not evidence of bootstrapping. No verified financial/product/commercial signals were imported. The feed therefore correctly starts empty.
-
-Search is parameterized SQLite LIKE/EXISTS over stored data, with bounded inputs and pagination; no external fetch occurs while rendering public pages. It is not a full-text relevance engine. Research writes are user-scoped and validated with Zod. Exports retain original source links, and CSV cells neutralize leading formula operators.
-
-Thesis fit uses editable weights (35/20/25/20 initially). Unknown or unspecified factors reduce coverage and are excluded from the normalized fit numerator/denominator. Scores are withheld below 50% unrounded coverage. Only published, evidenced factual/company-reported claims are eligible; conflicts remain unknown. Methodology version 1.2.0, exact contributions and evidence snapshots are available in the UI. The shared registry is `core/methodology.mjs`; see [Patch 1 report](docs/patch-1-report.md). This is keyword/sector screening, not investment advice, valuation, or a return forecast.
-
-## Validation
-
-```sh
-pnpm typecheck
-pnpm lint
-pnpm test
-pnpm build
+```bash
+npm run db:migrate
+npm run db:seed
+npm run db:verify
+npm run typecheck
+npm run lint
+npm run build
 ```
 
-Tests use Node's deterministic test runner and an isolated in-memory SQLite database rather than Vitest. Network responses in unit tests are mocked. Browser workflow checks were performed using the managed browser's Playwright-compatible interface; see [docs/implementation-report.md](docs/implementation-report.md). No unattended Playwright runner is configured.
+The seed importer is **idempotent**: it starts with 29 vetted directory companies, preserves
+source-linked evidence, adds 14 Research Park companies, and stages 243 official-directory
+source observations for administrator review. The source snapshot was captured on
+2026-11-04 and is not a verified census of active ventures. Do not substitute inferred
+funding, founder contact, or commercial traction.
 
-## Deployment
+### Multi-user access
 
-The tracked `.openai/hosting.json` declares the private Site and D1 binding. Build with the Sites `build-site.mjs` helper, push the exact source commit through `site-workflow.mjs`, package its output, and publish that commit/archive with `save_version_and_deploy_private`. Sites applies schema migrations before publishing the Worker. Configure `ADMIN_EMAIL` and a random `ADMIN_TOKEN` with the Sites environment-variable tool. Initialize the hosted DB via the protected reviewed seed action after deployment. Never put data backfills in schema migrations.
+In Supabase Auth, disable public signup and invite investors from the dashboard. The email
+sign-in page never creates users automatically. Grant an administrator by inserting the user's
+UUID into the protected `investor_roles` table; do not grant admin by email or client-supplied input.
+Private items use Supabase Auth user IDs and database-enforced RLS, independent of the frontend.
 
-## Explicitly incomplete
+### Scheduled sources
 
-PostgreSQL/Prisma/Docker/Vercel portability; advanced stage/business-model/evidence/date/watchlist filters; all-company thesis ranking (the UI screens the first page); administrator merge and candidate-approval UI; comprehensive broken-link checker; automated scheduled jobs; robust historical cutoff queries; grant/publication/patent integrations; verified GitHub company mappings; AI research assistant; dark mode; report print view; exhaustive mobile E2E coverage. Source coverage counts are supported claims, not a claim of complete diligence.
+Vercel invokes `GET /api/cron/refresh` daily with `Authorization: Bearer $CRON_SECRET`.
+The route refreshes one bounded source per run and uses a Postgres lease to avoid concurrency.
+OTM is deliberately not automatically crawled. Other catalog refreshes and candidate review remain
+available only to authenticated administrators.
 
+## Independent research methodology
 
-### Methodology audit refinements (v1.2.0)
+Every claim links to its original source; classifications distinguish company-reported facts
+from observed evidence. Unknown data stays unknown. A source directory listing does **not**
+establish investment, university equity ownership, current operations, or commercial success.
+All investor notes, watchlists, contacts, screenings and reports remain private.
 
-The `feature/methodology-tooltips` branch tightens public claim/search/sector counts and thesis scoring to require **supporting** evidence, not merely any linked citation (including contradicting-only links). The research profile now reads source-backed lifecycle, founder, equity-funding, grant/contract, and traction fields when they exist, rather than hard-coding unknown values; generic untyped `funding` is not treated as a confirmed equity round or grant. It distinguishes system-derived affiliation and verification labels from source-reported sector taxonomy. The Methodology page and contextual popovers remain linked from navigation. See [Patch 1 audit notes](docs/patch-1-report.md) for test scope and limitations.
+The application is not owned, backed or endorsed by the University of Illinois.
 
-### Production-data and UI placeholder audit (PR #1)
+## Security and release
 
-The checked-in production import contains **29 distinct Research Park directory company entries**, linked to three original directory pages. Three separately reviewed company profile URLs add website evidence. No invented company or fabricated production funding/valuation/signal records were found in the checked-in seed. This review establishes source provenance and rejects obvious synthetic names; it does **not** independently confirm every company-reported business assertion.
-
-The production seed generator and protected `seed` API now enforce source provenance, allowed affiliation types, unique identities, exact company/profile matches, and rejection of sample/demo/fake company names or placeholder websites before writing. The committed SQL is checked against the reviewed company list in automated tests. Synthetic companies in `tests/` remain deliberate fixtures and are not imported into the deployed database.
-
-The UI also no longer presents an invented account avatar or a prefilled “Software / AI, infrastructure” investment thesis as if it were the user's preference. Screening starts with blank sector, stage, and keyword fields. Missing company details remain explicitly unverified. This change does not delete existing hosted records or alter anyone's private workspace.
-
-## Patch 2 — continuous official-source discovery (review-first)
-
-**Status: implemented on the `feature/live-source-refresh` branch, not deployed or enabled.** After the additive D1 migration and protected credentials are configured, authorized administrators can refresh official sources manually or opt into daily/weekly GitHub Actions scheduling. See [full Patch 2 operations and risk notes](docs/patch-2-report.md).
-
-Sources include: Research Park startup tenant directory pages 1–3; EnterpriseWorks Incubator directory; Research Park news; Entrepreneurship at Illinois news; Office of Technology Management startup listing; **iVenture Accelerator's official [Startups by Cohort](https://iventure.illinois.edu/startups) directory**; NIH RePORTER project search and USAspending award search (both require a previously verified recipient identity); and GitHub releases for source-verified repository mappings. SBIR.gov's API is in maintenance, so no SBIR API results are fabricated. The directory importer checks robots.txt and rate-limits requests; all other official HTML connectors fail closed if robots.txt disallows access or cannot be retrieved.
-
-The iVenture connector records **cohort participation only**. A cohort may include nonprofit ventures. Inclusion does not establish Research Park tenancy, EnterpriseWorks membership, university IP ownership, receipt of accelerator funds, or investment merit. Existing exact-matching company names are staged as pending affiliation claims. Unmatched ventures are review-only; they may be explicitly created by an administrator **only when the official cohort listing links to a unique real venture website**. Ambiguous names are not silently merged.
-
-An additional EnterpriseWorks Incubator connector reads the official [EnterpriseWorks directory category](https://researchpark.illinois.edu/category/tenant-directory/enterpriseworks-incubator/), including program-listed ventures absent from the Startup tag. It stages exact matches and unmatched official profiles for review; administrators may add an unmatched venture only after verifying its unique Research Park profile. **EnterpriseWorks participation is a program affiliation, not evidence of university ownership or backing.**
-
-Source candidates, source timestamps and review decisions are stored in new D1 tables. Source discoveries are not public claims until an administrator approves them. Approvals preserve publisher, URL, excerpt, last-check timestamp, methodology classification and review audit. A known company record's original Research Park directory identity is not silently replaced. A news mention is not automatically labeled equity funding or customer traction. Scheduled actions are observability mechanisms—not freshness guarantees.
-
-### Required setup (after independent deployment)
-
-1. Apply `drizzle/0001_source_refresh.sql` to your **development D1** first. Verify that `source_candidates` and `refresh_leases` were created and that the 29 reviewed seed companies remain unchanged. Apply it to production D1 only after backup and validation. The original migration `0000_first_drax.sql` is still required for a fresh database.
-2. Deploy code to an environment that actually supports Vinext/Cloudflare D1 and trusted ChatGPT Sites identity (or deliberately port those dependencies). GitHub merge alone does **not** redeploy the current private Sites app.
-3. Test `POST /api/admin/refresh` as an authorized admin with `{"connector":"iventure-cohorts"}` and inspect the `GET /api/admin/candidates` review queue in Settings. Review each source before approving it. News and award sources may return no matches until verified company identifiers exist.
-4. In GitHub repository **Settings → Secrets and variables → Actions**, set variable `IVR_SITE_URL` to the HTTPS deployed site origin; set `IVR_AUTOMATION_ENABLED=true` **only after successful manual validation**. Set `IVR_ADMIN_TOKEN` as a secret (a unique 32+ character token matching the deployed secret). If the Site is private, configure `IVR_SITES_SERVICE_TOKEN` as a secret when an authorized, supported service token is available. Do not put secrets in source or documentation.
-5. The workflow runs daily at **10:17 UTC** for official news. On Mondays it also attempts the Research Park directory, EnterpriseWorks Incubator, iVenture, OTM, NIH, USAspending and reviewed GitHub releases. Failed jobs report failures in GitHub Actions and `ingestion_jobs`. To suspend all requests, set `IVR_AUTOMATION_ENABLED=false`.
-
-No live authentication, D1 database, scheduled job, or external data source has been altered merely by committing this branch. The source connectors are conservative, and official providers can change layouts, rate limits or API contracts; review actual data after deployment.
-
-
-### Patch 2 test-and-repair audit
-
-Pull Request #2 has a [comprehensive QA report](docs/patch-2-qa-report.md) covering 216 deterministic regression cases across official-source parsing, EnterpriseWorks, iVenture, NIH/USAspending, trust boundaries, review concurrency, migrations, refresh jobs and the scheduler CLI. The verified full test run passed all 216 tests, typecheck, lint and build. Browser E2E interactions, real production D1 migration and live upstream source compatibility still require independent staged validation before enabling the opt-in schedule.
-
-
-### Combined Patch 1 + Patch 2 regression audit
-
-After merging Patch 2 into `main`, the original directory ingestion, research exports, screening, GitHub release provenance, new iVenture/EnterpriseWorks reviews, source scheduling, private-workspace data and additive migrations were tested together. See the [integrated QA report](docs/integrated-qa-report.md) for the full test matrix, verified GitHub Actions results, cross-cutting fixes and the staging/browser checks that are still required before deployment.
-
-
-### Patch 4 — optional GitHub Education developer tooling
-
-Patch 4 prepares six integrations for eligible GitHub Student Developer Pack users **without storing credentials, changing trusted ChatGPT authentication, or migrating D1**:
-
-- **Honeybadger:** missing-run alerting for the scheduled official-source refresher; a successful scheduled run sends one heartbeat, failures and manual runs never do.
-- **Simple Analytics:** production-only, explicit opt-in to aggregated, redacted page analytics. Private research, account, company and comparison routes are excluded.
-- **BrowserStack Automate Mobile:** explicit, manual W3C WebDriver real-device check of the public entry/sign-in gate, with guaranteed remote-session cleanup.
-- **Codecov:** optional JUnit test analytics upload from GitHub Actions, with the existing tests still authoritative.
-- **GitHub Codespaces:** Node 22, pnpm 11.25.0, frozen lockfile and forwarded development ports.
-- **Dependabot:** bounded weekly review PRs for application and workflow dependencies.
-
-All third-party integrations are **disabled or unconnected by default**. The complete offer selection, setup instructions, which API keys remain to be supplied, limitations, and security controls are documented in [Patch 4 — GitHub Education integrations](docs/patch-4-education-pack.md).
-
-Never put API keys, Honeybadger check-in URLs, or BrowserStack access keys in GitHub source, issues, PR comments, or chat messages. Configure them in **Settings → Secrets and variables → Actions**, then enable each workflow deliberately. The hosted private ChatGPT Site is not redeployed by a GitHub branch.
-
-
-## Full-source discovery patch (review-first)
-
-The checked-in **29-company initial seed remains unchanged** until a separate,
-source-reviewed import is authorized. The new
-[`feature/full-uiuc-source-coverage` patch](docs/full-source-coverage-patch.md)
-adds Research Park startup pages 4–5, discovers OTM startups absent from the
-current database, and exposes all pending source candidates through paginated
-administrative review. It also adds an **admin-triggered full catalog discovery**
-button in Settings, covering Research Park, EnterpriseWorks, iVenture and OTM.
-
-New OTM, EnterpriseWorks and iVenture entries do not automatically become
-public company records. They need exact-identity approval or explicit reviewed
-creation with supported primary-source identity. News, NIH/USAspending awards
-and GitHub releases remain enrichment of already verified companies, not
-replacement company directories. No live production data changes happen from
-a GitHub branch or PR alone. See the patch report for rollout and limitations.
-
-### Live official-catalog snapshot and additive import artifacts
-
-The [live source-collection report](docs/live-source-collection.md) describes
-the executed GitHub Actions workflow that retrieves the real Research Park,
-EnterpriseWorks and iVenture directories, reconciles them with the original 29,
-and prepares additive D1 SQL plus review-only candidates. The initial capture
-retrieved **43 Research Park directory records (14 new)** and **56
-EnterpriseWorks observations**; iVenture's live accordion layout required a
-parser update. OTM currently forbids the automated crawler under its robots
-policy, so 45 publicly displayed startup names were **manually transcribed as
-pending review leads**, without bypassing that restriction.
-
-See `data/live-source-catalog.json` for the latest per-source counts,
-collection failures, deduplication and evidence links. These files do not
-automatically seed production or prove ecosystem completeness.
+CI builds Next.js, runs lint/typecheck, imports the real vetted snapshot into disposable
+PostgreSQL twice, validates claim provenance, and tests RLS with two different investors.
+No production database is modified by CI. See
+[docs/vercel-supabase-deployment.md](docs/vercel-supabase-deployment.md)
+for production cutover and existing private-data migration safeguards.

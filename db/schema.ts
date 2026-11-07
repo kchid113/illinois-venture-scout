@@ -1,22 +1,84 @@
-import {sqliteTable,text,integer,index,uniqueIndex} from 'drizzle-orm/sqlite-core';
-export const companies=sqliteTable('companies',{id:text('id').primaryKey(),name:text('name').notNull(),aliases:text('aliases').notNull().default('[]'),profile:text('profile').notNull().unique(),status:text('status').notNull().default('Not verified'),firstObserved:text('first_observed').notNull(),updatedAt:text('updated_at').notNull()},t=>[index('company_name_idx').on(t.name)]);
-export const sources=sqliteTable('sources',{id:text('id').primaryKey(),url:text('url').notNull().unique(),title:text('title').notNull(),publisher:text('publisher').notNull(),type:text('type').notNull(),publishedAt:text('published_at'),retrievedAt:text('retrieved_at').notNull(),lastChecked:text('last_checked').notNull(),hash:text('hash').notNull(),accessibility:text('accessibility').notNull().default('Accessible')});
-export const claims=sqliteTable('claims',{id:text('id').primaryKey(),companyId:text('company_id').notNull().references(()=>companies.id),field:text('field').notNull(),value:text('value').notNull(),classification:text('classification').notNull(),status:text('status').notNull(),firstObserved:text('first_observed').notNull(),verifiedAt:text('verified_at').notNull(),validFrom:text('valid_from'),validTo:text('valid_to')},t=>[index('claim_company_idx').on(t.companyId),uniqueIndex('claim_value_idx').on(t.companyId,t.field,t.value)]);
-export const evidence=sqliteTable('evidence',{id:text('id').primaryKey(),claimId:text('claim_id').notNull().references(()=>claims.id),sourceId:text('source_id').notNull().references(()=>sources.id),excerpt:text('excerpt').notNull(),relationship:text('relationship').notNull().default('supports'),method:text('method').notNull(),verifiedAt:text('verified_at').notNull()},t=>[uniqueIndex('evidence_pair_idx').on(t.claimId,t.sourceId)]);
-export const affiliations=sqliteTable('affiliations',{id:text('id').primaryKey(),companyId:text('company_id').notNull().references(()=>companies.id),claimId:text('claim_id').notNull().references(()=>claims.id),university:text('university').notNull(),type:text('type').notNull(),status:text('status').notNull(),validFrom:text('valid_from'),validTo:text('valid_to')});
-export const signals=sqliteTable('signals',{id:text('id').primaryKey(),companyId:text('company_id').notNull().references(()=>companies.id),claimId:text('claim_id').notNull().references(()=>claims.id),category:text('category').notNull(),description:text('description').notNull(),eventDate:text('event_date'),firstObserved:text('first_observed').notNull(),dedupKey:text('dedup_key').notNull().unique(),status:text('status').notNull()});
-export const history=sqliteTable('source_history',{id:text('id').primaryKey(),sourceId:text('source_id').notNull().references(()=>sources.id),hash:text('hash').notNull(),observedAt:text('observed_at').notNull(),summary:text('summary').notNull()},t=>[uniqueIndex('source_version_idx').on(t.sourceId,t.hash)]);
-export const jobs=sqliteTable('ingestion_jobs',{id:text('id').primaryKey(),connector:text('connector').notNull(),status:text('status').notNull(),startedAt:text('started_at').notNull(),finishedAt:text('finished_at'),count:integer('count').notNull().default(0),message:text('message')});
-export const review=sqliteTable('review_queue',{id:text('id').primaryKey(),claimId:text('claim_id').references(()=>claims.id),reason:text('reason').notNull(),status:text('status').notNull().default('Pending'),createdAt:text('created_at').notNull()});
-export const audit=sqliteTable('audit',{id:text('id').primaryKey(),actor:text('actor').notNull(),action:text('action').notNull(),target:text('target').notNull(),createdAt:text('created_at').notNull()});
-export const workspace=sqliteTable('workspace',{id:text('id').primaryKey(),userId:text('user_id').notNull(),kind:text('kind').notNull(),key:text('key').notNull(),value:text('value').notNull(),updatedAt:text('updated_at').notNull()},t=>[uniqueIndex('workspace_owner_key').on(t.userId,t.kind,t.key)]);
+import {pgTable,text,uuid,integer,index,uniqueIndex,check} from 'drizzle-orm/pg-core';
+import {sql} from 'drizzle-orm';
 
-/** New candidate records never appear as published claims until explicitly reviewed. */
-export const sourceCandidates=sqliteTable('source_candidates',{
- id:text('id').primaryKey(),connector:text('connector').notNull(),externalId:text('external_id').notNull(),
- sourceUrl:text('source_url').notNull(),publisher:text('publisher').notNull(),title:text('title').notNull(),
- excerpt:text('excerpt').notNull(),companyName:text('company_name'),companyId:text('company_id').references(()=>companies.id),
- eventDate:text('event_date'),observedAt:text('observed_at').notNull(),lastChecked:text('last_checked').notNull(),
- status:text('status').notNull().default('Pending'),contentHash:text('content_hash').notNull(),payload:text('payload').notNull().default('{}')
-},t=>[index('candidate_status_idx').on(t.status,t.lastChecked),index('candidate_company_idx').on(t.companyId),index('candidate_connector_idx').on(t.connector)]);
-export const refreshLeases=sqliteTable('refresh_leases',{name:text('name').primaryKey(),token:text('token').notNull(),expiresAt:text('expires_at').notNull()});
+export const companies=pgTable('companies',{
+ id:text('id').primaryKey(),name:text('name').notNull(),aliases:text('aliases').notNull().default('[]'),
+ profile:text('profile').notNull().unique(),status:text('status').notNull().default('Not verified'),
+ firstObserved:text('first_observed').notNull(),updatedAt:text('updated_at').notNull()
+},t=>[index('company_name_idx').on(t.name)]);
+export const sources=pgTable('sources',{
+ id:text('id').primaryKey(),url:text('url').notNull().unique(),
+ title:text('title').notNull(),publisher:text('publisher').notNull(),type:text('type').notNull(),
+ publishedAt:text('published_at'),retrievedAt:text('retrieved_at').notNull(),
+ lastChecked:text('last_checked').notNull(),hash:text('hash').notNull(),
+ accessibility:text('accessibility').notNull().default('Accessible')
+});
+export const claims=pgTable('claims',{
+ id:text('id').primaryKey(),companyId:text('company_id').notNull().references(()=>companies.id),
+ field:text('field').notNull(),value:text('value').notNull(),
+ classification:text('classification').notNull(),status:text('status').notNull(),
+ firstObserved:text('first_observed').notNull(),verifiedAt:text('verified_at').notNull(),
+ validFrom:text('valid_from'),validTo:text('valid_to')
+},t=>[index('claim_company_idx').on(t.companyId),uniqueIndex('claim_value_idx').on(t.companyId,t.field,t.value)]);
+export const evidence=pgTable('evidence',{
+ id:text('id').primaryKey(),claimId:text('claim_id').notNull().references(()=>claims.id),
+ sourceId:text('source_id').notNull().references(()=>sources.id),excerpt:text('excerpt').notNull(),
+ relationship:text('relationship').notNull().default('supports'),
+ method:text('method').notNull(),verifiedAt:text('verified_at').notNull()
+},t=>[uniqueIndex('evidence_pair_idx').on(t.claimId,t.sourceId)]);
+export const affiliations=pgTable('affiliations',{
+ id:text('id').primaryKey(),companyId:text('company_id').notNull().references(()=>companies.id),
+ claimId:text('claim_id').notNull().references(()=>claims.id),
+ university:text('university').notNull(),type:text('type').notNull(),
+ status:text('status').notNull(),validFrom:text('valid_from'),validTo:text('valid_to')
+});
+export const signals=pgTable('signals',{
+ id:text('id').primaryKey(),companyId:text('company_id').notNull().references(()=>companies.id),
+ claimId:text('claim_id').notNull().references(()=>claims.id),category:text('category').notNull(),
+ description:text('description').notNull(),eventDate:text('event_date'),
+ firstObserved:text('first_observed').notNull(),dedupKey:text('dedup_key').notNull().unique(),
+ status:text('status').notNull()
+});
+export const history=pgTable('source_history',{
+ id:text('id').primaryKey(),sourceId:text('source_id').notNull().references(()=>sources.id),
+ hash:text('hash').notNull(),observedAt:text('observed_at').notNull(),summary:text('summary').notNull()
+},t=>[uniqueIndex('source_version_idx').on(t.sourceId,t.hash)]);
+export const jobs=pgTable('ingestion_jobs',{
+ id:text('id').primaryKey(),connector:text('connector').notNull(),
+ status:text('status').notNull(),startedAt:text('started_at').notNull(),
+ finishedAt:text('finished_at'),count:integer('count').notNull().default(0),
+ message:text('message')
+});
+export const review=pgTable('review_queue',{
+ id:text('id').primaryKey(),claimId:text('claim_id').references(()=>claims.id),
+ reason:text('reason').notNull(),status:text('status').notNull().default('Pending'),
+ createdAt:text('created_at').notNull()
+});
+export const audit=pgTable('audit',{
+ id:text('id').primaryKey(),actor:text('actor').notNull(),
+ action:text('action').notNull(),target:text('target').notNull(),
+ createdAt:text('created_at').notNull()
+});
+export const workspace=pgTable('workspace',{
+ id:uuid('id').primaryKey().defaultRandom(),userId:uuid('user_id').notNull(),
+ kind:text('kind').notNull(),key:text('key').notNull(),value:text('value').notNull(),
+ updatedAt:text('updated_at').notNull()
+},t=>[uniqueIndex('workspace_owner_key').on(t.userId,t.kind,t.key),index('workspace_user_idx').on(t.userId)]);
+export const investorRoles=pgTable('investor_roles',{
+ userId:uuid('user_id').primaryKey(),role:text('role').notNull().default('investor')
+},t=>[check('role_allowed',sql`${t.role} in ('investor','admin')`)]);
+export const sourceCandidates=pgTable('source_candidates',{
+ id:text('id').primaryKey(),connector:text('connector').notNull(),
+ externalId:text('external_id').notNull(),sourceUrl:text('source_url').notNull(),
+ publisher:text('publisher').notNull(),title:text('title').notNull(),
+ excerpt:text('excerpt').notNull(),companyName:text('company_name'),
+ companyId:text('company_id').references(()=>companies.id),eventDate:text('event_date'),
+ observedAt:text('observed_at').notNull(),lastChecked:text('last_checked').notNull(),
+ status:text('status').notNull().default('Pending'),contentHash:text('content_hash').notNull(),
+ payload:text('payload').notNull().default('{}')
+},t=>[index('candidate_status_idx').on(t.status,t.lastChecked),
+ index('candidate_company_idx').on(t.companyId),index('candidate_connector_idx').on(t.connector)]);
+export const refreshLeases=pgTable('refresh_leases',{
+ name:text('name').primaryKey(),token:text('token').notNull(),
+ expiresAt:text('expires_at').notNull()
+});

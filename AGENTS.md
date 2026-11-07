@@ -1,21 +1,13 @@
-# Illinois Venture Radar — coding-agent guidance
+# Illinois Venture Radar — Vercel and Supabase only
 
-## Cloudflare project architecture
-
-- Source of truth: this GitHub repository, `main` for production.
-- Runtime: a dedicated Cloudflare Worker built from the existing Vinext/Vite configuration with a dedicated Cloudflare D1 database. Cloudflare Zero Trust Access protects the application.
-- Deploy only through the existing manually dispatched `.github/workflows/cloudflare-deploy.yml` on `main`. Do not bypass the deployment preflight, Access JWT checks, test suite or migration/seed guards.
-- Never use an unrelated D1 database, overwrite investor workspace data, auto-approve startup candidates or invent founder contact information.
-- The `create_d1` and `import_source_catalog` workflow inputs can mutate remote resources. Obtain explicit user authorization for the exact target before invoking a production deployment.
-- Cloudflare Account ID and Access application AUD are *different* identifiers. Store all credentials in GitHub Actions secrets/variables, never repository files or chat messages. Never echo secrets in logs.
-- Read `docs/cloudflare-github-deployment.md` and `docs/cloudflare-agent-setup.md` before changing deployment infrastructure.
-- Prefer Wrangler when this repository has an existing Worker configuration. Cloudflare's optional beta `cf` CLI is not required.
-- Use Cloudflare's official published Skills and API MCP when the **user's coding agent** has them installed and authenticated. Do not mistake a checked-in MCP endpoint definition for an authenticated connection.
-
-## Cloudflare MCP
-
-The official Cloudflare API MCP endpoint is `https://mcp.cloudflare.com/mcp`. Compatible repo-level configs are included for GitHub Copilot (`.mcp.json`), VS Code (`.vscode/mcp.json`), and Cursor (`.cursor/mcp.json`).
-
-This MCP server requires separate user OAuth approval in the agent application. Cloudflare permissions must be reviewed and scoped by the user. The repository config does not install Cloudflare Skills, grant account access, modify Zero Trust policies or trigger a deployment.
-
-Official reference: https://developers.cloudflare.com/agent-setup/prompt.md
+- Frontend and API: native Next.js 16 App Router on Vercel.
+- Auth: Supabase Auth, invitation-only; server routes verify `getUser()` before reading data; proxy refresh uses verified `getClaims()`.
+- Data: PostgreSQL on Supabase, with managed SQL migrations in `supabase/migrations`.
+- Private notes, watchlists, founder contacts, reports: `workspace` protected by user-specific Row Level Security. Never mix data across investor accounts.
+- Administrator permissions: `investor_roles` table; no email matches, no client-defined role header.
+- Collection jobs: authenticated admin routes and one daily Vercel cron route with `CRON_SECRET`. Respect source restrictions and manual reviews.
+- All source claims need corresponding evidence and source URLs. The historical 243 candidates are pending observations, not published startups.
+- Production settings are stored in Vercel/Supabase environment settings. Never commit secrets.
+- Do not use old Cloudflare workers, D1, Zero Trust, ChatGPT Sites, extra MCP infrastructure, or unused UI scaffolding.
+- Build, test and validate against the PostgreSQL CI service before merging. Production Vercel deployments are connected by the repository owner; GitHub merges don't provision accounts automatically.
+- Read `README.md` and `docs/vercel-supabase-deployment.md` before changing infrastructure.

@@ -49,7 +49,7 @@ export async function refreshConnector(db,connector,{fetcher=fetch,now=new Date(
      const reason=JSON.stringify({connector,slug:r.slug,sourceUrl:r.sourceUrl,observedAt:now,reason:'A source identifier, profile or name changed; identity review required'}).slice(0,700);
      const reviewId=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('identity:'+r.slug+':'+r.sourceUrl));
      const hex=[...new Uint8Array(reviewId)].map(x=>x.toString(16).padStart(2,'0')).join('');
-     await db.prepare("INSERT OR IGNORE INTO review_queue(id,claim_id,reason,status,created_at) VALUES(?,NULL,?,'Pending',?)").bind(hex,reason,now).run();
+     await db.prepare("INSERT INTO review_queue(id,claim_id,reason,status,created_at) VALUES(?,NULL,?,'Pending',?) ON CONFLICT DO NOTHING").bind(hex,reason,now).run();
      skipped++;continue;
     }
     await runStatements(db,await recordStatements(r));
