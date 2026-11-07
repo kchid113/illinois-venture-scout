@@ -18,7 +18,7 @@
     "db:verify": "node scripts/verify-postgres.mjs"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.7.0",
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.83.0",
     "drizzle-orm": "^0.45.2",
     "lucide-react": "^0.456.0",
