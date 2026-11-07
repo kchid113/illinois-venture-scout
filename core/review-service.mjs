@@ -21,7 +21,7 @@ function requireUniqueNewVenture(row,known,profile){
 }
 /** Called ONLY behind the existing administrator-authenticated route.
  *
- * A D1 batch is atomic; its first statement executes a guarded terminal
+ * A PostgreSQL transaction is atomic; its first statement executes a guarded terminal
  * status transition. A SQL trigger rejects the second decision even if two
  * reviewers read the same Pending row before either one writes. Subsequent
  * company, source, evidence and audit writes then commit or roll back together.
