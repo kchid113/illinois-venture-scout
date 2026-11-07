@@ -23,7 +23,7 @@ export async function GET(req:NextRequest){
  const connector=sources[index];
  try{
   const receipt=await refreshConnector(database(),connector);
-  return NextResponse.json({ok:true,connector,...receipt});
+  return NextResponse.json({ok:true,...receipt});
  }catch(e){
   return NextResponse.json({error:e instanceof Error?e.message:'Refresh failed',connector},{status:503});
  }
