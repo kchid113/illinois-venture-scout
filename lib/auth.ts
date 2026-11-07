@@ -8,10 +8,12 @@ export async function getInvestorUser():Promise<InvestorUser|null>{
  const {data,error}=await supabase.auth.getUser();
  if(error||!data.user||!data.user.email)return null;
  const user=data.user;
+ const email=user.email;
+ if(!email)return null;
  return {
   userId:user.id,
-  email:user.email,
-  displayName:user.email,
+  email,
+  displayName:email,
   fullName:null
  };
 }
