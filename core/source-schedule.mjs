@@ -30,7 +30,12 @@ export function retryableFailure(error){
  const message=String(error instanceof Error?error.message:error);
  return /(?:Source HTTP 50[0234]|GitHub HTTP 50[0234]|fetch failed|network error|socket hang up|AbortError|TimeoutError|timed out)/i.test(message);
 }
-/** Retry the complete idempotent source job only for bounded transport/5xx errors. */
+/**
+ * Retry the complete idempotent source job only for bounded transport/5xx errors.
+ * @param {string} connector
+ * @param {{db?:any, refresh?:(db:any,source:string)=>Promise<any>,
+ *          wait?:(milliseconds:number)=>Promise<void>,maxAttempts?:number}} [options]
+ */
 export async function executeScheduledConnector(connector,{
  refresh,db,wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),
  maxAttempts=3
