@@ -3,6 +3,15 @@
  * fragment; server route handlers cannot see it. PKCE codes and token hashes
  * are supported as well. This parser is deliberately dependency-free for CI.
  */
+/**
+ * @typedef {{kind:'error',reason:'expired'|'rejected'} |
+ *           {kind:'code',code:string} |
+ *           {kind:'token-hash',tokenHash:string,type:'email'|'invite'} |
+ *           {kind:'implicit-session',accessToken:string,refreshToken:string} |
+ *           {kind:'existing-session'}} AuthCallback
+ * @param {string} href
+ * @returns {AuthCallback}
+ */
 export function classifyAuthCallback(href){
  const url=new URL(href,'https://example.invalid');
  const query=url.searchParams;
