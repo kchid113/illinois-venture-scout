@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync,readdirSync} from 'node:fs';
+import {readFileSync,existsSync} from 'node:fs';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
-test('Next.js is the only app runtime and scheduled updates have a secure cron endpoint',()=>{
+
+test('public app uses Next.js and scheduled updates have a secret-protected endpoint',()=>{
  const pkg=JSON.parse(read('package.json'));
  assert.equal(pkg.scripts.build,'next build');
- for(const dep of ['wrangler','vinext','@cloudflare/vite-plugin','@cloudflare/workers-types'])assert.equal(pkg.dependencies?.[dep]||pkg.devDependencies?.[dep],undefined);
+ for(const dep of ['wrangler','vinext','@cloudflare/vite-plugin','@cloudflare/workers-types'])
+  assert.equal(pkg.dependencies?.[dep]||pkg.devDependencies?.[dep],undefined);
  const schedules=JSON.parse(read('vercel.json')).crons;
  assert.equal(schedules.length,12);
  assert.equal(new Set(schedules.map(x=>x.path)).size,12);
@@ -15,32 +17,51 @@ test('Next.js is the only app runtime and scheduled updates have a secure cron e
  assert.match(cron,/timingSafeEqual/);
  assert.match(cron,/CRON_SECRET/);
  assert.match(cron,/isScheduledConnector/);
- assert.match(cron,/executeScheduledConnector/);
 });
-test('private workspace requires authenticated Supabase identity and database RLS',()=>{
- const api=read('app/api/data/route.ts'),auth=read('lib/auth.ts'),migration=read('supabase/migrations/20261107000000_initial.sql');
- assert.match(api,/getInvestorUser\(\)/);
- assert.match(api,/\.from\('workspace'\)/);
- assert.match(api,/onConflict:'user_id,kind,key'/);
- assert.match(auth,/supabase\.auth\.getUser\(\)/);
+
+test('anonymous read-only source endpoints do not expose private account workspace',()=>{
+ const api=read('app/api/data/route.ts');
+ assert.match(api,/export async function GET/);
+ assert.doesNotMatch(api,/getInvestorUser\(\)|\.from\('workspace'\)/);
+ assert.match(api,/view==='company'/);
+ assert.match(api,/view==='sources'/);
+ assert.match(api,/view==='workspace'.*status:403/);
+ assert.match(api,/export async function POST/);
+ assert.match(api,/Server-side personal workspace writes are disabled/);
+ assert.match(api,/jobs:\[\]/);
+ assert.equal(existsSync(new URL('../proxy.ts',import.meta.url)),false);
+ for(const path of ['app/login/page.tsx','app/auth/callback/page.tsx'])
+  assert.match(read(path),/redirect\('\/'\)/);
+});
+
+test('public research is browser-local, admin and legacy workspace stay protected',()=>{
+ const ui=read('components/radar.tsx');
+ const storage=read('core/local-workspace.mjs');
+ const admin=read('lib/admin.ts');
+ const migration=read('supabase/migrations/20261107000000_initial.sql');
+ assert.match(ui,/localStorage/);
+ assert.match(ui,/decodeLocalWorkspace/);
+ assert.match(ui,/encodeLocalWorkspace/);
+ assert.match(ui,/Export research backup/);
+ assert.match(ui,/Import a browser research backup/);
+ assert.doesNotMatch(ui,/auth\/signout|\/api\/data\?view=workspace/);
+ assert.match(storage,/ivr-public-workspace-v1/);
+ assert.match(admin,/getInvestorUser/);
+ assert.match(admin,/investor_roles/);
+ assert.match(read('app/api/admin/route.ts'),/if\(!await isAdmin\(\)\)/);
  assert.match(migration,/ENABLE ROW LEVEL SECURITY/);
  assert.match(migration,/user_id = \(SELECT auth\.uid\(\)\)/);
  assert.match(migration,/CREATE POLICY investor_workspace_insert/);
  assert.match(migration,/REVOKE ALL ON TABLE companies/);
 });
-test('credentials, admin roles and sign-ups are not controlled by client headers',()=>{
- const proxy=read('proxy.ts'),login=read('app/login/page.tsx'),admin=read('lib/admin.ts');
- assert.match(proxy,/auth\.getClaims\(\)/);
- assert.match(login,/shouldCreateUser:false/);
- assert.match(admin,/investor_roles/);
- assert.ok(!admin.includes('ADMIN_EMAIL')&&!admin.includes('oai-authenticated-user'));
+
+test('secrets are not leaked to the client and obsolete stacks are absent',()=>{
  const config=read('.env.example');
  assert.match(config,/DATABASE_URL/);
+ assert.match(config,/CRON_SECRET/);
  assert.doesNotMatch(config,/CLOUDFLARE|IVR_ACCESS_AUD|CHATGPT/);
-});
-test('obsolete infrastructure and unused UI boilerplate are not shipped',()=>{
- const pkg=JSON.parse(read('package.json'));
- for(const dep of ['@shadcn/react','recharts','@vitejs/plugin-rsc','json-rpc-2.0'])assert.equal(pkg.dependencies?.[dep]||pkg.devDependencies?.[dep],undefined);
  assert.match(read('components/radar.tsx'),/Founder contact/);
- assert.match(read('components/radar.tsx'),/auth\/signout/);
+ const pkg=JSON.parse(read('package.json'));
+ for(const dep of ['@shadcn/react','recharts','@vitejs/plugin-rsc','json-rpc-2.0'])
+  assert.equal(pkg.dependencies?.[dep]||pkg.devDependencies?.[dep],undefined);
 });

@@ -1,57 +1,33 @@
-# Vercel + Supabase deployment and data migration
+# Vercel + Supabase deployment — public visitor mode (Option B)
 
-This is the only supported production architecture. No Cloudflare services are required.
+This is the only supported production architecture. No Cloudflare services or visitor sign-in are required.
 
-## 1. Provision isolated resources
+## 1. Configure independent preview and production resources
 
-1. Create a **development Supabase project**. Set its region near the intended Vercel function region.
-2. Use Supabase Connect → **Transaction pooler** for server-only `DATABASE_URL`.
-3. Copy the project URL and **publishable key** into Vercel Preview environment variables.
-4. Connect GitHub repository `kchid113/illinois-venture-scout` to a Vercel project using Next.js preset.
-5. Configure the four variables in `.env.example`. Separate **Preview** and **Production**
-   values; never point Vercel previews at production user data.
-6. Apply the versioned PostgreSQL migration using `npm run db:migrate` against development
-   first. Only an authorized operator runs production migration and `db:seed`.
-7. Run `npm run db:verify`, confirm the database has **43** source-backed directory companies
-   and **243** pending source observations, and inspect original evidence links.
+1. Create an **isolated development Supabase project** near your Vercel region, then connect Vercel Preview to that project.
+2. Set server-only `DATABASE_URL` to the Supabase **Transaction pooler** connection URI in Vercel. Do not use `NEXT_PUBLIC_DATABASE_URL`.
+3. Connect `kchid113/illinois-venture-scout` to Vercel with Next.js preset, and set the production `DATABASE_URL` to the production Supabase project.
+4. Set production `CRON_SECRET` to a random secret with at least 32 characters. Configure preview secrets separately.
+5. Apply managed SQL migration with `npm run db:migrate` and seed the authorized target once with `npm run db:seed`.
+6. Run `npm run db:verify` to confirm the expected **43** source-backed companies and **243** Pending observations, then verify source URLs.
+7. Disable Vercel Deployment Protection for the intended public Production deployment; previews may remain protected.
 
-## 2. Authentication and invitation-only login
+## 2. Public browsing and browser research
 
-- In Supabase Authentication, turn off public signups. Invite approved investors using
-  Supabase Auth user management.
-- Configure Auth URL settings for both the production origin and preview auth callback.
-- **Staging does not require a custom SMTP service or editable email templates.**
-  The app's browser-side `/auth/callback` supports the default hosted
-  `{{ .ConfirmationURL }}` email template (which can return credentials in the
-  URL fragment), PKCE `?code=` callbacks, and explicit `token_hash` callbacks.
-  Do not use the previous server-only callback: it cannot read URL fragments.
-- For production, configure a verified sending domain and supported email delivery;
-  use the optional token-hash email template where appropriate. The email
-  template may use `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email`
-  for magic links and `type=invite` for invitations.
-- Always test with a fresh link. A magic link is single-use, commonly expires
-  within one hour, and a link opened by automated email scanners can be
-  consumed. For PKCE callbacks, use the same browser profile where the sign-in
-  request originated. Never paste URLs containing `code`, `token_hash` or
-  `access_token` into chat, logs, issue reports, or screenshots.
-- Register only your trusted Vercel preview/production redirect URLs. Never allow arbitrary
-  redirect destinations from user input.
-- In Supabase SQL Editor, insert an administrator role:
-  `INSERT INTO investor_roles(user_id,role) VALUES ('<real-auth-user-uuid>','admin');`
-  The auth account must already exist. This is an intentionally manual privileged operation;
-  public signup, arbitrary email matching and client-side role assignment are prohibited.
+- Every visitor can open the production URL and use `/`, `/discover`, `/companies/[slug]`, `/activity`, `/watchlists`, `/compare`, `/research`, `/sources`, `/methodology` and `/settings` without a login.
+- Retired `/login` and `/auth/callback` paths redirect to the homepage.
+- The public `GET /api/data` accesses reviewed PostgreSQL records through the server-only pooler; server workspace queries and writes are denied.
+- Watchlists, research statuses, notes, founder contacts, searches, theses and reports are stored in the visitor's browser at `localStorage['ivr-public-workspace-v1']`. They are **not** uploaded to Supabase or synced across devices. Settings provides JSON backup export/import and deletion.
+- Local storage is not encrypted or user-isolated on a shared browser profile. Do not store sensitive diligence on public/shared devices; browser clearing can erase it.
+- Existing Supabase private workspace records are **retained but not surfaced**. Never copy historical private research into a public API or another user's browser.
 
-## 3. Private research and Row Level Security
+## 3. Administrative and Supabase security
 
-All public company/sources/candidates tables are **denied** through Supabase's Data API.
-They are exposed only by authenticated Next.js API handlers, using the server-only pooler URL.
-
-`workspace` uses Supabase Data API with the authenticated user's access token.
-Postgres policies restrict SELECT, INSERT, UPDATE, DELETE to `auth.uid()=user_id`.
-`investor_roles` is not readable/writable by anonymous or investor accounts.
-
-The GitHub CI integration suite tests real RLS queries for two distinct user UUIDs,
-rejected cross-tenant writes, and anonymous access denial. Keep these checks on every PR.
+- The original Supabase `workspace` table retains `auth.uid()=user_id` RLS and authenticated-only grants. Public users never access it.
+- Public companies/sources/claims/candidates tables remain denied to Supabase's Data API, including `anon` and `authenticated` roles; the Next.js server uses its private PostgreSQL connection for reviewed read-only responses.
+- `/api/admin/*` operations continue to require a verified Supabase Auth identity **and** the `investor_roles` admin row. They cannot be invoked anonymously, and there is no admin login UI on the public website. Use separately authorized database and operational tooling to manage review until a dedicated administrative interface is provided.
+- Scheduled imports use `CRON_SECRET` bearer authentication; do not expose that value in the browser. Anonymous users cannot trigger source collection.
+- No database schema change or public RLS policy is needed for visitor mode.
 
 ## 4. Source catalog and migration safety
 
@@ -125,12 +101,12 @@ source API throttling and zero-eligible-identity results. Do not claim
 source coverage is complete if a provider returns 0, a forbidden response,
 or a known incomplete dataset.
 
-## 6. Production launch and rollback
+## 6. Public production launch and rollback
 
 - Before attaching a production domain, require a green native Next.js build,
   Postgres source-integrity tests, real sign-in and two-account isolation checks,
   admin review actions, manual and scheduled source refresh, cron auth and cursor checks, responsive browser
-  navigation, downloads, founder contact, watchlist and notes functionality.
+  navigation, downloads, founder contact, browser-local watchlist, notes and research-backup functionality.
 - Configure `CRON_SECRET` as a random 32+ character value in Vercel Production;
   rotate it if leaked. Vercel Cron sends it as a bearer token.
 - Keep the previous system **disabled or read-only** for a short rollback window.
