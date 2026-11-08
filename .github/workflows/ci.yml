@@ -39,6 +39,8 @@ jobs:
           --health-retries 15
     env:
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/ivr_test
+      NEXT_PUBLIC_SUPABASE_URL: https://preview-test.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_test_only
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -52,3 +54,23 @@ jobs:
       - run: npm run db:seed
       - run: npm run db:verify
       - run: npm test
+      - name: Build app against seeded PostgreSQL
+        run: npm run build
+      - name: Verify live Next.js public data routes against seeded PostgreSQL
+        run: |
+          npm run start -- --port 3100 > /tmp/ivr-next-smoke.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 30); do
+            if curl --silent --max-time 2 http://127.0.0.1:3100/api/health > /dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/ivr-next-smoke.log
+            exit 1
+          fi
+          node scripts/smoke-public.mjs http://127.0.0.1:3100

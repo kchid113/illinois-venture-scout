@@ -101,7 +101,15 @@ source API throttling and zero-eligible-identity results. Do not claim
 source coverage is complete if a provider returns 0, a forbidden response,
 or a known incomplete dataset.
 
-## 6. Public production launch and rollback
+## 6. Test the deployed data connection
+
+1. Open `https://<deployment>.vercel.app/api/health`; successful healthy output includes `status: ready` and a nonzero company count.
+2. Open `https://<deployment>.vercel.app/api/data?view=summary` to verify the number of companies, evidence and original sources. `signals: 0` is expected until reviewed events exist.
+3. Run the manual GitHub Actions workflow `Verify public Vercel deployment data` against that deployment URL. It exercises health, summary, discovery, company detail, evidence links and private-workspace denial, without writing to Supabase.
+4. A Vercel build success does **not** prove the `DATABASE_URL` environment variable is configured at runtime. HTTP 503 `database-unavailable` means inspect the Vercel environment-scoped pooler connection settings. HTTP 503 `published-data-empty` means verify which Supabase project Vercel targets. Never expose the database connection string to the browser or re-seed an unverified target.
+5. Keep Vercel deployment protection turned off for the intended public production URL, while staging previews may remain private.
+
+## 7. Public production launch and rollback
 
 - Before attaching a production domain, require a green native Next.js build,
   Postgres source-integrity tests, real sign-in and two-account isolation checks,

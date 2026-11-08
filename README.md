@@ -63,3 +63,14 @@ Vercel schedules twelve bounded source jobs covering five Research Park pages, E
 ## Methodology
 
 Every published claim requires original evidence. Directory affiliation is **not** evidence of UIUC equity ownership, university funding, active operations or commercial traction. Unknown data remains unknown. The application is independent and not endorsed by the University of Illinois.
+
+
+## Release readiness: verify the deployed database, not just the build
+
+`GET /api/health` is a safe, unauthenticated, no-cache readiness check. It returns HTTP 200 only when the application's **server-side PostgreSQL connection** can query nonempty, source-backed public companies, claims and sources. It returns HTTP 503 with a generic reason (`database-unavailable` or `published-data-empty`) rather than a false success or credentials.
+
+Normal pull-request CI now **starts Next.js against disposable, migrated, seeded PostgreSQL** and verifies the real data endpoints, source-backed company evidence and explicit denial of the retired private workspace. This detects API/database integration regressions that a successful Next.js build alone cannot.
+
+After any Vercel deployment, run the [Verify public Vercel deployment data](.github/workflows/smoke-deployment.yml) workflow manually with the complete `https://...vercel.app` deployment origin (no path). The read-only test fails if the domain is inaccessible, Deployment Protection blocks it, the public API responds 500/503, data is missing, source citations are broken, or server private-workspace access is accidentally enabled. For a production domain, the URL must be a `*.vercel.app` origin.
+
+**A successful Vercel build does not mean the server has `DATABASE_URL`.** If the live health check reports `database-unavailable`, verify the Vercel Production (or Preview) `DATABASE_URL` is the correct Supabase transaction-pooler string, with the correct environment scope and password; then redeploy. Keep `DATABASE_URL` server-only and never paste it into chat, logs or issues. If the health check reports `published-data-empty`, verify Vercel is pointed at the intended seeded Supabase project. Do not rerun seeding before confirming the target.
