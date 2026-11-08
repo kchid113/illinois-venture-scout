@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import postgres from 'postgres';
 import {database,all,parameterize,closeDatabase} from '../db/postgres.mjs';
 import {decideSourceCandidate} from '../core/review-service.mjs';
+import {refreshConnector} from '../core/refresh-runner.mjs';
 const uri=process.env.DATABASE_URL;
 const integrated=(name,fn)=>test(name,{skip:!uri},fn);
 const sql=uri?postgres(uri,{max:1,prepare:false,ssl:false}):null;
@@ -64,4 +65,117 @@ integrated('Supabase workspace policies protect each investor at the actual data
   await tx.unsafe('SET LOCAL ROLE anon');
   await tx.unsafe('SELECT value FROM workspace');
  }),/permission denied/i);
+});
+
+integrated('all five startup directory pages are actionable, not empty scheduled successes',async()=>{
+ const seed=JSON.parse((await import('node:fs/promises')).readFile?await (await import('node:fs/promises')).readFile(new URL('../data/import.json',import.meta.url),'utf8'):'[]')[0];
+ const calls=[];
+ const collect=async opts=>{calls.push(opts.startPage);return [seed];};
+ const first=await refreshConnector(database(),'research-park-4',{
+  directoryCollector:collect,pause:async()=>{},now:'2026-11-07T21:00:00.000Z'
+ });
+ const second=await refreshConnector(database(),'research-park-5',{
+  directoryCollector:collect,pause:async()=>{},now:'2026-11-07T21:01:00.000Z'
+ });
+ assert.deepEqual(calls,[4,5]);
+ assert.equal(first.observed,1);
+ assert.equal(second.observed,1);
+ assert.equal(first.imported,0);
+ assert.equal(second.imported,0);
+ assert.equal(first.updated,1);
+ assert.equal(second.updated,1);
+});
+integrated('only reviewed NIH recipient identities create pending, provenance-carrying award candidates',async()=>{
+ const company=(await all('SELECT id,name FROM companies ORDER BY name LIMIT 1'))[0];
+ const source=(await all('SELECT id FROM sources ORDER BY id LIMIT 1'))[0];
+ const claimId='ci-verified-nih-recipient';
+ await database().batch([
+  database().prepare("INSERT INTO claims(id,company_id,field,value,classification,status,first_observed,verified_at) VALUES(?,?,?,'CI Verified Research Institute','Verified factual','Published',?,?) ON CONFLICT DO NOTHING")
+   .bind(claimId,company.id,'nih organization','2026-11-07T00:00:00.000Z','2026-11-07T00:00:00.000Z'),
+  database().prepare("INSERT INTO evidence(id,claim_id,source_id,excerpt,relationship,method,verified_at) VALUES(?,?,?,'Verified institutional name','supports','CI evidence','2026-11-07T00:00:00.000Z') ON CONFLICT DO NOTHING")
+   .bind('ci-nih-evidence',claimId,source.id)
+ ]);
+ let calls=0;
+ const fetcher=async (url)=>{
+  assert.equal(url,'https://api.reporter.nih.gov/v2/projects/search');
+  calls++;
+  return new Response(JSON.stringify({results:[{
+   appl_id:99334411,organization:{org_name:'CI Verified Research Institute'},
+   project_title:'Technology transfer research',project_num:'R01-TEST-123',
+   award_amount:120000,award_notice_date:'2026-11-01'
+  }]}),{status:200,headers:{'Content-Type':'application/json'}});
+ };
+ const before=await all("SELECT count(*) n FROM source_candidates WHERE connector='nih-reporter'");
+ const first=await refreshConnector(database(),'nih-reporter',{fetcher,pause:async()=>{},maxMappingsPerRun:2});
+ assert.equal(first.mappingsChecked,1);
+ assert.equal(first.staged,1);
+ const second=await refreshConnector(database(),'nih-reporter',{fetcher,pause:async()=>{},maxMappingsPerRun:2});
+ assert.equal(second.mappingsChecked,1);
+ assert.equal(second.staged,0);
+ assert.equal(calls,2);
+ const after=await all("SELECT count(*) n FROM source_candidates WHERE connector='nih-reporter' AND status='Pending'");
+ assert.equal(Number(after[0].n),Number(before[0].n)+1);
+ const row=(await all("SELECT source_url,excerpt,company_id FROM source_candidates WHERE connector='nih-reporter' LIMIT 1"))[0];
+ assert.equal(row.company_id,company.id);
+ assert.ok(row.source_url.startsWith('https://reporter.nih.gov/project-details/'));
+ assert.ok(row.excerpt.includes('CI Verified Research Institute'));
+ const linked=(await all("SELECT count(*) n FROM claims WHERE company_id=? AND field='NIH award'",company.id))[0];
+ assert.equal(Number(linked.n),0,'unreviewed award must not enter company claims');
+});
+integrated('GitHub releases advance bounded checkpoints, wrap around, and never duplicate verified events',async()=>{
+ const names=await all('SELECT id,name FROM companies ORDER BY id LIMIT 7');
+ const source=(await all('SELECT id FROM sources ORDER BY id LIMIT 1'))[0];
+ assert.equal(names.length,7);
+ for(let i=0;i<names.length;i++){
+  const id='ci-verified-repo-'+i;
+  const claim=database().prepare("INSERT INTO claims(id,company_id,field,value,classification,status,first_observed,verified_at) VALUES(?,?,? ,?,'Verified factual','Published',?,?) ON CONFLICT DO NOTHING")
+   .bind(id,names[i].id,'repository','https://github.com/verified-ci/repo'+i,'2026-11-07T00:00:00.000Z','2026-11-07T00:00:00.000Z');
+  const evidence=database().prepare("INSERT INTO evidence(id,claim_id,source_id,excerpt,relationship,method,verified_at) VALUES(?,?,?,'Reviewed repository identity','supports','CI evidence','2026-11-07T00:00:00.000Z') ON CONFLICT DO NOTHING")
+   .bind('ci-repo-evidence-'+i,id,source.id);
+  await database().batch([claim,evidence]);
+ }
+ const urls=[];
+ const fetcher=async url=>{
+  urls.push(url);
+  const i=Number(url.match(/repo(\d+)/)?.[1]);
+  assert.ok(Number.isInteger(i)&&i>=0&&i<7);
+  return new Response(JSON.stringify([{
+   id:551100+i,html_url:'https://github.com/verified-ci/repo'+i+'/releases/tag/v1.0',
+   name:'Verified public release',published_at:'2026-11-02T11:00:00Z'
+  }]),{status:200,headers:{'Content-Type':'application/json'}});
+ };
+ const opts={fetcher,pause:async()=>{},maxMappingsPerRun:3};
+ const outcomes=[];
+ for(let i=0;i<4;i++)outcomes.push(await refreshConnector(database(),'github-releases',opts));
+ assert.deepEqual(outcomes.map(x=>x.mappingsChecked),[3,3,1,3]);
+ assert.deepEqual(outcomes.map(x=>x.imported),[3,3,1,0]);
+ assert.equal(outcomes[3].updated,3);
+ const [counts]=await all("SELECT count(*) n FROM signals WHERE dedup_key LIKE 'github:%:5511%'");
+ assert.equal(Number(counts.n),7);
+ assert.equal(urls.length,10);
+ const cursor=(await all("SELECT last_claim_id FROM refresh_cursors WHERE name='github-releases'"))[0];
+ assert.equal(cursor.last_claim_id,'ci-verified-repo-2');
+});
+integrated('failure keeps the last verified checkpoint and records a failed job without a stuck lease',async()=>{
+ const old=(await all("SELECT last_claim_id FROM refresh_cursors WHERE name='github-releases'"))[0];
+ let callCount=0;
+ await assert.rejects(()=>refreshConnector(database(),'github-releases',{
+  fetcher:async()=>{callCount++;throw Error('fetch failed');},
+  pause:async()=>{},maxMappingsPerRun:1
+ }),/fetch failed/);
+ assert.equal(callCount,1);
+ const now=(await all("SELECT last_claim_id FROM refresh_cursors WHERE name='github-releases'"))[0];
+ assert.equal(now.last_claim_id,old.last_claim_id);
+ const lease=(await all("SELECT count(*) n FROM refresh_leases WHERE name='github-releases'"))[0];
+ assert.equal(Number(lease.n),0);
+ const latest=(await all("SELECT status, message FROM ingestion_jobs WHERE connector='github-releases' ORDER BY started_at DESC LIMIT 1"))[0];
+ assert.equal(latest.status,'Failed');
+ assert.ok(latest.message.includes('fetch failed'));
+});
+integrated('OTM is rejected before making network or database changes',async()=>{
+ let called=0;
+ await assert.rejects(()=>refreshConnector(database(),'otm-startups',{
+  fetcher:async()=>{called++;throw Error('unexpected fetch');}
+ }),/automated collection is disabled/);
+ assert.equal(called,0);
 });

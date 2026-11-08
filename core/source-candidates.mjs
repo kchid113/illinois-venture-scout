@@ -14,6 +14,12 @@ export const STARTUP_CATALOG_CONNECTORS=Object.freeze([
  'enterpriseworks-directory','iventure-cohorts','otm-startups'
 ]);
 
+/** OTM has a manually recorded source snapshot only; never automatically crawl it. */
+export const REFRESHABLE_STARTUP_CATALOG_CONNECTORS=Object.freeze(
+ STARTUP_CATALOG_CONNECTORS.filter(source=>source!=='otm-startups')
+);
+
+
 export function normalizeCompanyName(name){
  return String(name||'').normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
 }

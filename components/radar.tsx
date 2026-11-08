@@ -7,13 +7,13 @@ import {MetricInfo,Methodology} from './metric-info';
 import CompanyOverview from './company-overview';
 import IllinoisHeroArt from './illinois-hero-art';
 import {METRICS,FIELD_METRICS} from '@/core/methodology.mjs';
-import {CONNECTORS,STARTUP_CATALOG_CONNECTORS} from '@/core/source-candidates.mjs';
+import {CONNECTORS,REFRESHABLE_STARTUP_CATALOG_CONNECTORS} from '@/core/source-candidates.mjs';
 import {report,thesisFit,csv,screeningSnapshot} from '@/core/records.mjs';
 type Evidence={id:string;source_id:string;excerpt:string;url:string;title:string;publisher:string;published_at:string|null;retrieved_at:string;last_checked:string;accessibility:string;method?:string;verified_at?:string;relationship?:string;type?:string};
 type Claim={id:string;field:string;value:string;classification:string;status:string;evidence:Evidence[]};
 type Company={id:string;name:string;profile?:string;updated_at:string;first_observed:string;claims:Claim[];signals?:Signal[]};
 type Signal={id:string;company_id:string;name:string;description:string;category:string;event_date:string|null;first_observed:string;claim?:Claim};
-type Summary={lastChecked?:string|null;oldestCheck?:string|null;companies:number;claims:number;sources:number;signals:number;conflicts:number;recent:number;sectors:{name:string;count:number}[];jobs:{id:string;connector:string;status:string;finished_at:string;count:number}[]};
+type Summary={lastChecked?:string|null;oldestCheck?:string|null;companies:number;claims:number;sources:number;signals:number;conflicts:number;recent:number;sectors:{name:string;count:number}[];jobs:{id:string;connector:string;status:string;finished_at:string;count:number;message?:string|null}[]};
 type Item={kind:string;key:string;value:string};
 const nav=[['overview','Overview',LayoutDashboard],['discover','Discover',Search],['activity','Activity feed',Activity],['watchlists','Watchlists',Bookmark],['compare','Compare',Columns3],['research','Research',FileText],['sources','Sources',Database],['methodology','Methodology',BookOpen]] as const;
 const date=(v?:string|null)=>v?new Date(v).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'America/Chicago'}):'Not verified';
@@ -107,8 +107,8 @@ function SettingsPage({heading,local,admin,summary,reload}:{heading:(a:string,b:
   setBusy(true);setReviewError('');
   let observed=0,imported=0,staged=0;
   const failures:string[]=[];
-  for(const [i,source] of STARTUP_CATALOG_CONNECTORS.entries()){
-   setStatus('Checking official startup catalogs '+(i+1)+'/'+STARTUP_CATALOG_CONNECTORS.length+': '+source);
+  for(const [i,source] of REFRESHABLE_STARTUP_CATALOG_CONNECTORS.entries()){
+   setStatus('Checking official startup catalogs '+(i+1)+'/'+REFRESHABLE_STARTUP_CATALOG_CONNECTORS.length+': '+source);
    try{
     const result=await request<{observed:number;imported:number;staged:number}>('/api/admin/refresh',{
      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({connector:source})
@@ -130,20 +130,20 @@ function SettingsPage({heading,local,admin,summary,reload}:{heading:(a:string,b:
  <div className="profile-grid">
   <section className="panel padded"><h2>Research storage</h2><p>Your watchlists, contacts, notes and reports are stored in your private investor account.</p>
    <h2>Data refresh history <MetricInfo metric="freshness" lastChecked={summary.lastChecked}/></h2>
-   {summary.jobs.length?summary.jobs.map(j=><div className="claim-row" key={j.id}><strong>{j.connector}</strong><p>{j.status} · {j.count} records · {date(j.finished_at)}</p></div>):<p>No ingestion jobs recorded.</p>}
+   {summary.jobs.length?summary.jobs.map(j=><div className="claim-row" key={j.id}><strong>{j.connector}</strong><p>{j.status} · {j.count} records · {date(j.finished_at)}</p>{j.status==='Failed'&&j.message?<p className="error">{j.message}</p>:null}</div>):<p>No ingestion jobs recorded.</p>}
    <h2>Data quality <MetricInfo metric="verification" lastChecked={summary.lastChecked}/></h2><p>{summary.conflicts} conflicting claims · {summary.claims} supported claims</p>
   </section>
   <section className="panel padded"><h2>{admin?'Administrator controls':'Data operations'}</h2><p className="muted">{admin?'Your account is authorized to refresh source data.':'An authorized administrator manages source refreshes.'}</p>
    <div className="stack"><button disabled={busy||!admin} onClick={()=>void runAdmin('refresh')}><RefreshCw size={16}/>Refresh original directory page 1</button><button disabled={busy||!admin} onClick={()=>void runAdmin('seed')}>Import reviewed initial records</button></div>
    <h3>Public-source refresh <MetricInfo metric="freshness" lastChecked={summary.lastChecked}/></h3>
-   <p className="muted">Research Park startup pages 1–5 import documented tenant facts. EnterpriseWorks, iVenture and OTM startup directory entries are staged for review when new. News and federal-award connectors enrich verified identities; they are not complete startup directories.</p>
-   <div className="stack"><button disabled={busy||!admin} onClick={()=>void runCatalogBackfill()}><RefreshCw size={16}/>Discover from all 8 official startup catalogs</button></div>
-   <p className="muted">This makes sequential, rate-limited requests to the configured sources. New EnterpriseWorks, iVenture and OTM startups are not published until you explicitly review them.</p>
+   <p className="muted">Research Park startup pages 1–5 import documented tenant facts. EnterpriseWorks and iVenture entries are staged for review. OTM information is imported only from manually reviewed source snapshots. News and federal-award connectors enrich verified identities; they are not complete startup directories.</p>
+   <div className="stack"><button disabled={busy||!admin} onClick={()=>void runCatalogBackfill()}><RefreshCw size={16}/>Discover from 7 permitted live startup catalogs</button></div>
+   <p className="muted">This makes sequential, rate-limited requests to the configured sources. New EnterpriseWorks and iVenture entries require your review. OTM remains a separately reviewed, manually recorded source—not an automated crawler.</p>
    <div className="row" style={{flexWrap:'wrap',marginTop:10}}>
-    <select aria-label="Refresh source" value={connector} disabled={busy||!admin} onChange={e=>setConnector(e.target.value)}>{CONNECTORS.map((id:string)=><option key={id} value={id}>{id}</option>)}</select>
+    <select aria-label="Refresh source" value={connector} disabled={busy||!admin} onChange={e=>setConnector(e.target.value)}>{CONNECTORS.filter(id=>id!=='otm-startups').map((id:string)=><option key={id} value={id}>{id}</option>)}</select>
     <button disabled={busy||!admin} onClick={()=>void runRefresh()}><RefreshCw size={16}/>Refresh selected source</button>
    </div>
-   <p role="status">{status}</p><div className="hint">Scheduled GitHub Actions run only after production URL and protected credentials are configured. The official SBIR API is currently under maintenance. No AI-generated financial numbers are used.</div>
+   <p role="status">{status}</p><div className="hint">Vercel schedules the approved public-source collectors only after production deployment and CRON_SECRET configuration. University news, identity-verified awards and releases use scheduled jobs; OTM collection remains manual. No AI-generated financial figures are used.</div>
   </section>
  </div>
  {admin&&<section className="panel padded" style={{marginTop:18}}>

@@ -65,10 +65,13 @@ Private items use Supabase Auth user IDs and database-enforced RLS, independent 
 
 ### Scheduled sources
 
-Vercel invokes `GET /api/cron/refresh` daily with `Authorization: Bearer $CRON_SECRET`.
-The route refreshes one bounded source per run and uses a Postgres lease to avoid concurrency.
-OTM is deliberately not automatically crawled. Other catalog refreshes and candidate review remain
-available only to authenticated administrators.
+Vercel schedules 12 individually bounded `GET /api/cron/refresh/<connector>` jobs with
+`Authorization: Bearer $CRON_SECRET`: five Research Park pages, EnterpriseWorks,
+iVenture, two university news sources, NIH RePORTER, USAspending and verified GitHub
+releases. The weekly/daily jobs use source policies, PostgreSQL leases, idempotent
+storage, and resumable enrichment checkpoints. Unreviewed funding/news/program
+observations stay Pending. OTM is never automatically crawled and cannot run from
+the admin refresh route. See the [production schedule](docs/vercel-supabase-deployment.md).
 
 ## Independent research methodology
 

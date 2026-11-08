@@ -82,3 +82,9 @@ export const refreshLeases=pgTable('refresh_leases',{
  name:text('name').primaryKey(),token:text('token').notNull(),
  expiresAt:text('expires_at').notNull()
 });
+
+/** Bounded per-connector enrichment checkpoint; server-only and RLS-denied. */
+export const refreshCursors=pgTable('refresh_cursors',{
+ name:text('name').primaryKey(),lastClaimId:text('last_claim_id').notNull().default(''),
+ updatedAt:text('updated_at').notNull()
+});

@@ -63,11 +63,64 @@ account. Browser-local storage requires an opt-in export/import and is not avail
 server-side migration. Keep a read-only backup until reconciled. Never copy investor data
 between accounts by matching an unverified email address.
 
-## 5. Production launch and rollback
+## 5. Expanded automated source coverage
+
+The production app has 12 separate, staggered and secret-protected Vercel
+Cron Jobs. The allowlisted connector paths and UTC schedules live in
+`core/source-schedule.mjs`, and CI verifies that `vercel.json` exactly matches.
+
+| Source | Cadence | Review/security requirement |
+| --- | --- | --- |
+| Research Park startup directory pages 1–5 | Each page weekly, Mon–Fri | Direct evidence-backed directory records; identity conflicts held for human review |
+| EnterpriseWorks | Weekly Tuesday | New accelerator observations stay Pending |
+| iVenture | Weekly Saturday | Cohort observations stay Pending |
+| Research Park news | Daily | Exact documented company mentions, queued for review |
+| Entrepreneurship at Illinois news | Daily | Exact documented company mentions, queued for review |
+| NIH RePORTER | Weekly Tuesday | Only separately verified NIH organization identities; awards stay Pending |
+| USAspending | Weekly Thursday | Only separately verified UEI identities; awards stay Pending |
+| GitHub releases | Daily | Only verified repository identities; source-backed engineering signals |
+
+The OTM startup directory is excluded from *all* automated fetching—including
+the admin API—because its robots/access restrictions require manual handling.
+The original reviewed, manually collected source snapshot remains available.
+Do not override provider robots restrictions or search funding recipients by
+similar company names.
+
+Enrichment sources use **resumable batches of five verified mappings** and an
+RLS-denied `refresh_cursors` table. A cursor advances only after one identity's
+records have been fully processed; later runs wrap at the end. Apply the
+additional versioned PostgreSQL migration with `npm run db:migrate`
+before deploying the new cron configuration.
+
+The ingestion layer retains database leases to prevent overlap, idempotent
+source/claim/evidence operations, single-decision candidate review and
+persisted audit/job records. Failed jobs appear in Settings.
+Transient network failures and HTTP 500/502/503/504 may retry at most twice
+with modest delay; 403, 429, robots blocks and malformed sources never
+trigger an aggressive retry loop.
+
+The routes are under `/api/cron/refresh/<allowlisted-connector>` and require a
+32+ character Vercel Production `CRON_SECRET` bearer token. Invalid or
+manual-only connectors cannot run from the cron endpoint. Production cron
+functions use a maximum duration of 300 seconds and UTC scheduling.
+The 12 jobs fit Vercel's 100-jobs-per-project limit. Each individual
+schedule runs at most once daily, compatible with the Hobby cron cadence
+restriction, although commercial use requires an eligible plan.
+See [Vercel Cron Jobs](https://vercel.com/docs/cron-jobs) and the
+[January 2026 expansion](https://vercel.com/changelog/cron-jobs-now-support-100-per-project-on-every-plan).
+
+Before launch, use a deployed authenticated environment to check source runs,
+403 with a wrong cron bearer, 404 for OTM/unknown source, failed-job logging,
+cursor resume after a failed mapping, review-only staging, robot blocks,
+source API throttling and zero-eligible-identity results. Do not claim
+source coverage is complete if a provider returns 0, a forbidden response,
+or a known incomplete dataset.
+
+## 6. Production launch and rollback
 
 - Before attaching a production domain, require a green native Next.js build,
   Postgres source-integrity tests, real sign-in and two-account isolation checks,
-  admin review actions, manual source refresh, cron auth checks, responsive browser
+  admin review actions, manual and scheduled source refresh, cron auth and cursor checks, responsive browser
   navigation, downloads, founder contact, watchlist and notes functionality.
 - Configure `CRON_SECRET` as a random 32+ character value in Vercel Production;
   rotate it if leaked. Vercel Cron sends it as a bearer token.
