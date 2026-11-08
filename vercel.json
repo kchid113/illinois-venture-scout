@@ -1,9 +1,54 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "crons": [
     {
-      "path": "/api/cron/refresh",
-      "schedule": "0 10 * * *"
+      "path": "/api/cron/refresh/research-park-1",
+      "schedule": "5 7 * * 1"
+    },
+    {
+      "path": "/api/cron/refresh/research-park-2",
+      "schedule": "5 7 * * 2"
+    },
+    {
+      "path": "/api/cron/refresh/research-park-3",
+      "schedule": "5 7 * * 3"
+    },
+    {
+      "path": "/api/cron/refresh/research-park-4",
+      "schedule": "5 7 * * 4"
+    },
+    {
+      "path": "/api/cron/refresh/research-park-5",
+      "schedule": "5 7 * * 5"
+    },
+    {
+      "path": "/api/cron/refresh/enterpriseworks-directory",
+      "schedule": "25 9 * * 2"
+    },
+    {
+      "path": "/api/cron/refresh/iventure-cohorts",
+      "schedule": "25 9 * * 6"
+    },
+    {
+      "path": "/api/cron/refresh/research-park-news",
+      "schedule": "10 12 * * *"
+    },
+    {
+      "path": "/api/cron/refresh/illinois-news",
+      "schedule": "10 13 * * *"
+    },
+    {
+      "path": "/api/cron/refresh/nih-reporter",
+      "schedule": "30 15 * * 2"
+    },
+    {
+      "path": "/api/cron/refresh/usaspending",
+      "schedule": "30 15 * * 4"
+    },
+    {
+      "path": "/api/cron/refresh/github-releases",
+      "schedule": "10 16 * * *"
     }
   ]
 }

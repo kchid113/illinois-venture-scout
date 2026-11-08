@@ -11,6 +11,7 @@ export async function POST(req:NextRequest){
  if(req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});
  const parsed=schema.safeParse(await req.json().catch(()=>null));
  if(!parsed.success)return NextResponse.json({error:'Specify an allowed public data source'},{status:400});
+ if(parsed.data.connector==='otm-startups')return NextResponse.json({error:'OTM automated collection is not authorized; review the manually recorded snapshot'},{status:422});
  try{return NextResponse.json(await refreshConnector(database(),parsed.data.connector));}
  catch(error){
   const message=error instanceof Error?error.message:'Refresh failed';

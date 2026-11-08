@@ -47,6 +47,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: node scripts/prepare-test-postgres.mjs
       - run: npm run db:migrate
+      - run: npm run db:migrate
       - run: npm run db:seed
       - run: npm run db:seed
       - run: npm run db:verify

@@ -6,11 +6,16 @@ test('Next.js is the only app runtime and scheduled updates have a secure cron e
  const pkg=JSON.parse(read('package.json'));
  assert.equal(pkg.scripts.build,'next build');
  for(const dep of ['wrangler','vinext','@cloudflare/vite-plugin','@cloudflare/workers-types'])assert.equal(pkg.dependencies?.[dep]||pkg.devDependencies?.[dep],undefined);
- assert.equal(JSON.parse(read('vercel.json')).crons.length,1);
- const cron=read('app/api/cron/refresh/route.ts');
+ const schedules=JSON.parse(read('vercel.json')).crons;
+ assert.equal(schedules.length,12);
+ assert.equal(new Set(schedules.map(x=>x.path)).size,12);
+ assert.ok(schedules.every(x=>x.path.startsWith('/api/cron/refresh/')));
+ assert.ok(!schedules.some(x=>/otm-startups/.test(x.path)));
+ const cron=read('app/api/cron/refresh/[connector]/route.ts');
  assert.match(cron,/timingSafeEqual/);
  assert.match(cron,/CRON_SECRET/);
- assert.ok(!cron.includes("otm-startups'"));
+ assert.match(cron,/isScheduledConnector/);
+ assert.match(cron,/executeScheduledConnector/);
 });
 test('private workspace requires authenticated Supabase identity and database RLS',()=>{
  const api=read('app/api/data/route.ts'),auth=read('lib/auth.ts'),migration=read('supabase/migrations/20261107000000_initial.sql');
