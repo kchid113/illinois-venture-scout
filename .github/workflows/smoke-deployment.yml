@@ -1,0 +1,24 @@
+name: Verify public Vercel deployment data
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: 'HTTPS *.vercel.app origin to verify (no paths, tokens or query parameters)'
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  smoke:
+    name: Live read-only public data smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      DEPLOYMENT_URL: ${{ inputs.deployment_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify health, summary, discovery, evidence and private workspace denial
+        run: node scripts/smoke-public.mjs "$DEPLOYMENT_URL"
