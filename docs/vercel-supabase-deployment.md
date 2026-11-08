@@ -20,11 +20,20 @@ This is the only supported production architecture. No Cloudflare services are r
 - In Supabase Authentication, turn off public signups. Invite approved investors using
   Supabase Auth user management.
 - Configure Auth URL settings for both the production origin and preview auth callback.
-- Configure Email (Magic Link) and Invite email templates using a **token hash**:
-  `https://YOUR_VERIFIED_APP_ORIGIN/auth/callback?token_hash={{ .TokenHash }}&type=email`
-  for regular email magic links. For invitation links use `type=invite` and update the
-  callback route to accept the invite type, as implemented. Alternatively use the PKCE `code`
-  callback provided by Supabase; both paths are handled.
+- **Staging does not require a custom SMTP service or editable email templates.**
+  The app's browser-side `/auth/callback` supports the default hosted
+  `{{ .ConfirmationURL }}` email template (which can return credentials in the
+  URL fragment), PKCE `?code=` callbacks, and explicit `token_hash` callbacks.
+  Do not use the previous server-only callback: it cannot read URL fragments.
+- For production, configure a verified sending domain and supported email delivery;
+  use the optional token-hash email template where appropriate. The email
+  template may use `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email`
+  for magic links and `type=invite` for invitations.
+- Always test with a fresh link. A magic link is single-use, commonly expires
+  within one hour, and a link opened by automated email scanners can be
+  consumed. For PKCE callbacks, use the same browser profile where the sign-in
+  request originated. Never paste URLs containing `code`, `token_hash` or
+  `access_token` into chat, logs, issue reports, or screenshots.
 - Register only your trusted Vercel preview/production redirect URLs. Never allow arbitrary
   redirect destinations from user input.
 - In Supabase SQL Editor, insert an administrator role:
