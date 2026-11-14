@@ -50,7 +50,7 @@ export function trustedCompanyHost(raw){
 }
 
 export function companyLogoCandidates(company){
- const candidates:string[]=[];
+ const candidates=[];
  try{
   const url=new URL(company.profile||'');
   if(url.hostname==='researchpark.illinois.edu'){
