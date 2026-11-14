@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useState,useCallback} from 'react';
 import Link from 'next/link';
-import {Radar as RadarIcon,LayoutDashboard,Search,Activity,Bookmark,Columns3,FileText,Database,Settings,ArrowUpRight,ArrowRight,ChevronRight,Check,Plus,X,Download,SlidersHorizontal,Grid2X2,List,ShieldCheck,ExternalLink,Menu,BookOpen,Link2,UserRound} from 'lucide-react';
+import {Radar as RadarIcon,LayoutDashboard,Search,Activity,Bookmark,Columns3,Database,Settings,ArrowUpRight,ArrowRight,ChevronRight,Check,Plus,X,Download,SlidersHorizontal,Grid2X2,List,ShieldCheck,ExternalLink,Menu,BookOpen,Link2,UserRound} from 'lucide-react';
 import {Dialog} from 'radix-ui';
 import {MetricInfo,Methodology} from './metric-info';
 import CompanyOverview from './company-overview';
