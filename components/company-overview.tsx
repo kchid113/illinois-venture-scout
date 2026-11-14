@@ -1,28 +1,28 @@
 'use client';
 import {useState} from 'react';
-import {ArrowRight,ArrowUpRight,Check,ClipboardList,ExternalLink,Mail,ShieldCheck,UserRound} from 'lucide-react';
+import {ArrowRight,ArrowUpRight,Check,ExternalLink,Mail,ShieldCheck,UserRound} from 'lucide-react';
 import {founderOutreach,parsePrivateContact,validatePrivateContact} from '@/core/founder-outreach.mjs';
+import {displayableClaims} from '@/core/display-facts.mjs';
 
 type Evidence={id:string;source_id:string;relationship?:string;url:string;publisher:string;title:string;published_at:string|null;retrieved_at:string;last_checked:string;accessibility:string;excerpt:string};
 type Claim={id:string;field:string;value:string;status:string;classification:string;evidence:Evidence[]};
 type Company={id:string;name:string;profile?:string;updated_at:string;claims:Claim[];signals?:{id:string;description:string;event_date:string|null}[]};
-type Props={company:Company;citation:(c?:Claim)=>React.ReactNode;onSources:()=>void;onSignals:()=>void;onFounderContact:()=>void};
-const fields=(c:Company,names:string[])=>c.claims.filter(c=>names.includes(c.field.toLowerCase())&&c.evidence.some(e=>e.source_id&&e.relationship==='supports'));
+type Props={company:Company;onSources:()=>void;onSignals:()=>void;onFounderContact:()=>void};
+const fields=(c:Company,names:string[])=>displayableClaims(c.claims,names).filter(c=>c.evidence.some(e=>e.source_id&&e.relationship==='supports'));
 const primary=(c:Company,names:string[])=>fields(c,names)[0];
 const formatDate=(v?:string|null)=>v?new Date(v).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}):'Not recorded';
 
-function SourcedFact({company,label,names,citation}:{company:Company;label:string;names:string[];citation:Props['citation']}){
+function SourcedFact({company,label,names}:{company:Company;label:string;names:string[]}){
  const matching=fields(company,names);
  if(!matching.length)return null;
  return <div className="deep-fact"><span className="deep-fact-label">{label}</span>
   {matching.map(c=><div className="deep-fact-entry" key={c.id}>
-   <strong>{c.value}</strong> {citation(c)}
-   <small>{c.status==='Conflicting'?'Conflicting evidence':c.classification}</small>
+   <strong>{c.value}</strong>{c.status==='Conflicting'&&<small>Conflicting information</small>}
   </div>)}
  </div>;
 }
 
-export function CompanyContact({company,privateValue,onSave,citation}:{company:Company;privateValue?:string;onSave:(value:string)=>Promise<boolean>;citation:Props['citation']}){
+export function CompanyContact({company,privateValue,onSave}:{company:Company;privateValue?:string;onSave:(value:string)=>Promise<boolean>}){
  const found=founderOutreach(company);
  const empty={name:'',email:'',profile:'',notes:''};
  const [draft,setDraft]=useState(empty);
@@ -48,8 +48,8 @@ export function CompanyContact({company,privateValue,onSave,citation}:{company:C
    <p>Use verified founder details when available, or start with the company’s documented public presence.</p>
   </div>
   {found.founders.length>0?<div className="founder-names">{found.founders.map((f:{value:string;claimId:string})=><div key={f.claimId}>
-   <strong>{f.value}</strong> {citation(company.claims.find(x=>x.id===f.claimId))}
-  </div>)}</div>:<p className="contact-unverified">Founder details are not included in the published research sources.</p>}
+   <strong>{f.value}</strong>
+  </div>)}</div>:null}
   <div className="contact-action-stack">
    {found.direct.map((link:{kind:string;label:string;url:string;value:string;claimId:string})=>
     <a className="button contact-direct" href={link.url} key={link.url}
@@ -63,7 +63,6 @@ export function CompanyContact({company,privateValue,onSave,citation}:{company:C
    {found.officialProfile&&<a className="button" href={found.officialProfile} target="_blank" rel="noopener noreferrer">
     <ExternalLink size={16}/> {found.website?'Official company listing':'Open company profile'} <ArrowUpRight size={14}/>
    </a>}
-   {!found.direct.length&&<p className="contact-unverified">Founder introductions are not established by the available evidence. Use the official listing above as a research starting point.</p>}
   </div>
   <div className="private-contact">
    <div className="row private-contact-header">
@@ -88,7 +87,7 @@ export function CompanyContact({company,privateValue,onSave,citation}:{company:C
  </section>;
 }
 
-export default function CompanyOverview({company,citation,onSources,onSignals,onFounderContact}:Props){
+export default function CompanyOverview({company,onSources,onSignals,onFounderContact}:Props){
  const description=primary(company,['description']),technology=primary(company,['technology','product']);
  const sourced=company.claims.filter(c=>c.evidence.some(e=>e.source_id&&e.relationship==='supports'));
  const uniqueSources=new Map<string,{title:string;publisher:string;url:string;last_checked?:string}>();
@@ -96,26 +95,24 @@ export default function CompanyOverview({company,citation,onSources,onSignals,on
   if(e.source_id&&e.relationship==='supports'&&!uniqueSources.has(e.source_id))
    uniqueSources.set(e.source_id,{title:e.title,publisher:e.publisher,url:e.url,last_checked:e.last_checked});
  }
- const missing=[
-  {label:'Founder identity and contact',ok:fields(company,['founder','founders','co-founder','leadership']).length>0},
-  {label:'Commercial traction and customers',ok:fields(company,['customers','customer','commercial traction','revenue']).length>0},
-  {label:'Funding round and capitalization',ok:fields(company,['equity funding','funding round','equity financing']).length>0},
-  {label:'Market and competitive position',ok:fields(company,['market','market size','competitors']).length>0}
- ];
+ const hasStory=Boolean(description||technology||fields(company,['sector','affiliation','incubator','accelerator','university ip startup','stage']).length);
+ const hasBusiness=fields(company,['technology','product','business model','customer','customers','market','commercial traction']).length>0;
+ const hasPeople=fields(company,['founder','founders','co-founder','leadership','incubator','accelerator','affiliation','university ip startup']).length>0;
+ const hasCapital=fields(company,['equity funding','equity financing','funding round','grant','grants','government award','research award','federal award','government contract','revenue','sales','customers','commercial traction','lifecycle','operating status','status']).length>0;
  return <div className="company-overview">
   <div className="overview-intro-grid">
-   <section className="panel padded company-story">
+   {hasStory&&<section className="panel padded company-story">
     <div className="eyebrow">COMPANY BRIEF</div><h2>What {company.name} is building</h2>
-    {description?<><p className="company-story-text">{description.value} {citation(description)}</p>
+    {description?<><p className="company-story-text">{description.value}</p>
      <span className="tag amber">Company-reported overview · linked to the source</span></>:
-     <div className="company-story-unlisted"><p>The available university listing does not describe the product in detail.</p>{company.profile&&<a className="button research-source-cta" href={company.profile} target="_blank" rel="noopener noreferrer">Explore the original company listing <ArrowUpRight size={15}/></a>}</div>}
-    {technology&&<div className="technology-note"><strong>Technology</strong><p>{technology.value} {citation(technology)}</p></div>}
+     null}
+    {technology&&<div className="technology-note"><strong>Technology</strong><p>{technology.value}</p></div>}
     <div className="company-key-facts">
-     <SourcedFact company={company} label="Sector" names={['sector']} citation={citation}/>
-     <SourcedFact company={company} label="University ecosystem link" names={['affiliation','incubator','accelerator','university ip startup']} citation={citation}/>
-     <SourcedFact company={company} label="Company stage" names={['stage']} citation={citation}/>
+     <SourcedFact company={company} label="Sector" names={['sector']}/>
+     <SourcedFact company={company} label="University ecosystem link" names={['affiliation','incubator','accelerator','university ip startup']}/>
+     <SourcedFact company={company} label="Company stage" names={['stage']}/>
     </div>
-   </section>
+   </section>}
    <section className="panel padded founder-contact-teaser">
     <div className="eyebrow"><UserRound size={14}/> TEAM & OUTREACH</div>
     <h2>Connect with the people building {company.name}</h2>
@@ -124,41 +121,35 @@ export default function CompanyOverview({company,citation,onSources,onSignals,on
    </section>
   </div>
   <div className="company-detail-grid">
-   <section className="panel padded deep-section">
+   {hasBusiness&&<section className="panel padded deep-section">
     <div className="eyebrow">BUSINESS & MARKET</div><h2>Product and commercialization</h2>
-    <SourcedFact company={company} label="Product / technology" names={['technology','product']} citation={citation}/>
-    <SourcedFact company={company} label="Business model" names={['business model']} citation={citation}/>
-    <SourcedFact company={company} label="Customer and market evidence" names={['customer','customers','market','commercial traction']} citation={citation}/>
-   </section>
-   <section className="panel padded deep-section">
+    <SourcedFact company={company} label="Product / technology" names={['technology','product']}/>
+    <SourcedFact company={company} label="Business model" names={['business model']}/>
+    <SourcedFact company={company} label="Customer and market evidence" names={['customer','customers','market','commercial traction']}/>
+   </section>}
+   {hasPeople&&<section className="panel padded deep-section">
     <div className="eyebrow">PEOPLE & ORIGINS</div><h2>Team and university connection</h2>
-    <SourcedFact company={company} label="Founders / leadership" names={['founder','founders','co-founder','leadership']} citation={citation}/>
-    <SourcedFact company={company} label="Incubator and accelerator" names={['incubator','accelerator']} citation={citation}/>
-    <SourcedFact company={company} label="University relationship" names={['affiliation','university ip startup']} citation={citation}/>
-   </section>
-   <section className="panel padded deep-section">
+    <SourcedFact company={company} label="Founders / leadership" names={['founder','founders','co-founder','leadership']}/>
+    <SourcedFact company={company} label="Incubator and accelerator" names={['incubator','accelerator']}/>
+    <SourcedFact company={company} label="University relationship" names={['affiliation','university ip startup']}/>
+   </section>}
+   {hasCapital&&<section className="panel padded deep-section">
     <div className="eyebrow">CAPITAL & MOMENTUM</div><h2>Funding, traction and status</h2>
-    <SourcedFact company={company} label="Equity financing" names={['equity funding','equity financing','funding round']} citation={citation}/>
-    <SourcedFact company={company} label="Grants / awards" names={['grant','grants','government award','research award','federal award','government contract']} citation={citation}/>
-    <SourcedFact company={company} label="Revenue / customer traction" names={['revenue','sales','customers','commercial traction']} citation={citation}/>
-    <SourcedFact company={company} label="Operating status" names={['lifecycle','operating status','status']} citation={citation}/>
-    <p className="fact-note">No funding or traction claims are currently published unless they appear above. A program listing alone does not establish investment, ownership, customers, or operations.</p>
-   </section>
-   <section className="panel padded deep-section evidence-summary">
+    <SourcedFact company={company} label="Equity financing" names={['equity funding','equity financing','funding round']}/>
+    <SourcedFact company={company} label="Grants / awards" names={['grant','grants','government award','research award','federal award','government contract']}/>
+    <SourcedFact company={company} label="Revenue / customer traction" names={['revenue','sales','customers','commercial traction']}/>
+    <SourcedFact company={company} label="Operating status" names={['lifecycle','operating status','status']}/>
+   </section>}
+   {uniqueSources.size>0&&<section className="panel padded deep-section evidence-summary">
     <div className="eyebrow"><ShieldCheck size={14}/> ORIGINAL EVIDENCE</div><h2>Source-backed research</h2>
     <div className="source-summary-number">{sourced.length}<span>supported or conflicting claims</span></div>
     {[...uniqueSources.values()].slice(0,5).map(s=><a className="evidence-summary-link" href={s.url} target="_blank" rel="noopener noreferrer" key={s.url}>
      <span><strong>{s.publisher}</strong><small>{s.title} · Checked {formatDate(s.last_checked)}</small></span><ArrowUpRight size={15}/>
     </a>)}
     <button className="button full" onClick={onSources}>Review all sources & claims <ArrowRight size={16}/></button>
-   </section>
+   </section>}
   </div>
   <div className="company-footer-grid">
-   <section className="panel padded">
-    <div className="eyebrow"><ClipboardList size={14}/> INVESTMENT DILIGENCE</div><h2>Questions to resolve</h2>
-    <p className="muted">These questions highlight evidence gaps, not red flags or predictive scores.</p>
-    <ul className="diligence-gaps">{missing.map(x=><li key={x.label}><span className={x.ok?'gap-dot resolved':'gap-dot'}/><span>{x.label}</span><small>{x.ok?'Evidence available':'To investigate'}</small></li>)}</ul>
-   </section>
    <section className="panel padded next-steps">
     <div className="eyebrow">NEXT STEPS</div><h2>Continue your research</h2>
     <p>Inspect individual claims, review documented developments, and save your own founder conversation notes.</p>
