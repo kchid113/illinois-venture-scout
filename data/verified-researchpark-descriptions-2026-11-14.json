@@ -1,0 +1,193 @@
+{
+  "title": "2026-11-14 manually reviewed Research Park primary-source company descriptions",
+  "reviewedOn": "2026-11-14",
+  "classification": "Company-reported",
+  "policy": "Publish only if company id and exact Research Park profile URL match existing record; insert immutable description claim with source and supporting evidence; do not infer financing, growth, or endorsement.",
+  "excluded": [
+    "second-chance-innovations: official listing describes program participation only, not product"
+  ],
+  "records": [
+    {
+      "company_id": "ai-nexus-healthcare",
+      "name": "AI Nexus Healthcare",
+      "url": "https://researchpark.illinois.edu/ai-nexus-healthcare/",
+      "description": "Develops AI-powered health and wellness applications, including tools intended to help users and care teams recognize early health risks.",
+      "evidence_note": "Research Park describes its cognitive AI health applications and mia early-warning platform."
+    },
+    {
+      "company_id": "amnioalert",
+      "name": "AmnioAlert",
+      "url": "https://researchpark.illinois.edu/amnioalert/",
+      "description": "Develops a disposable liner intended to detect amniotic fluid at home and help identify the onset of labor.",
+      "evidence_note": "Research Park describes the disposable amniotic-fluid detection liner and its purpose."
+    },
+    {
+      "company_id": "bloomd",
+      "name": "BlooMD",
+      "url": "https://researchpark.illinois.edu/bloomd/",
+      "description": "Researches plant-derived bioactive compounds and screens plant materials for activity against fungal and bacterial pathogens.",
+      "evidence_note": "Research Park explains the company's screening of plant compounds for pathogen activity."
+    },
+    {
+      "company_id": "boston-bioprocess",
+      "name": "Boston Bioprocess",
+      "url": "https://researchpark.illinois.edu/boston-bioprocess/",
+      "description": "Provides bench- and pilot-scale fermentation and downstream processing services to help clients improve production yields and test products.",
+      "evidence_note": "Research Park documents fermentation, downstream processing and pilot-scale commercial testing services."
+    },
+    {
+      "company_id": "cache-energy",
+      "name": "Cache Energy",
+      "url": "https://researchpark.illinois.edu/cache-energy/",
+      "description": "Develops long-duration electricity storage technology based on thermal power concepts for large-scale and industrial energy storage.",
+      "evidence_note": "Research Park describes thermal-based long-duration energy storage and industrial applications."
+    },
+    {
+      "company_id": "eleuthra-photonics",
+      "name": "Eleuthra Photonics",
+      "url": "https://researchpark.illinois.edu/eleuthra-photonics/",
+      "description": "Develops rapid, image-based diagnostic tools for analyzing tissue and cell samples, with a focus on cancer and other diseases.",
+      "evidence_note": "Research Park identifies rapid image-based diagnostics for tissue and cell samples."
+    },
+    {
+      "company_id": "epivara",
+      "name": "Epivara",
+      "url": "https://researchpark.illinois.edu/epivara/",
+      "description": "Develops an injectable, nonsurgical spay-and-neuter technology for companion animals.",
+      "evidence_note": "Research Park describes Epivara's injectable alternative to surgical spaying and neutering."
+    },
+    {
+      "company_id": "epl-power-electronics-inc",
+      "name": "EPL Power Electronics, Inc.",
+      "url": "https://researchpark.illinois.edu/epl-power-electronics-inc/",
+      "description": "Designs compact, programmable, energy-efficient high-voltage power drivers for plasma and related academic and industrial applications.",
+      "evidence_note": "Research Park lists high-voltage power drivers for plasma and industrial applications."
+    },
+    {
+      "company_id": "frenzy-ag",
+      "name": "Frenzy Ag",
+      "url": "https://researchpark.illinois.edu/frenzy-ag/",
+      "description": "Develops crop-growth strategies intended to improve the productivity of each acre and plant.",
+      "evidence_note": "Research Park describes crop-growth strategies aimed at maximizing productivity."
+    },
+    {
+      "company_id": "frostdefense-envirotech-inc-2",
+      "name": "FrostDefense Envirotech Inc.",
+      "url": "https://researchpark.illinois.edu/frostdefense-envirotech-inc-2/",
+      "description": "Develops biodegradable coatings intended to protect vineyards and orchards against spring frost damage.",
+      "evidence_note": "Research Park describes a protective biodegradable crop coating for frost mitigation."
+    },
+    {
+      "company_id": "gigacrop",
+      "name": "GigaCrop",
+      "url": "https://researchpark.illinois.edu/gigacrop/",
+      "description": "Develops a crop-yield technology using a novel carbon-fixation pathway intended to make photosynthesis faster.",
+      "evidence_note": "Research Park describes a faster carbon-fixation pathway for improving crop yields."
+    },
+    {
+      "company_id": "glucosentient",
+      "name": "GlucoSentient",
+      "url": "https://researchpark.illinois.edu/glucosentient/",
+      "description": "Develops diagnostic technology that adapts glucose meters to measure other targets for point-of-care monitoring.",
+      "evidence_note": "Research Park explains the adaptation of glucose meter measurements to non-glucose targets."
+    },
+    {
+      "company_id": "habiterre",
+      "name": "HabiTerre",
+      "url": "https://researchpark.illinois.edu/habiterre/",
+      "description": "Uses remote sensing, process models and AI to analyze cropland productivity, resource use and environmental impact.",
+      "evidence_note": "Research Park describes remote sensing, process models and AI for cropland analysis."
+    },
+    {
+      "company_id": "helixon",
+      "name": "Helixon",
+      "url": "https://researchpark.illinois.edu/helixon/",
+      "description": "Develops biological therapeutics using protein engineering and screening techniques for diseases including cancer and autoimmune conditions.",
+      "evidence_note": "Research Park describes Helixon US and biologic discovery using molecular engineering."
+    },
+    {
+      "company_id": "hourglass-medical",
+      "name": "Hourglass Medical",
+      "url": "https://researchpark.illinois.edu/hourglass-medical/",
+      "description": "Develops hands-free hardware controls for smart glasses and extended reality using facial and other movements.",
+      "evidence_note": "Research Park documents hands-free controls for XR and smart glasses."
+    },
+    {
+      "company_id": "identomat",
+      "name": "Identomat",
+      "url": "https://researchpark.illinois.edu/identomat/",
+      "description": "Provides remote digital identity verification and customer onboarding software for regulated industries.",
+      "evidence_note": "Research Park describes remote identity verification and digital onboarding."
+    },
+    {
+      "company_id": "ion-grove",
+      "name": "Ion Grove",
+      "url": "https://researchpark.illinois.edu/ion-grove/",
+      "description": "Develops an electric-vehicle charging-station network along interstate highway corridors.",
+      "evidence_note": "Research Park describes a NEVI-aligned charging network along alternative-fuel corridors."
+    },
+    {
+      "company_id": "iridescent-sensors",
+      "name": "Iridescent Sensors",
+      "url": "https://researchpark.illinois.edu/iridescent-sensors/",
+      "description": "Develops colorimetric sensor arrays and handheld analyzers for identifying odors, chemical mixtures and toxic gases.",
+      "evidence_note": "Research Park documents colorimetric sensor arrays and a handheld analyzer."
+    },
+    {
+      "company_id": "keanetech",
+      "name": "KeaneTech",
+      "url": "https://researchpark.illinois.edu/keanetech/",
+      "description": "Works on ceramic powder synthesis and the design and fabrication of geopolymer materials and composites.",
+      "evidence_note": "Research Park describes ceramic powder synthesis and geopolymer composites."
+    },
+    {
+      "company_id": "kocree",
+      "name": "Kocree",
+      "url": "https://researchpark.illinois.edu/kocree/",
+      "description": "Created Muosaic, an AI-supported music co-creation platform for combining melodies, rhythms and arrangements.",
+      "evidence_note": "Research Park describes the Muosaic social music co-creation platform."
+    },
+    {
+      "company_id": "micromgx",
+      "name": "MicroMGX",
+      "url": "https://researchpark.illinois.edu/micromgx/",
+      "description": "Develops a natural-products discovery platform to assemble compound libraries for early-stage pharmaceutical testing.",
+      "evidence_note": "Research Park describes a discovery platform for natural-product libraries."
+    },
+    {
+      "company_id": "phi-optics",
+      "name": "Phi Optics",
+      "url": "https://researchpark.illinois.edu/phi-optics/",
+      "description": "Develops quantitative phase imaging systems combining light microscopy with real-time 3D imaging capabilities.",
+      "evidence_note": "Research Park describes optical imaging using quantitative phase imaging."
+    },
+    {
+      "company_id": "photon-queue",
+      "name": "Photon Queue",
+      "url": "https://researchpark.illinois.edu/photon-queue/",
+      "description": "Develops photonic quantum-memory hardware for quantum networking, communications and computing.",
+      "evidence_note": "Research Park describes photonic quantum memories for emerging quantum technologies."
+    },
+    {
+      "company_id": "reconstruct",
+      "name": "Reconstruct",
+      "url": "https://researchpark.illinois.edu/reconstruct/",
+      "description": "Develops construction-visualization software combining visual data, 4D BIM and progress analytics for project coordination.",
+      "evidence_note": "Research Park describes its web platform for 4D BIM, progress tracking and delay risk."
+    },
+    {
+      "company_id": "sensiboo",
+      "name": "Sensiboo",
+      "url": "https://researchpark.illinois.edu/sensiboo/",
+      "description": "Develops play-based digital learning experiences for infants and caregivers, focused on early childhood development.",
+      "evidence_note": "Research Park describes digital experiences connecting play and early childhood development."
+    },
+    {
+      "company_id": "structureiq",
+      "name": "StructureIQ",
+      "url": "https://researchpark.illinois.edu/structureiq/",
+      "description": "Develops AI-enabled infrastructure monitoring using smart sensors for structural-health insights and risk management.",
+      "evidence_note": "Research Park describes smart sensors and AI for structural health monitoring."
+    }
+  ]
+}
