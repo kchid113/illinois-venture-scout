@@ -17,7 +17,7 @@ function contrast(a,b){
 }
 
 test('founder button opens a dedicated contact view rather than an unreliable anchor',()=>{
- assert.match(radar,/\['Overview','Founder contact','Signals','Research','Sources & Evidence'\]/);
+ assert.match(radar,/\['Overview','Founder contact','Signals','Research','Sources'\]/);
  assert.match(radar,/const goToFounderContact=\(\)=>\{setTab\('Founder contact'\);setFounderNavTick\(n=>n\+1\);\}/);
  assert.match(radar,/className="button contact-jump" aria-pressed=\{tab==='Founder contact'\} onClick=\{goToFounderContact\}/);
  assert.match(radar,/\{tab==='Founder contact'&&<div className="founder-contact-view">/);
@@ -33,7 +33,8 @@ test('founder and team actions still require source-backed published claims',()=
  assert.match(overview,/id="founder-contact" tabIndex=\{-1\}/);
  assert.match(overview,/className="panel padded founder-contact-teaser"/);
  assert.match(overview,/onClick=\{onFounderContact\}/);
- assert.match(overview,/company\.profile/);
+ assert.match(overview,/found\.officialProfile/);
+ assert.match(read('core/founder-outreach.mjs'),/company\?\.profile/);
  assert.match(overview,/found\.direct\.map/);
  assert.match(overview,/onSave/);
  assert.match(read('core/founder-outreach.mjs'),/c\.status==='Published'/);
@@ -56,17 +57,16 @@ test('home screen displays actionable startup cards before supporting sections',
  assert.doesNotMatch(home,/premium-index-panel/);
  assert.match(radar,/className="card-surface-link"/);
  assert.match(radar,/\{watchButton\(c\)\}/);
- assert.match(radar,/onClick=\{\(\)=>toggleCompare\(c\)\}/);
+ assert.doesNotMatch(radar,/toggleCompare/);
 });
 
-test('claim classification has explicit accessible contrast in the evidence drawer',()=>{
- assert.match(radar,/<h3>Claim classification/);
- assert.match(radar,/className="drawer-claim"/);
- assert.match(css,/\.evidence-panel \.drawer-claim\s*\{\s*background:#0C3150/);
- assert.match(css,/\.evidence-panel \.drawer-claim>strong\{[^}]*color:#FFFFFF/);
- assert.match(css,/\.evidence-panel \.drawer-claim p\{color:#D9EEFF/);
- assert.ok(contrast('#FFFFFF','#0C3150')>=7);
- assert.ok(contrast('#D9EEFF','#0C3150')>=7);
+test('claims retain direct links but do not show repetitive evidence flags',()=>{
+ assert.match(radar,/Original company sources/);
+ assert.match(radar,/href=\{e\.url\} target="_blank" rel="noopener noreferrer"/);
+ assert.doesNotMatch(radar,/className="citation evidence-action"/);
+ assert.doesNotMatch(radar,/className="drawer-claim"/);
+ assert.doesNotMatch(radar,/href="\/compare"/);
+ assert.match(css,/\.claim-row \.source-link/);
  assert.match(css,/#founder-contact:focus/);
  assert.match(css,/home-company-spotlight/);
 });

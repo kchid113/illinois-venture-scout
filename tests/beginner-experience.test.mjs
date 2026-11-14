@@ -5,8 +5,9 @@ const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 
 test('beginner-friendly public navigation preserves advanced and legacy routes',()=>{
  const ui=read('components/radar.tsx'),route=read('app/[section]/page.tsx');
- for(const label of ['Home','Explore Startups','Compare','My Research','Learn'])
+ for(const label of ['Home','Explore Startups','My Research','Learn'])
   assert.ok(ui.includes("'"+label+"'"),'Navigation missing '+label);
+ assert.doesNotMatch(route,/['"]compare['"]/);
  assert.match(route,/['"]learn['"]/);
  for(const legacy of ['activity','watchlists','research','sources','methodology'])
   assert.ok(route.includes("'"+legacy+"'"),'Missing legacy route '+legacy);
@@ -32,7 +33,7 @@ test('homepage search, sector links and source counts use live data',()=>{
  assert.match(ui,/summary\.sectors\.slice/);
  assert.match(ui,/summary\.companies/);
  assert.match(ui,/summary\.sources/);
- assert.match(ui,/Explore original company research and available evidence/);
+ assert.match(ui,/firstDisplayableClaim\(c\.claims,\['description'\]\)/);
  assert.doesNotMatch(ui,/Company description not yet verified/);
  assert.match(ui,/ecosystemClaim\(c\)/);
  assert.doesNotMatch(ui,/Math\.random\(\)/);

@@ -64,7 +64,7 @@ test('contrast controls retain focus states, source semantics and company brandi
  const radar=read('components/radar.tsx');
  const marks=read('components/company-logo.tsx');
  assert.match(css,/focus-visible/);
- assert.match(css,/\.citation\.evidence-action/);
+ assert.match(css,/\.claim-row \.source-link/);
  assert.match(css,/\.company-logo--image/);
  assert.match(css,/\.company-logo--fallback/);
  assert.match(css,/prefers-reduced-motion:reduce/);

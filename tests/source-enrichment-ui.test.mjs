@@ -3,38 +3,39 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 
-test('the entire startup card navigates to its research profile, preserving independent actions',()=>{
+test('startup card and directory table navigate to company profiles; save stays independent',()=>{
  const ui=read('components/radar.tsx');
  const style=read('app/premium.css');
- assert.match(ui,/className="card-surface-link" href=\{\`\/companies\/\$\{c\.id\}\`\}/);
- assert.match(ui,/aria-label=\{\`Explore \$\{c\.name\} company profile\`\}/);
- assert.match(ui,/className="home-company-spotlight"/);
- assert.match(ui,/aria-pressed=\{compare\.some\(/);
- assert.match(style,/\.card-surface-link,\.index-row-link/);
- assert.match(style,/\.clickable-company-card \.card-controls \.icon-button/);
+ assert.ok(ui.includes('className="card-surface-link"'));
+ assert.ok(ui.includes('Explore ${c.name} company profile'));
+ assert.ok(ui.includes('className="home-company-spotlight"'));
+ assert.ok(ui.includes('watchButton(c)'));
+ assert.ok(ui.includes('href={`/companies/${c.id}`}'));
+ assert.doesNotMatch(ui,/toggleCompare|compare-tray|href="\/compare"/);
  assert.match(style,/\.card-surface-link:focus-visible/);
 });
 
-test('source evidence actions are descriptive and prominent, not tiny link icons',()=>{
+test('source links are direct and visible, without per-field evidence badges',()=>{
  const ui=read('components/radar.tsx');
  const profile=read('components/company-overview.tsx');
- assert.match(ui,/className="citation evidence-action"/);
- assert.match(ui,/<span>Evidence<\/span>/);
- assert.match(ui,/Inspect \{e\.publisher\} evidence/);
- assert.match(profile,/className="evidence-summary-link"/);
- assert.match(profile,/className="button research-source-cta"/);
- assert.match(read('app/premium.css'),/\.evidence-action\.citation/);
+ assert.doesNotMatch(ui,/className="citation evidence-action"/);
+ assert.doesNotMatch(ui,/<span>Evidence<\/span>/);
+ assert.ok(ui.includes('Original company sources'));
+ assert.ok(ui.includes('href={e.url} target="_blank" rel="noopener noreferrer"'));
+ assert.ok(profile.includes('className="evidence-summary-link"'));
+ assert.match(read('app/contrast.css'),/\.claim-row \.source-link/);
 });
 
-test('research pages remain accurate without repetitive missing-data placeholders',()=>{
- const ui=read('components/radar.tsx');
- const profile=read('components/company-overview.tsx');
+test('missing fields and empty financial panels are omitted rather than filled with placeholders',()=>{
+ const ui=read('components/radar.tsx'),profile=read('components/company-overview.tsx');
+ assert.ok(ui.includes("firstDisplayableClaim(c.claims,['description'])"));
+ assert.ok(ui.includes("firstDisplayableClaim(c.claims,['sector'])"));
+ assert.ok(profile.includes('if(!matching.length)return null'));
+ assert.ok(profile.includes('hasBusiness&&<section'));
+ assert.ok(profile.includes('hasCapital&&<section'));
+ assert.ok(profile.includes('hasStory&&<section'));
  assert.doesNotMatch(ui,/Not yet verified/);
  assert.doesNotMatch(profile,/Not yet verified/);
- assert.match(profile,/if\(!matching\.length\)return null/);
- assert.match(profile,/To investigate/);
- assert.match(profile,/company\.profile/);
- assert.match(ui,/c\.claims\.length/);
 });
 
 test('the manual enrichment snapshot contains uniquely identified official source profiles',()=>{

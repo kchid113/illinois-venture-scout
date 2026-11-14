@@ -541,3 +541,26 @@ footer a{color:#D4E9FB}
 #founder-contact{scroll-margin-top:84px}
 #founder-contact:focus{outline:2px solid #FFAA6D;outline-offset:4px}
 @media(max-width:700px){#founder-contact{scroll-margin-top:20px}}
+
+/* Fewer decorative flags; preserve the bold dark research palette. */
+.company-card,.clickable-company-card{min-height:226px}
+.company-card .card-footer{margin-top:auto}
+.company-card>p:empty,.company-key-facts:empty,.company-detail-grid:empty{display:none}
+.overview-intro-grid:has(> :only-child),.company-detail-grid:has(> :only-child){
+ grid-template-columns:minmax(0,1fr);
+}
+.company-footer-grid{grid-template-columns:minmax(0,1fr)}
+.company-footer-grid .next-steps{max-width:100%}
+.claim-row .source-link{
+ display:flex;align-items:center;justify-content:space-between;
+ width:100%;max-width:100%;
+ background:#104B69;color:#E7FAFF;border:1px solid #58ABD3;
+ padding:11px 13px;white-space:normal;text-align:left;
+ border-radius:4px;text-decoration:none;
+}
+.claim-row .source-link:hover,.claim-row .source-link:focus-visible{
+ background:#16688A;border-color:#8EDBFC;color:#FFFFFF;
+}
+@media(max-width:700px){
+ .company-card,.clickable-company-card{min-height:210px}
+}
