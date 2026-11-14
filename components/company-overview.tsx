@@ -13,11 +13,12 @@ const formatDate=(v?:string|null)=>v?new Date(v).toLocaleDateString('en-US',{mon
 
 function SourcedFact({company,label,names,citation}:{company:Company;label:string;names:string[];citation:Props['citation']}){
  const matching=fields(company,names);
+ if(!matching.length)return null;
  return <div className="deep-fact"><span className="deep-fact-label">{label}</span>
-  {matching.length?matching.map(c=><div className="deep-fact-entry" key={c.id}>
+  {matching.map(c=><div className="deep-fact-entry" key={c.id}>
    <strong>{c.value}</strong> {citation(c)}
    <small>{c.status==='Conflicting'?'Conflicting evidence':c.classification}</small>
-  </div>):<span className="unknown-value">Not yet verified</span>}
+  </div>)}
  </div>;
 }
 
@@ -48,7 +49,7 @@ function ContactPanel({company,privateValue,onSave,citation}:{company:Company;pr
   </div>
   {found.founders.length>0?<div className="founder-names">{found.founders.map((f:{value:string;claimId:string})=><div key={f.claimId}>
    <strong>{f.value}</strong> {citation(company.claims.find(x=>x.id===f.claimId))}
-  </div>)}</div>:<p className="contact-unverified">Founder names have not been verified for this record.</p>}
+  </div>)}</div>:<p className="contact-unverified">Founder details are not included in the published research sources.</p>}
   <div className="contact-action-stack">
    {found.direct.map((link:{kind:string;label:string;url:string;value:string;claimId:string})=>
     <a className="button contact-direct" href={link.url} key={link.url}
@@ -60,9 +61,9 @@ function ContactPanel({company,privateValue,onSave,citation}:{company:Company;pr
     <ExternalLink size={16}/> Visit company website <ArrowUpRight size={14}/>
    </a>}
    {found.officialProfile&&<a className="button" href={found.officialProfile} target="_blank" rel="noopener noreferrer">
-    <Link2 size={16}/> {found.website?'Official company listing':'Open company profile'} <ArrowUpRight size={14}/>
+    <ExternalLink size={16}/> {found.website?'Official company listing':'Open company profile'} <ArrowUpRight size={14}/>
    </a>}
-   {!found.direct.length&&<p className="contact-unverified">No source-verified direct founder email or personal profile is available. Links above are research starting points, not verified direct introductions.</p>}
+   {!found.direct.length&&<p className="contact-unverified">Founder introductions are not established by the available evidence. Use the official listing above as a research starting point.</p>}
   </div>
   <div className="private-contact">
    <div className="row private-contact-header">
@@ -106,8 +107,8 @@ export default function CompanyOverview({company,privateContact,onSaveContact,ci
    <section className="panel padded company-story">
     <div className="eyebrow">COMPANY BRIEF</div><h2>What {company.name} is building</h2>
     {description?<><p className="company-story-text">{description.value} {citation(description)}</p>
-     <span className="tag amber">Company-reported description · Not independently validated</span></>:
-     <p className="unknown-value">An evidenced product description has not yet been collected for this company.</p>}
+     <span className="tag amber">Company-reported overview · linked to the source</span></>:
+     <div className="company-story-unlisted"><p>The available university listing does not describe the product in detail.</p>{company.profile&&<a className="button research-source-cta" href={company.profile} target="_blank" rel="noopener noreferrer">Explore the original company listing <ArrowUpRight size={15}/></a>}</div>}
     {technology&&<div className="technology-note"><strong>Technology</strong><p>{technology.value} {citation(technology)}</p></div>}
     <div className="company-key-facts">
      <SourcedFact company={company} label="Sector" names={['sector']} citation={citation}/>
@@ -136,13 +137,13 @@ export default function CompanyOverview({company,privateContact,onSaveContact,ci
     <SourcedFact company={company} label="Grants / awards" names={['grant','grants','government award','research award','federal award','government contract']} citation={citation}/>
     <SourcedFact company={company} label="Revenue / customer traction" names={['revenue','sales','customers','commercial traction']} citation={citation}/>
     <SourcedFact company={company} label="Operating status" names={['lifecycle','operating status','status']} citation={citation}/>
-    <p className="fact-note">A program listing does not imply investment, ownership, funding, customers, or active operations.</p>
+    <p className="fact-note">No funding or traction claims are currently published unless they appear above. A program listing alone does not establish investment, ownership, customers, or operations.</p>
    </section>
    <section className="panel padded deep-section evidence-summary">
     <div className="eyebrow"><ShieldCheck size={14}/> ORIGINAL EVIDENCE</div><h2>Source-backed research</h2>
     <div className="source-summary-number">{sourced.length}<span>supported or conflicting claims</span></div>
     {[...uniqueSources.values()].slice(0,5).map(s=><a className="evidence-summary-link" href={s.url} target="_blank" rel="noopener noreferrer" key={s.url}>
-     <Link2 size={15}/><span><strong>{s.publisher}</strong><small>{s.title} · Checked {formatDate(s.last_checked)}</small></span><ArrowUpRight size={15}/>
+     <span><strong>{s.publisher}</strong><small>{s.title} · Checked {formatDate(s.last_checked)}</small></span><ArrowUpRight size={15}/>
     </a>)}
     <button className="button full" onClick={onSources}>Review all sources & claims <ArrowRight size={16}/></button>
    </section>
@@ -151,7 +152,7 @@ export default function CompanyOverview({company,privateContact,onSaveContact,ci
    <section className="panel padded">
     <div className="eyebrow"><ClipboardList size={14}/> INVESTMENT DILIGENCE</div><h2>Questions to resolve</h2>
     <p className="muted">These questions highlight evidence gaps, not red flags or predictive scores.</p>
-    <ul className="diligence-gaps">{missing.map(x=><li key={x.label}><span className={x.ok?'gap-dot resolved':'gap-dot'}/><span>{x.label}</span><small>{x.ok?'Some sourced evidence':'Not verified'}</small></li>)}</ul>
+    <ul className="diligence-gaps">{missing.map(x=><li key={x.label}><span className={x.ok?'gap-dot resolved':'gap-dot'}/><span>{x.label}</span><small>{x.ok?'Evidence available':'To investigate'}</small></li>)}</ul>
    </section>
    <section className="panel padded next-steps">
     <div className="eyebrow">NEXT STEPS</div><h2>Continue your research</h2>
