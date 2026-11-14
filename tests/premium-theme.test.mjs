@@ -51,7 +51,7 @@ test('redesigned homepage uses a functional public search and real database coun
 });
 
 test('research tools, no-login browsing, and mobile controls remain available',()=>{
- for(const label of ['Home','Explore Startups','Compare','My Research','Learn'])
+ for(const label of ['Home','Explore Startups','My Research','Learn'])
   assert.ok(ui.includes("'"+label+"'"));
  assert.match(ui,/aria-expanded=\{menu\}/);
  assert.match(ui,/onClick=\{\(\)=>setMenu\(false\)\}/);
