@@ -22,7 +22,7 @@ test('source evidence actions are descriptive and prominent, not tiny link icons
  assert.match(ui,/<span>Evidence<\/span>/);
  assert.match(ui,/Inspect \{e\.publisher\} evidence/);
  assert.match(profile,/className="evidence-summary-link"/);
- assert.match(profile,/className="research-source-cta"/);
+ assert.match(profile,/className="button research-source-cta"/);
  assert.match(read('app/premium.css'),/\.evidence-action\.citation/);
 });
 
