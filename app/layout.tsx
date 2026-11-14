@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import './premium.css';
+import './contrast.css';
 export const metadata:Metadata={
  title:'Illinois Venture Radar',
  description:'Independent, evidence-backed discovery and research for startups connected to the University of Illinois.'
