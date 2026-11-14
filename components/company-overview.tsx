@@ -42,7 +42,7 @@ export function CompanyContact({company,privateValue,onSave,citation}:{company:C
   }catch(e){setError(e instanceof Error?e.message:'Invalid contact details');}
   finally{setSaving(false);}
  }
- return <section id="founder-contact" className="panel padded founder-contact-panel" aria-labelledby="founder-contact-title">
+ return <section id="founder-contact" tabIndex={-1} className="panel padded founder-contact-panel" aria-labelledby="founder-contact-title">
   <div className="outreach-heading"><div className="eyebrow"><UserRound size={14}/> FOUNDER ACCESS</div>
    <h2 id="founder-contact-title">Connect with the team</h2>
    <p>Use verified founder details when available, or start with the company’s documented public presence.</p>
