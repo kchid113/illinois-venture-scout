@@ -45,13 +45,13 @@ test('redesigned homepage uses a functional public search and real database coun
  assert.match(ui,/summary\.claims/);
  assert.match(ui,/summary\.sectors\.slice/);
  assert.match(ui,/encodeURIComponent\(sector\.name\)/);
- assert.match(ui,/companies\.slice\(0,6\)/);
+ assert.match(ui,/companies\.slice\(0,8\)/);
  assert.doesNotMatch(ui,/<IllinoisHeroArt\s*\/>/);
  assert.match(ui,/Evidence, not speculation/);
 });
 
 test('research tools, no-login browsing, and mobile controls remain available',()=>{
- for(const label of ['Home','Explore Startups','My Research','Learn'])
+ for(const label of ['Home','Companies','My Research','Learn'])
   assert.ok(ui.includes("'"+label+"'"));
  assert.match(ui,/aria-expanded=\{menu\}/);
  assert.match(ui,/onClick=\{\(\)=>setMenu\(false\)\}/);
