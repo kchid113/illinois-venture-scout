@@ -492,3 +492,44 @@ blockquote{background:#182b2b;border-left:2px solid #70b8a9;color:#c3dbd6}
 @media(prefers-reduced-motion:reduce){
   button,.button,.nav-link,.premium-sector,.premium-action{transition:none!important}
 }
+
+/* Full-card and full-row hit targets: native links for mouse, touch and keyboard. */
+.clickable-company-card{position:relative;cursor:pointer;isolation:isolate;transition:border-color .16s,background-color .16s}
+.clickable-company-card:hover,.clickable-company-card:focus-within{border-color:#7596a2;background:#192630}
+.card-surface-link,.index-row-link{position:absolute;inset:0;display:block;z-index:1;border-radius:inherit}
+.card-surface-link:focus-visible,.index-row-link:focus-visible{outline:2px solid var(--iv-orange);outline-offset:-3px}
+.clickable-company-card h3{display:flex;align-items:center;gap:8px;min-width:0}
+.clickable-company-card h3 svg{opacity:.5;flex-shrink:0}
+.clickable-company-card:hover h3 svg,.clickable-company-card:focus-within h3 svg{color:var(--iv-orange);opacity:1}
+.clickable-company-card .card-controls .icon-button,.clickable-company-card .card-footer button{position:relative;z-index:3}
+.clickable-company-card .card-footer button{border:1px solid #364e5b;background:#172531;padding:7px 10px;min-height:32px}
+.clickable-company-card .card-footer button:hover{border-color:var(--iv-orange);color:var(--iv-orange)}
+.card-open-action{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--iv-orange);font-weight:650}
+.card-open-action svg{opacity:.8}
+.clickable-company-card:hover .card-open-action{color:#ffac7a}
+.clickable-index-row{position:relative;isolation:isolate;cursor:pointer;transition:background .13s}
+.clickable-index-row:hover,.clickable-index-row:focus-within{background:#1c2b38}
+.clickable-index-row .premium-index-name strong{display:inline-flex;gap:6px;align-items:center;color:#e8eef3;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clickable-index-row:hover .premium-index-name strong{color:var(--iv-orange)}
+.clickable-index-row .icon-button{position:relative;z-index:3}
+.evidence-action.citation{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:72px;min-height:29px;padding:5px 7px;border:1px solid #3b665a;border-radius:3px;background:#182d29;color:#a4d9ca;font-size:10px;font-weight:700;vertical-align:middle;line-height:1;white-space:nowrap}
+.evidence-action.citation:hover,.evidence-action.citation:focus-visible{border-color:#86bfb1;background:#23443b;color:#e1fff3}
+.evidence-action.citation svg{flex-shrink:0}
+.source-row-link{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:44px;padding:7px 10px;margin:-7px -10px;border:1px solid transparent;border-radius:3px;text-decoration:none!important}
+.source-row-link:hover,.source-row-link:focus-visible{background:#20323c;border-color:#405765;color:var(--iv-orange)}
+.source-row-link svg{flex-shrink:0}
+.source-link{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:9px 13px;cursor:pointer;border-radius:3px;white-space:normal;text-align:left}
+.source-link span{flex:1;text-align:left}
+.evidence-summary-link{padding:13px 10px;margin:0 -10px;border:1px solid transparent;border-top-color:var(--iv-border-soft);border-radius:3px;transition:background .14s}
+.evidence-summary-link:hover,.evidence-summary-link:focus-visible{background:#1e303c;border-color:#526978;color:#e6f3f6}
+.evidence-summary-link>span{flex:1}
+.company-story-unlisted{display:flex;flex-direction:column;align-items:flex-start;gap:13px;margin:12px 0 15px}
+.company-story-unlisted p{color:#92a8b7;font-size:13px}
+.research-source-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 13px;border-color:#4b6471;background:#1c2b36;color:#d6eaf0;white-space:normal;text-align:left}
+.research-source-cta:hover{border-color:var(--iv-orange);color:#fff}
+.company-overview .deep-fact:empty{display:none}
+@media(max-width:600px){
+  .clickable-company-card .card-footer{flex-wrap:wrap}
+  .evidence-action.citation{min-height:32px}
+  .source-row-link{width:100%;min-height:46px}
+}
