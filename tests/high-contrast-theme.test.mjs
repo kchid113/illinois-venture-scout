@@ -69,7 +69,7 @@ test('contrast controls retain focus states, source semantics and company brandi
  assert.match(css,/\.company-logo--fallback/);
  assert.match(css,/prefers-reduced-motion:reduce/);
  assert.match(radar,/card-surface-link/);
- assert.match(radar,/index-row-link/);
+ assert.match(radar,/home-company-spotlight/);
  assert.match(radar,/variant="card"/);
  assert.match(marks,/companyLogoCandidates/);
  assert.match(read('app/api/data/route.ts'),/view==='workspace'.*status:403/);

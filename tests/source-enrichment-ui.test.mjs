@@ -8,7 +8,7 @@ test('the entire startup card navigates to its research profile, preserving inde
  const style=read('app/premium.css');
  assert.match(ui,/className="card-surface-link" href=\{\`\/companies\/\$\{c\.id\}\`\}/);
  assert.match(ui,/aria-label=\{\`Explore \$\{c\.name\} company profile\`\}/);
- assert.match(ui,/className="index-row-link"/);
+ assert.match(ui,/className="home-company-spotlight"/);
  assert.match(ui,/aria-pressed=\{compare\.some\(/);
  assert.match(style,/\.card-surface-link,\.index-row-link/);
  assert.match(style,/\.clickable-company-card \.card-controls \.icon-button/);

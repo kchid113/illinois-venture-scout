@@ -6,7 +6,7 @@ import {founderOutreach,parsePrivateContact,validatePrivateContact} from '@/core
 type Evidence={id:string;source_id:string;relationship?:string;url:string;publisher:string;title:string;published_at:string|null;retrieved_at:string;last_checked:string;accessibility:string;excerpt:string};
 type Claim={id:string;field:string;value:string;status:string;classification:string;evidence:Evidence[]};
 type Company={id:string;name:string;profile?:string;updated_at:string;claims:Claim[];signals?:{id:string;description:string;event_date:string|null}[]};
-type Props={company:Company;privateContact?:string;onSaveContact:(value:string)=>Promise<boolean>;citation:(c?:Claim)=>React.ReactNode;onSources:()=>void;onSignals:()=>void};
+type Props={company:Company;citation:(c?:Claim)=>React.ReactNode;onSources:()=>void;onSignals:()=>void;onFounderContact:()=>void};
 const fields=(c:Company,names:string[])=>c.claims.filter(c=>names.includes(c.field.toLowerCase())&&c.evidence.some(e=>e.source_id&&e.relationship==='supports'));
 const primary=(c:Company,names:string[])=>fields(c,names)[0];
 const formatDate=(v?:string|null)=>v?new Date(v).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}):'Not recorded';
@@ -22,7 +22,7 @@ function SourcedFact({company,label,names,citation}:{company:Company;label:strin
  </div>;
 }
 
-function ContactPanel({company,privateValue,onSave,citation}:{company:Company;privateValue?:string;onSave:(value:string)=>Promise<boolean>;citation:Props['citation']}){
+export function CompanyContact({company,privateValue,onSave,citation}:{company:Company;privateValue?:string;onSave:(value:string)=>Promise<boolean>;citation:Props['citation']}){
  const found=founderOutreach(company);
  const empty={name:'',email:'',profile:'',notes:''};
  const [draft,setDraft]=useState(empty);
@@ -42,7 +42,7 @@ function ContactPanel({company,privateValue,onSave,citation}:{company:Company;pr
   }catch(e){setError(e instanceof Error?e.message:'Invalid contact details');}
   finally{setSaving(false);}
  }
- return <section id="founder-contact" className="panel padded founder-contact-panel" aria-labelledby="founder-contact-title">
+ return <section id="founder-contact" tabIndex={-1} className="panel padded founder-contact-panel" aria-labelledby="founder-contact-title">
   <div className="outreach-heading"><div className="eyebrow"><UserRound size={14}/> FOUNDER ACCESS</div>
    <h2 id="founder-contact-title">Connect with the team</h2>
    <p>Use verified founder details when available, or start with the company’s documented public presence.</p>
@@ -88,7 +88,7 @@ function ContactPanel({company,privateValue,onSave,citation}:{company:Company;pr
  </section>;
 }
 
-export default function CompanyOverview({company,privateContact,onSaveContact,citation,onSources,onSignals}:Props){
+export default function CompanyOverview({company,citation,onSources,onSignals,onFounderContact}:Props){
  const description=primary(company,['description']),technology=primary(company,['technology','product']);
  const sourced=company.claims.filter(c=>c.evidence.some(e=>e.source_id&&e.relationship==='supports'));
  const uniqueSources=new Map<string,{title:string;publisher:string;url:string;last_checked?:string}>();
@@ -116,7 +116,12 @@ export default function CompanyOverview({company,privateContact,onSaveContact,ci
      <SourcedFact company={company} label="Company stage" names={['stage']} citation={citation}/>
     </div>
    </section>
-   <ContactPanel company={company} privateValue={privateContact} onSave={onSaveContact} citation={citation}/>
+   <section className="panel padded founder-contact-teaser">
+    <div className="eyebrow"><UserRound size={14}/> TEAM & OUTREACH</div>
+    <h2>Connect with the people building {company.name}</h2>
+    <p>Open the dedicated contact view for source-backed founder details, official company links, and your private contact notes.</p>
+    <button type="button" className="button primary" onClick={onFounderContact}>View founder & team contact <ArrowRight size={16}/></button>
+   </section>
   </div>
   <div className="company-detail-grid">
    <section className="panel padded deep-section">
