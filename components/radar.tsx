@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useState,useCallback} from 'react';
 import Link from 'next/link';
-import {Radar as RadarIcon,LayoutDashboard,Search,Activity,Bookmark,Columns3,Database,Settings,ArrowUpRight,ArrowRight,ChevronRight,Check,Plus,X,Download,SlidersHorizontal,Grid2X2,List,ShieldCheck,ExternalLink,Menu,BookOpen,Link2,UserRound} from 'lucide-react';
+import {Radar as RadarIcon,LayoutDashboard,Search,Activity,Bookmark,Database,Settings,ArrowUpRight,ArrowRight,ChevronRight,Check,Plus,X,Download,SlidersHorizontal,Grid2X2,List,ShieldCheck,ExternalLink,Menu,BookOpen,UserRound} from 'lucide-react';
 import {MetricInfo,Methodology} from './metric-info';
 import CompanyOverview, {CompanyContact} from './company-overview';
 import CompanyLogo from './company-logo';
@@ -18,8 +18,6 @@ type Summary={lastChecked?:string|null;oldestCheck?:string|null;companies:number
 type Item={kind:string;key:string;value:string};
 const nav=[['overview','Home',LayoutDashboard],['discover','Explore Startups',Search],['watchlists','My Research',Bookmark],['learn','Learn',BookOpen]] as const;
 const date=(v?:string|null)=>v?new Date(v).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'America/Chicago'}):'—';
-const field=(c:Company,k:string)=>c.claims.find(x=>x.field===k);
-const value=(c:Company,k:string)=>{const matches=c.claims.filter(x=>x.field===k);return matches.some(x=>x.status==='Conflicting')?'Conflicting: '+matches.map(x=>x.value).join(' / '):matches[0]?.value||'—';};
 async function request<T>(url:string,options?:RequestInit):Promise<T>{const r=await fetch(url,options);const d=await r.json() as T & {error?:string};if(!r.ok)throw Error(d.error||'Request failed');return d;}
 function download(name:string,content:string,type='text/markdown'){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 const emptySummary:Summary={companies:0,claims:0,sources:0,signals:0,conflicts:0,recent:0,sectors:[],jobs:[]};
