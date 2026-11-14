@@ -41,3 +41,12 @@ test('public research reads no longer perform per-record nested queries',()=>{
  assert.doesNotMatch(src,/rows\.map\(async c=>/);
  assert.doesNotMatch(src,/claims\.map\(async c=>/);
 });
+
+test('only shared public read responses receive short CDN caching',()=>{
+ const src=readFileSync(new URL('../app/api/data/route.ts',import.meta.url),'utf8');
+ assert.match(src,/s-maxage=60/);
+ assert.match(src,/stale-while-revalidate=120/);
+ assert.match(src,/view==='workspace'.*status:403/);
+ assert.match(src,/headers:publicCache/);
+ assert.doesNotMatch(src,/NEXT_PUBLIC_DATABASE_URL/);
+});
