@@ -33,7 +33,8 @@ test('founder and team actions still require source-backed published claims',()=
  assert.match(overview,/id="founder-contact" tabIndex=\{-1\}/);
  assert.match(overview,/className="panel padded founder-contact-teaser"/);
  assert.match(overview,/onClick=\{onFounderContact\}/);
- assert.match(overview,/company\.profile/);
+ assert.match(overview,/found\.officialProfile/);
+ assert.match(read('core/founder-outreach.mjs'),/company\?\.profile/);
  assert.match(overview,/found\.direct\.map/);
  assert.match(overview,/onSave/);
  assert.match(read('core/founder-outreach.mjs'),/c\.status==='Published'/);
