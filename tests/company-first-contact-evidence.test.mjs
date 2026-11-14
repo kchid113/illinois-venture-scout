@@ -51,7 +51,7 @@ test('home screen displays actionable startup cards before supporting sections',
  const sector=home.indexOf('<div className="premium-sector-grid">');
  const actions=home.indexOf('<div className="premium-action-grid">');
  assert.ok(hero>=0&&cards>hero&&actions>cards&&sector>cards);
- assert.match(home,/companyCards\(companies\.slice\(0,6\)\)/);
+ assert.match(home,/companyDirectoryTable\(companies\.slice\(0,8\)\)/);
  assert.match(home,/Browse all \{loading\?'':summary\.companies\} companies/);
  assert.match(home,/aria-labelledby="home-company-heading"/);
  assert.doesNotMatch(home,/premium-index-panel/);
