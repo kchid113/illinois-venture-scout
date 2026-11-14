@@ -32,8 +32,9 @@ test('homepage search, sector links and source counts use live data',()=>{
  assert.match(ui,/summary\.sectors\.slice/);
  assert.match(ui,/summary\.companies/);
  assert.match(ui,/summary\.sources/);
- assert.match(ui,/Company description not yet verified/);
- assert.match(ui,/renderEcosystem\(c\)/);
+ assert.match(ui,/Explore original company research and available evidence/);
+ assert.doesNotMatch(ui,/Company description not yet verified/);
+ assert.match(ui,/ecosystemClaim\(c\)/);
  assert.doesNotMatch(ui,/Math\.random\(\)/);
 });
 
