@@ -36,7 +36,7 @@ test('founder and team actions still require source-backed published claims',()=
  assert.match(overview,/company\.profile/);
  assert.match(overview,/found\.direct\.map/);
  assert.match(overview,/onSave/);
- assert.match(read('core/founder-outreach.mjs'),/claim\.status==='Published'/);
+ assert.match(read('core/founder-outreach.mjs'),/c\.status==='Published'/);
  assert.match(read('core/founder-outreach.mjs'),/e\.relationship==='supports'/);
 });
 
