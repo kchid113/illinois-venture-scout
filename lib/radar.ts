@@ -36,7 +36,7 @@ export async function company(id:string){
 export async function signalsFor(companyId?:string){
  const rows=await all(`SELECT s.*,c.name FROM signals s JOIN companies c ON c.id=s.company_id WHERE ${SIGNAL_ELIGIBILITY} ${companyId?'AND s.company_id=?':''} ORDER BY s.event_date DESC NULLS LAST`,...(companyId?[companyId]:[]));
  const byCompany=await claimsForMany([...new Set(rows.map(s=>String(s.company_id)))]);
- return rows.map(s=>({...s,claim:(byCompany.get(String(s.company_id))||[]).find(c=>c.id===s.claim_id)}));
+ return rows.map(s=>({...s,claim:(byCompany.get(String(s.company_id))||[]).find((c:{id:string})=>c.id===s.claim_id)}));
 }
 export async function summary(){
  const metrics=(await all(SUMMARY_SQL))[0]||{};
