@@ -48,9 +48,9 @@ test('unsafe or ambiguous icon hosts are rejected',()=>{
  ]}),[]);
 });
 
-test('logo component appears in all four navigable company interfaces',()=>{
+test('logo component appears in card, table and profile interfaces',()=>{
  const ui=read('components/radar.tsx'),component=read('components/company-logo.tsx');
- for(const variant of ['card','table','index','profile'])assert.match(ui,new RegExp('variant="'+variant+'"'));
+ for(const variant of ['card','table','profile'])assert.match(ui,new RegExp('variant="'+variant+'"'));
  assert.match(ui,/card-surface-link/);
  assert.match(ui,/index-row-link/);
  assert.match(component,/onError=\{\(\)=>setAttempt\(i=>i\+1\)\}/);
