@@ -1,6 +1,6 @@
 'use client';
 import {useState} from 'react';
-import {ArrowRight,ArrowUpRight,Check,ClipboardList,ExternalLink,Mail,ShieldCheck,UserRound,Link2} from 'lucide-react';
+import {ArrowRight,ArrowUpRight,Check,ClipboardList,ExternalLink,Mail,ShieldCheck,UserRound} from 'lucide-react';
 import {founderOutreach,parsePrivateContact,validatePrivateContact} from '@/core/founder-outreach.mjs';
 
 type Evidence={id:string;source_id:string;relationship?:string;url:string;publisher:string;title:string;published_at:string|null;retrieved_at:string;last_checked:string;accessibility:string;excerpt:string};
