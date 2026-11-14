@@ -537,3 +537,7 @@ footer a{color:#D4E9FB}
 @media(prefers-reduced-motion:reduce){
  .home-company-spotlight .clickable-company-card:hover{transform:none}
 }
+
+#founder-contact{scroll-margin-top:84px}
+#founder-contact:focus{outline:2px solid #FFAA6D;outline-offset:4px}
+@media(max-width:700px){#founder-contact{scroll-margin-top:20px}}
