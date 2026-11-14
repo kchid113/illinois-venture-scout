@@ -8,7 +8,7 @@ type Evidence={id:string;source_id:string;relationship?:string;url:string;publis
 type Claim={id:string;field:string;value:string;status:string;classification:string;evidence:Evidence[]};
 type Company={id:string;name:string;profile?:string;updated_at:string;claims:Claim[];signals?:{id:string;description:string;event_date:string|null}[]};
 type Props={company:Company;onSources:()=>void;onSignals:()=>void;onFounderContact:()=>void};
-const fields=(c:Company,names:string[])=>displayableClaims(c.claims,names).filter(c=>c.evidence.some(e=>e.source_id&&e.relationship==='supports'));
+const fields=(c:Company,names:string[]):Claim[]=>(displayableClaims(c.claims,names) as Claim[]).filter((claim:Claim)=>claim.evidence.some((e:Evidence)=>e.source_id&&e.relationship==='supports'));
 const primary=(c:Company,names:string[])=>fields(c,names)[0];
 const formatDate=(v?:string|null)=>v?new Date(v).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}):'Not recorded';
 
@@ -16,7 +16,7 @@ function SourcedFact({company,label,names}:{company:Company;label:string;names:s
  const matching=fields(company,names);
  if(!matching.length)return null;
  return <div className="deep-fact"><span className="deep-fact-label">{label}</span>
-  {matching.map(c=><div className="deep-fact-entry" key={c.id}>
+  {matching.map((c:Claim)=><div className="deep-fact-entry" key={c.id}>
    <strong>{c.value}</strong>{c.status==='Conflicting'&&<small>Conflicting information</small>}
   </div>)}
  </div>;
