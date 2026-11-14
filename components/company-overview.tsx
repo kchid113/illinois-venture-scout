@@ -104,7 +104,7 @@ export default function CompanyOverview({company,onSources,onSignals,onFounderCo
    {hasStory&&<section className="panel padded company-story">
     <div className="eyebrow">COMPANY BRIEF</div><h2>What {company.name} is building</h2>
     {description?<><p className="company-story-text">{description.value}</p>
-     <span className="tag amber">Company-reported overview · linked to the source</span></>:
+     </>:
      null}
     {technology&&<div className="technology-note"><strong>Technology</strong><p>{technology.value}</p></div>}
     <div className="company-key-facts">
@@ -144,7 +144,7 @@ export default function CompanyOverview({company,onSources,onSignals,onFounderCo
     <div className="eyebrow"><ShieldCheck size={14}/> ORIGINAL EVIDENCE</div><h2>Source-backed research</h2>
     <div className="source-summary-number">{sourced.length}<span>supported or conflicting claims</span></div>
     {[...uniqueSources.values()].slice(0,5).map(s=><a className="evidence-summary-link" href={s.url} target="_blank" rel="noopener noreferrer" key={s.url}>
-     <span><strong>{s.publisher}</strong><small>{s.title} · Checked {formatDate(s.last_checked)}</small></span><ArrowUpRight size={15}/>
+     <span><strong>{s.publisher}</strong><small>{s.title}{s.last_checked&&<> · Checked {formatDate(s.last_checked)}</>}</small></span><ArrowUpRight size={15}/>
     </a>)}
     <button className="button full" onClick={onSources}>Review all sources & claims <ArrowRight size={16}/></button>
    </section>}
