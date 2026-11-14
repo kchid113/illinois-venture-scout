@@ -5,7 +5,7 @@ const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 
 test('beginner-friendly public navigation preserves advanced and legacy routes',()=>{
  const ui=read('components/radar.tsx'),route=read('app/[section]/page.tsx');
- for(const label of ['Home','Explore Startups','My Research','Learn'])
+ for(const label of ['Home','Companies','My Research','Learn'])
   assert.ok(ui.includes("'"+label+"'"),'Navigation missing '+label);
  assert.doesNotMatch(route,/['"]compare['"]/);
  assert.match(route,/['"]learn['"]/);
