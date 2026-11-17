@@ -25,7 +25,7 @@ test('browse, create-watchlist link, card bookmark and full-card navigation are 
  await expect(card.getByRole('button',{name:'Remove Beta Robotics from My watchlist'})).toBeVisible();
  await card.getByRole('link',{name:/Explore Beta Robotics company profile/}).click();
  await expect(page).toHaveURL(/\/companies\/beta-robotics/);
- await page.getByRole('button',{name:'Watch company'}).click();
+ await page.getByRole('button',{name:'Saved',exact:true}).click();
  await expect(page.getByRole('status').filter({hasText:'Removed Beta Robotics'})).toBeVisible();
  await page.goto('/discover');
  await page.getByRole('link',{name:'Create / manage watchlists'}).click();
@@ -120,8 +120,9 @@ test('slow obsolete search cannot replace newer directory results',async({page})
  await search.fill('Beta');
  await expect(page.locator('.cb-company-row')).toHaveCount(1);
  await expect(page.locator('.cb-company-row')).toContainText('Beta Robotics');
+ const oldResolved=page.waitForResponse(response=>response.url().includes('/api/data?')&&new URL(response.url()).searchParams.get('q')==='Gamma');
  await releaseOld();
- await page.waitForResponse(response=>response.url().includes('/api/data?')&&new URL(response.url()).searchParams.get('q')==='Gamma');
+ await oldResolved;
  await expect(page.locator('.cb-company-row')).toContainText('Beta Robotics');
  await expect(page.locator('.cb-company-row').filter({hasText:'Gamma Energy'})).toHaveCount(0);
 });
