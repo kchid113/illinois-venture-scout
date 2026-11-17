@@ -81,3 +81,48 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+
+  browser-database:
+    name: Real PostgreSQL-backed browser and public API smoke tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: ivr_browser_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ivr_browser_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      CI: 'true'
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/ivr_browser_test
+      NEXT_PUBLIC_SUPABASE_URL: https://preview-test.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_test_only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --no-audit --no-fund
+      - run: npm install --no-save --package-lock=false --no-audit --no-fund @playwright/test@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/prepare-test-postgres.mjs
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - run: npm run db:verify
+      - run: npm run build
+      - run: npx playwright test tests/browser/database-smoke.spec.mjs --config playwright.config.mjs
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: database-browser-smoke-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
