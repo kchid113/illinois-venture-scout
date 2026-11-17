@@ -48,12 +48,12 @@ test('duplicate, empty, or case-insensitive duplicate names do not overwrite mem
  for(const name of [' fund a ','FUND A','My watchlist']){
   await input.fill(name);
   await create.click();
-  await expect(page.getByRole('alert')).toContainText('already exists');
+  await expect(page.locator('.watchlist-error[role="alert"]')).toContainText('already exists');
   await expect(page.locator('.cb-company-row').filter({hasText:'Alpine Analytics'})).toBeVisible();
  }
  await input.fill(' ');
  await create.click();
- await expect(page.getByRole('alert')).toContainText('Enter a watchlist name');
+ await expect(page.locator('.watchlist-error[role="alert"]')).toContainText('Enter a watchlist name');
  await expect(page.getByRole('combobox',{name:'Current watchlist'})).toHaveValue('Fund A');
  await expect(page.getByRole('combobox',{name:'Current watchlist'}).locator('option')).toHaveCount(2);
 });
@@ -104,7 +104,7 @@ test('missing company record does not prevent valid watchlist entries from loadi
  await page.goto('/watchlists');
  await expect(page.getByRole('combobox',{name:'Current watchlist'})).toHaveValue('Recovered');
  await expect(page.locator('.cb-company-row').filter({hasText:'Alpine Analytics'})).toBeVisible();
- await expect(page.getByRole('alert')).toContainText('1 saved company is unavailable');
+ await expect(page.locator('.watchlist-error[role="alert"]')).toContainText('1 saved company is unavailable');
 });
 
 test('a list created on another tab is visible without reloading',async({page,context})=>{
