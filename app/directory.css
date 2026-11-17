@@ -607,3 +607,13 @@ main{min-width:0}
  .watchlist-create-controls{flex-wrap:wrap}
  .watchlist-create-controls button{width:100%;justify-content:center}
 }
+
+/* Methodology help is a viewport-bounded dialog; Close remains reachable. */
+.method-dialog-overlay{position:fixed;inset:0;z-index:98;background:#040b14c7;backdrop-filter:blur(3px)}
+.method-popover.method-dialog{position:fixed;top:50%;left:50%;z-index:99;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 28px));max-width:440px;max-height:min(76dvh,650px);overflow:auto;overscroll-behavior:contain;padding:0 20px 20px;border:1px solid #5C9AC5;border-top:3px solid #FF7A21;border-radius:5px;color:#ECF7FF;background:#102D4A;box-shadow:0 20px 70px #000000be}
+.method-dialog-header{position:sticky;top:0;z-index:2;margin:0 -20px 15px;padding:15px 20px;background:#153B5D;border-bottom:1px solid #4579A3;display:flex;align-items:center;justify-content:space-between;gap:13px}
+.method-dialog-header h3{font-size:15px;color:#FFFFFF;min-width:0}
+.method-dialog-close{position:relative;flex-shrink:0;z-index:3;width:34px;height:34px;min-height:34px;display:inline-flex;align-items:center;justify-content:center;color:#FFFFFF;background:#244E74;border:1px solid #719FC0;border-radius:3px;box-shadow:none}
+.method-dialog-close:hover{background:#FF7A21;color:#091522;border-color:#FFB681}
+.method-dialog-close:focus-visible{outline:2px solid #FFB681;outline-offset:2px}
+@media(max-width:550px){.method-popover.method-dialog{padding:0 15px 15px;max-height:80dvh}.method-dialog-header{margin:0 -15px 12px;padding:13px 15px}}
