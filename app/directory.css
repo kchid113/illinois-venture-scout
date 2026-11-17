@@ -568,3 +568,42 @@ main{min-width:0}
 @media(prefers-reduced-motion:reduce){
  .cb-company-row{transition:none}
 }
+
+/* Personal research: explicit list selection and usable creation controls. */
+.watchlist-tools{
+ display:grid;grid-template-columns:minmax(180px,260px) minmax(280px,1fr);
+ align-items:end;gap:18px;padding:18px;
+ background:#0E2B49;border:1px solid #3A6C97;border-radius:4px;
+ margin-bottom:12px;
+}
+.watchlist-select-label,.watchlist-create-form{display:flex;flex-direction:column;gap:8px;color:#E1EFF8;font-size:12px;font-weight:750;min-width:0}
+.watchlist-tools select,.watchlist-tools input{
+ width:100%;height:43px;min-height:43px;
+ background:#071B31;border:1px solid #5488B4;color:#FFFFFF;
+ border-radius:4px;padding:0 13px;font-size:12px;
+}
+.watchlist-create-controls{display:flex;align-items:stretch;gap:9px;min-width:0}
+.watchlist-create-controls input{flex:1;min-width:0}
+.watchlist-create-controls button{
+ flex-shrink:0;display:inline-flex;align-items:center;gap:7px;
+ min-height:43px;border-radius:4px;
+ border:1px solid #FFB580;background:#FF7A21;color:#091723;
+ font-size:12px;font-weight:800;
+}
+.watchlist-create-controls button:hover{background:#FFA052;color:#091723}
+.watchlist-active-hint{
+ font-size:11px;color:#B7D7EB;
+ line-height:1.55;margin:6px 0 16px;padding:0 3px;
+}
+.watchlist-active-hint strong{color:#FFB989}
+.watchlist-error{
+ margin:7px 0 12px;padding:10px 13px;
+ border:1px solid #E87E7E;border-radius:4px;
+ background:#4A2029;color:#FFE9EA;font-size:12px;
+}
+.watchlist-tools :focus-visible{outline:2px solid #FFAA6D;outline-offset:2px}
+@media(max-width:750px){
+ .watchlist-tools{grid-template-columns:1fr;gap:13px;padding:13px}
+ .watchlist-create-controls{flex-wrap:wrap}
+ .watchlist-create-controls button{width:100%;justify-content:center}
+}
