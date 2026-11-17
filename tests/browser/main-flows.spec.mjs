@@ -137,7 +137,7 @@ test('saving a filtered search allows reopening the same filters from research',
  await expect(page.getByRole('status').filter({hasText:'Search saved in My Research'})).toBeVisible();
  await page.goto('/research');
  await page.getByRole('heading',{name:/Saved searches/}).waitFor();
- await page.locator('.saved-search').filter({hasText:'All companies'}).first().click();
+ await page.locator('.saved-search').filter({hasText:'Sector: Robotics'}).first().click();
  await expect(page).toHaveURL(/\/discover/);
  await expect(page.getByRole('combobox',{name:'Sector filter'})).toHaveValue('Robotics');
  await expect(page.locator('.cb-company-row')).toHaveCount(1);
