@@ -67,12 +67,12 @@ test('full table row navigates to a company; watchlist bookmark does not',async(
  await expect(row.getByRole('button',{name:'Remove Alpine Analytics from My watchlist'})).toBeVisible();
  await row.locator('.cb-company-name-cell').click({position:{x:40,y:20}});
  await expect(page).toHaveURL(/\/companies\/alpine-analytics/);
- await expect(page.getByRole('heading',{name:'Alpine Analytics'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Alpine Analytics',exact:true})).toBeVisible();
 });
 
 test('company source, founder-contact, activity and research tabs open correctly',async({page})=>{
  await page.goto('/companies/alpine-analytics');
- await expect(page.getByRole('heading',{name:'Alpine Analytics'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Alpine Analytics',exact:true})).toBeVisible();
  await expect(page.locator('.cb-profile-facts')).toContainText('Artificial Intelligence');
  await page.getByRole('button',{name:'Founder contact'}).first().click();
  await expect(page.locator('#founder-contact')).toBeVisible();
@@ -96,7 +96,7 @@ test('founder contact editing validates inputs and persists private fields',asyn
  await page.getByRole('textbox',{name:'Contact name'}).fill('Private Analyst Contact');
  await page.getByRole('textbox',{name:'Email (if known)'}).fill('not-an-email');
  await page.getByRole('button',{name:'Save private contact'}).click();
- await expect(page.getByRole('alert')).toContainText('Invalid private founder email');
+ await expect(page.locator('.private-contact-form [role="alert"]')).toContainText('Invalid private founder email');
  await page.getByRole('textbox',{name:'Email (if known)'}).fill('contact@alpine-analytics.com');
  await page.getByRole('textbox',{name:'Introduction context'}).fill('Met at an alumni event');
  await page.getByRole('button',{name:'Save private contact'}).click();
@@ -166,8 +166,8 @@ test('learning, screening controls and methodology popovers respond',async({page
  expect(dl.suggestedFilename()).toMatch(/-screening\.json$/);
  await page.goto('/discover');
  await waitForDirectory(page);
- await page.getByRole('button',{name:/About ranking/}).click();
- await expect(page.getByRole('heading',{name:/ranking/i})).toBeVisible();
+ await page.getByRole('button',{name:'About Ordering and screening scope'}).click();
+ await expect(page.getByRole('heading',{name:'Ordering and screening scope'})).toBeVisible();
  await page.getByRole('button',{name:'Close explanation'}).click();
 });
 
