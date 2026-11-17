@@ -8,6 +8,8 @@ import CompanyLogo from './company-logo';
 import VentureLearning from './venture-learning';
 import {METRICS,FIELD_METRICS} from '@/core/methodology.mjs';
 import {LOCAL_WORKSPACE_KEY,decodeLocalWorkspace,encodeLocalWorkspace,upsertLocalWorkspace} from '@/core/local-workspace.mjs';
+import {DEFAULT_WATCHLIST,watchlistNames,activeWatchlist,createWatchlist,toggleWatchlistCompany,watchlistCompanyIds} from '@/core/watchlists.mjs';
+import {savedSearchName,parseSavedSearch,parseSavedThesis} from '@/core/research-preferences.mjs';
 import {report,thesisFit,screeningSnapshot} from '@/core/records.mjs';
 import {hasDisplayValue,firstDisplayableClaim} from '@/core/display-facts.mjs';
 type Evidence={id:string;source_id:string;excerpt:string;url:string;title:string;publisher:string;published_at:string|null;retrieved_at:string;last_checked:string;accessibility:string;method?:string;verified_at?:string;relationship?:string;type?:string};
@@ -24,7 +26,7 @@ const emptySummary:Summary={companies:0,claims:0,sources:0,signals:0,conflicts:0
 export default function Radar({section,slug}:{section:string;slug?:string}){
  const [beginnerMode,setBeginnerMode]=useState(true);
  const [summary,setSummary]=useState<Summary>(emptySummary),[companies,setCompanies]=useState<Company[]>([]),[total,setTotal]=useState(0),[selectedCompany,setSelectedCompany]=useState<Company|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState('');
- const [q,setQ]=useState(''),[sector,setSector]=useState(''),[affiliation,setAffiliation]=useState(''),[sort,setSort]=useState('name'),[page,setPage]=useState(1),[cards,setCards]=useState(false),[items,setItems]=useState<Item[]>([]),[sources,setSources]=useState<Evidence[]>([]),[signals,setSignals]=useState<Signal[]>([]),[tab,setTab]=useState('Overview'),[toast,setToast]=useState(''),[menu,setMenu]=useState(false),[watchlist,setWatchlist]=useState('My watchlist'),[newList,setNewList]=useState(''),[note,setNote]=useState(''),[reportText,setReportText]=useState('');
+ const [q,setQ]=useState(''),[sector,setSector]=useState(''),[affiliation,setAffiliation]=useState(''),[sort,setSort]=useState('name'),[page,setPage]=useState(1),[cards,setCards]=useState(false),[items,setItems]=useState<Item[]>([]),[sources,setSources]=useState<Evidence[]>([]),[signals,setSignals]=useState<Signal[]>([]),[tab,setTab]=useState('Overview'),[toast,setToast]=useState(''),[menu,setMenu]=useState(false),[watchlist,setWatchlist]=useState(DEFAULT_WATCHLIST),[newList,setNewList]=useState(''),[note,setNote]=useState(''),[reportText,setReportText]=useState('');
  const [founderNavTick,setFounderNavTick]=useState(0);
  const [criteria,setCriteria]=useState({sector:'',stage:'',keywords:'',weights:{sector:35,stage:20,keywords:25,progress:20}});
  const goToFounderContact=()=>{setTab('Founder contact');setFounderNavTick(n=>n+1);};
@@ -40,18 +42,61 @@ export default function Radar({section,slug}:{section:string;slug?:string}){
  },[section,tab,selectedCompany?.id,founderNavTick]);
  const notify=(s:string)=>{setToast(s);setTimeout(()=>setToast(''),3500);};
  const setExperience=(advanced:boolean)=>{setBeginnerMode(!advanced);try{window.localStorage.setItem('ivr-experience-mode',advanced?'advanced':'beginner');}catch{/* Browser preferences are optional. */}};
- useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(!active)return;try{setItems(decodeLocalWorkspace(window.localStorage.getItem(LOCAL_WORKSPACE_KEY)));setWatchlist(localStorage.getItem('ivr-active-watchlist')||'My watchlist');const storedMode=localStorage.getItem('ivr-experience-mode');setBeginnerMode(storedMode!=='advanced');if(section==='discover'){const p=new URLSearchParams(window.location.search);setQ(p.get('q')||'');setSector(p.get('sector')||'');setAffiliation(p.get('affiliation')||'');}const saved=sessionStorage.getItem('ivr-saved-search');if(saved){const f=JSON.parse(saved);setQ(f.q||'');setSector(f.sector||'');setAffiliation(f.affiliation||'');sessionStorage.removeItem('ivr-saved-search');}}catch(e){setError(e instanceof Error?e.message:'Unable to read browser research storage');}});return()=>{active=false;};},[]);
+ useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(!active)return;try{const storedResearch=decodeLocalWorkspace(window.localStorage.getItem(LOCAL_WORKSPACE_KEY));setItems(storedResearch);setWatchlist(activeWatchlist(storedResearch,localStorage.getItem('ivr-active-watchlist')));const storedMode=localStorage.getItem('ivr-experience-mode');setBeginnerMode(storedMode!=='advanced');if(section==='discover'){const p=new URLSearchParams(window.location.search);setQ(p.get('q')||'');setSector(p.get('sector')||'');setAffiliation(p.get('affiliation')||'');}const saved=sessionStorage.getItem('ivr-saved-search');if(saved){try{const f=parseSavedSearch(saved);setQ(f.q);setSector(f.sector);setAffiliation(f.affiliation);}catch(e){notify(e instanceof Error?e.message:'Unable to reopen this saved search');}finally{sessionStorage.removeItem('ivr-saved-search');}}}catch(e){setError(e instanceof Error?e.message:'Unable to read browser research storage');}});return()=>{active=false;};},[]);
  const load=useCallback(async()=>{setLoading(true);setError('');try{const [s,c]=await Promise.all([request<Summary>('/api/data?view=summary'),request<{companies:Company[];total:number}>(`/api/data?q=${encodeURIComponent(q)}&sector=${encodeURIComponent(sector)}&affiliation=${encodeURIComponent(affiliation)}&sort=${sort}&page=${page}`)]);setSummary(s);setCompanies(c.companies);setTotal(c.total);if(slug)setSelectedCompany(await request<Company|null>(`/api/data?view=company&id=${encodeURIComponent(slug)}`));if(section==='sources')setSources(await request<Evidence[]>('/api/data?view=sources'));if(section==='activity')setSignals(await request<Signal[]>('/api/data?view=signals'));}catch(e){setError(e instanceof Error?e.message:'Unable to load');}finally{setLoading(false);}},[q,sector,affiliation,sort,page,slug,section]);
  useEffect(()=>{const t=setTimeout(()=>void load(),180);return()=>clearTimeout(t);},[load]);
  const item=(kind:string,key:string)=>items.find(i=>i.kind===kind&&i.key===key)?.value;
  async function save(kind:string,key:string,v:string){try{const current=decodeLocalWorkspace(window.localStorage.getItem(LOCAL_WORKSPACE_KEY));const next=upsertLocalWorkspace(current,kind,key,v);window.localStorage.setItem(LOCAL_WORKSPACE_KEY,encodeLocalWorkspace(next));setItems(next);return true;}catch(e){notify(e instanceof Error?e.message:'Browser storage is unavailable or full');return false;}}
- const lists=Array.from(new Set(['My watchlist',...items.filter(i=>i.kind==='watchlist').map(i=>i.key)]));
- const watched=(id:string,list=watchlist):boolean=>JSON.parse(item('watchlist',list)||'[]').includes(id);
- async function toggleWatch(c:Company){const ids:string[]=JSON.parse(item('watchlist',watchlist)||'[]');if(await save('watchlist',watchlist,JSON.stringify(ids.includes(c.id)?ids.filter(i=>i!==c.id):[...ids,c.id])))notify(ids.includes(c.id)?'Removed from watchlist':`Saved to ${watchlist}`);}
+ const lists=watchlistNames(items);
+ function selectWatchlist(name:string,workspace:Item[]=items){
+  const resolved=activeWatchlist(workspace,name);
+  setWatchlist(resolved);
+  try{window.localStorage.setItem('ivr-active-watchlist',resolved);}
+  catch(e){notify(e instanceof Error?e.message:'Could not remember the selected watchlist');}
+ }
+ function addWatchlist(rawName:string):{ok:boolean;error?:string}{
+  try{
+   const current=decodeLocalWorkspace(window.localStorage.getItem(LOCAL_WORKSPACE_KEY));
+   const created=createWatchlist(current,rawName);
+   window.localStorage.setItem(LOCAL_WORKSPACE_KEY,encodeLocalWorkspace(created.items));
+   setItems(created.items);
+   selectWatchlist(created.name,created.items);
+   notify(`Watchlist "${created.name}" created`);
+   return {ok:true};
+  }catch(e){return {ok:false,error:e instanceof Error?e.message:'Unable to create the watchlist'};}
+ }
+ const watched=(id:string,list=watchlist):boolean=>{
+  try{return watchlistCompanyIds(items,list).includes(id);}
+  catch{return false;}
+ };
+ function toggleWatch(c:Company){
+  try{
+   // Read the latest persisted data on EVERY click, not a stale render snapshot.
+   // Two rapid clicks therefore add then remove rather than losing updates.
+   const current=decodeLocalWorkspace(window.localStorage.getItem(LOCAL_WORKSPACE_KEY));
+   const result=toggleWatchlistCompany(current,watchlist,c.id);
+   window.localStorage.setItem(LOCAL_WORKSPACE_KEY,encodeLocalWorkspace(result.items));
+   setItems(result.items);
+   selectWatchlist(result.name,result.items);
+   notify(result.added?`Saved ${c.name} to ${result.name}`:`Removed ${c.name} from ${result.name}`);
+  }catch(e){notify(e instanceof Error?e.message:'Unable to update this watchlist');}
+ }
+ useEffect(()=>{
+  const syncResearch=(event:StorageEvent)=>{
+   if(event.key!==LOCAL_WORKSPACE_KEY&&event.key!=='ivr-active-watchlist'&&event.key!==null)return;
+   try{
+    const latest=decodeLocalWorkspace(window.localStorage.getItem(LOCAL_WORKSPACE_KEY));
+    setItems(latest);
+    setWatchlist(activeWatchlist(latest,window.localStorage.getItem('ivr-active-watchlist')));
+   }catch(e){setError(e instanceof Error?e.message:'Saved research changed but could not be read');}
+  };
+  window.addEventListener('storage',syncResearch);
+  return ()=>window.removeEventListener('storage',syncResearch);
+ },[]);
  const info=(metric:keyof typeof METRICS,claims:Claim[]=[]) => <MetricInfo metric={metric} claims={claims} lastChecked={summary.lastChecked}/>;
  const fieldInfo=(c:Company,k:string)=>info((FIELD_METRICS as Record<string,keyof typeof METRICS>)[k]||'verification',c.claims.filter(cl=>cl.field===k));
  const ecosystemClaim=(c:Company)=>firstDisplayableClaim(c.claims,['affiliation','incubator','accelerator','university IP startup']);
- const watchButton=(c:Company)=><button className={`icon-button ${watched(c.id)?'saved':''}`} title={watched(c.id)?'Remove from watchlist':'Save to watchlist'} aria-label={`${watched(c.id)?'Unsave':'Save'} ${c.name}`} onClick={()=>void toggleWatch(c)}><Bookmark size={17} fill={watched(c.id)?'currentColor':'none'}/></button>;
+ const watchButton=(c:Company)=><button type="button" className={`icon-button ${watched(c.id)?'saved':''}`} title={`${watched(c.id)?'Remove from':'Save to'} ${watchlist}`} aria-label={`${watched(c.id)?'Remove':'Save'} ${c.name} ${watched(c.id)?'from':'to'} ${watchlist}`} onClick={()=>toggleWatch(c)}><Bookmark size={17} fill={watched(c.id)?'currentColor':'none'}/></button>;
  const companyCards=(rows:Company[])=><div className="company-grid">{rows.map(c=><article className="panel company-card clickable-company-card" key={c.id}>
   <Link className="card-surface-link" href={`/companies/${c.id}`} aria-label={`Explore ${c.name} company profile`}/>
   <div className="row card-controls"><CompanyLogo company={c} variant="card"/>{watchButton(c)}</div>
@@ -117,7 +162,7 @@ export default function Radar({section,slug}:{section:string;slug?:string}){
 </>}
   {section==='discover'&&<>
  {heading('ILLINOIS STARTUP DIRECTORY','Company discovery','Search startups, filter documented Illinois relationships, and open company profiles for deeper research.',
-  <button type="button" onClick={async()=>{if(await save('search',q||'All companies',JSON.stringify({q,sector,affiliation})))notify('Search saved in My Research');}}><Bookmark size={16}/>Save search</button>)}
+  <button type="button" onClick={async()=>{if(await save('search',savedSearchName({q,sector,affiliation}),JSON.stringify({q,sector,affiliation})))notify('Search saved in My Research');}}><Bookmark size={16}/>Save search</button>)}
  <div className="cb-directory-tabs"><span className="cb-directory-tab active"><Database size={15}/> Companies</span><Link className="cb-directory-tab" href="/watchlists"><Bookmark size={15}/> Saved companies</Link><Link className="cb-directory-tab" href="/learn"><BookOpen size={15}/> Research guide</Link></div>
  <div className="cb-directory-layout">
   {filters}
@@ -141,20 +186,84 @@ export default function Radar({section,slug}:{section:string;slug?:string}){
    />
  </div>}
 {tab==='Signals'&&<section className="panel"><div className="panel-heading"><h2>Recorded developments {info('signals')}</h2></div>{selectedCompany.signals?.length?selectedCompany.signals.map(s=><div className="padded" key={s.id}>{s.description}  {info('signals',s.claim?[s.claim]:[])} · Event {date(s.event_date)} · Observed {date(s.first_observed)}</div>):empty('No verified developments recorded','A directory refresh is not a product launch or funding event. New developments appear only with supporting evidence.')}</section>}{tab==='Sources'&&<section className="panel padded"><h2>Original company sources</h2><p className="muted">Open the original publisher or company record for each documented fact.</p>{selectedCompany.claims.filter(c=>hasDisplayValue(c.value)).map(c=><div className="claim-row" key={c.id}><div className="row"><span className="eyebrow">{c.field}</span>{c.status==='Conflicting'&&<small>Conflicting information</small>}</div><p>{c.value}</p>{c.evidence.filter(e=>e.relationship==='supports'&&e.url).map(e=><a className="source-link" key={e.id} href={e.url} target="_blank" rel="noopener noreferrer"><span>{e.publisher} · Open original source</span><ExternalLink size={14}/></a>)}</div>)}</section>}{tab==='Research'&&<div className="profile-grid"><section className="panel padded"><h2>Research notes</h2><p className="muted">Saved only in this browser. Other people using this device and browser profile may read them.</p><div>Research status {info('workflow')}</div><label><span className="sr-only">Research status</span><select value={item('status',selectedCompany.id)||'Watching'} onChange={e=>void save('status',selectedCompany.id,e.target.value)}>{['Watching','Researching','Further diligence','Archived'].map(s=><option key={s}>{s}</option>)}</select></label><textarea className="notes" aria-label="Browser-saved research notes" placeholder="Record your observations, questions, and next steps…" value={note} onChange={e=>setNote(e.target.value)}/><button className="primary" onClick={async()=>{if(await save('note',selectedCompany.id,note))notify('Note saved');}}>Save notes <Check size={15}/></button><hr/><h2>Editable research report</h2><p className="muted">Source links remain in the Markdown. Your edits are analyst-authored.</p><textarea className="report-editor" aria-label="Research report" value={reportText} onChange={e=>setReportText(e.target.value)}/><div className="row"><button onClick={async()=>{if(await save('report',selectedCompany.id,reportText))notify('Report saved');}}>Save report</button><button onClick={()=>download(`${selectedCompany.id}-research.md`,reportText)}><Download size={15}/>Export Markdown</button></div></section><section className="panel padded"><h2>Questions worth asking</h2><ol className="questions"><li>What is the current product, and who uses it?</li><li>Which technical claims have independent validation?</li><li>What customer, funding, and IP evidence is available?</li><li>What remains to be demonstrated?</li></ol><div className="hint">Analyst prompts, not factual claims about this company.</div></section></div>}</>:empty('Company not found','Return to Discover to select an imported company.'))}
- {section==='watchlists'&&<><div className="research-shortcuts"><div><div className="eyebrow">YOUR RESEARCH WORKSPACE</div><h1>My Research</h1><p>Save interesting startups, organize questions, and explore how well available evidence fits your interests. Saved only in this browser.</p></div><div className="row"><Link className="button" href="/research">My investment interests <ArrowRight size={15}/></Link><Link className="button" href="/settings">Backup my research</Link></div></div><Watchlists heading={heading} lists={lists} watchlist={watchlist} setWatchlist={v=>{setWatchlist(v);localStorage.setItem('ivr-active-watchlist',v);}} newList={newList} setNewList={setNewList} save={save} items={items} render={companyTable} empty={empty}/></>}
+ {section==='watchlists'&&<><div className="research-shortcuts"><div><div className="eyebrow">YOUR RESEARCH WORKSPACE</div><h1>My Research</h1><p>Save interesting startups, organize questions, and explore how well available evidence fits your interests. Saved only in this browser.</p></div><div className="row"><Link className="button" href="/research">My investment interests <ArrowRight size={15}/></Link><Link className="button" href="/settings">Backup my research</Link></div></div><Watchlists heading={heading} lists={lists} watchlist={watchlist} setWatchlist={selectWatchlist} newList={newList} setNewList={setNewList} onCreate={addWatchlist} items={items} render={companyTable} empty={empty}/></>}
  {section==='activity'&&<>{heading('OBSERVABLE DEVELOPMENTS','Activity feed','Dated events with supporting evidence. A source retrieval is not a company event.',info('signals'))}<section className="panel">{signals.length?signals.map(s=><div key={s.id} className="radar-row"><Activity size={20}/><div><Link href={`/companies/${s.company_id}`}>{s.name}</Link><p>{s.description}  {info('signals',s.claim?[s.claim]:[])}</p><small>Event {date(s.event_date)} · Observed {date(s.first_observed)}</small></div></div>):empty('No verified events yet','Company profiles are available now. Funding, product, research, and engineering events will appear as they are verified.')}</section></>}
- {section==='research'&&<>{heading('MY RESEARCH','My investment interests','Screen UIUC-connected ventures against your own investment criteria—not predictions of return.')}<div className="profile-grid"><section className="panel padded"><h2>Investment thesis {info('thesis')}</h2><p className="muted">Enter your own screening preferences; no company is preselected or recommended. Unknown factors stay unknown.</p><div className="form-grid"><label>Preferred sector<input value={criteria.sector} onChange={e=>setCriteria({...criteria,sector:e.target.value})}/></label><label>Stage<input placeholder="Not specified" value={criteria.stage} onChange={e=>setCriteria({...criteria,stage:e.target.value})}/></label></div><label>Technology keywords (comma separated)<input value={criteria.keywords} onChange={e=>setCriteria({...criteria,keywords:e.target.value})}/></label><h3>Factor weights {info('weights')}</h3>{Object.entries(criteria.weights).map(([k,w])=><label className="weight" key={k}><span>{k}</span><input type="range" min="0" max="100" value={w} onChange={e=>setCriteria({...criteria,weights:{...criteria.weights,[k]:+e.target.value}})}/><strong>{w}</strong></label>)}<button className="primary" onClick={async()=>{if(await save('thesis','My thesis',JSON.stringify(criteria)))notify('Thesis saved');}}>Save thesis</button>{item('thesis','My thesis')&&<button onClick={()=>setCriteria(JSON.parse(item('thesis','My thesis')!))}>Load saved thesis</button>}<hr/><h2>Screening results {info('thesis')} {info('ranking')}</h2><p className="muted">First page, A–Z; not a ranked universe. Fit is withheld below 50% unrounded weighted evidence coverage. Higher fit means closer text alignment, not greater investment merit.</p>{companies.map(c=>{const fit=thesisFit(c,criteria);return <details className="fit" key={c.id}><summary><span>{c.name}</span><strong>{fit.score===null?'Insufficient evidence':`${fit.score}% fit`}</strong><small>{fit.coverage}% coverage</small></summary><div className="fit-explanation"><p><strong>Calculation:</strong> matched weight {fit.matchedWeight} ÷ known weight {fit.knownWeight} × 100{fit.score===null?' → withheld':` → ${fit.score}% (rounded)`}. Coverage: {fit.knownWeight} ÷ {fit.totalWeight} × 100 = {fit.coverage}%.</p><p>Method {fit.version} · 50% cutoff is a product safeguard, not an empirically validated threshold. {info('matching')}</p></div>{fit.factors.map(f=><div className="factor-detail" key={f.key}><strong>{f.key} · weight {f.weight}</strong><p>Criterion: {f.criterion}</p><p>{f.reason} · Contribution: {f.contribution===null?'Unknown / excluded':`${f.contribution.toFixed(2)} percentage points`}</p><div>Observed claims: {f.evidence.length?f.evidence.map((id:string)=><span key={id}><small>{id.slice(0,12)} · {c.claims.find(cl=>cl.id===id)?.classification}{f.matchedEvidence.includes(id)?' · matched':''}</small></span>):'None eligible'}</div>{f.excludedEvidence.length>0&&<p>Excluded claims (inspect evidence): {f.excludedEvidence.map((id:string)=><span key={id}></span>)}</p>}</div>)}<div className="row snapshot-actions"><button onClick={async()=>{const snapshot=screeningSnapshot(c,criteria);if(await save('thesis',`snapshot:${c.id}`,JSON.stringify(snapshot)))notify('Evidence snapshot saved in this browser');}}>Save evidence snapshot</button><button onClick={()=>download(`${c.id}-screening.json`,JSON.stringify(screeningSnapshot(c,criteria),null,2),'application/json')}>Export calculation</button></div></details>;})}</section><aside><section className="panel padded"><h2>Saved searches {info('filters')}</h2>{items.filter(i=>i.kind==='search').length?items.filter(i=>i.kind==='search').map(i=><Link className="saved-search" key={i.key} href="/discover" onClick={()=>sessionStorage.setItem('ivr-saved-search',i.value)}><Search size={15}/>{i.key}<ArrowRight size={15}/></Link>):<p className="muted">Save a filter from Discover to return to it later.</p>}</section><section className="panel padded notes-list"><h2>Saved screening snapshots</h2><p className="muted">Exact evidence and criteria at the time of saving. Older saved theses contain preferences only.</p>{items.filter(i=>i.kind==='thesis'&&i.key.startsWith('snapshot:')).map(i=><button key={i.key} className="saved-search" onClick={()=>download(`${i.key.slice(9)}-screening.json`,i.value,'application/json')}>Download {i.key.slice(9)} snapshot</button>)}</section><section className="panel padded notes-list"><h2>Your research notes</h2>{items.filter(i=>i.kind==='note'&&i.value).map(i=><Link className="saved-search" href={`/companies/${i.key}`} key={i.key}>{i.key}<ArrowRight size={14}/></Link>)}{!items.some(i=>i.kind==='note'&&i.value)&&<p className="muted">Open a company’s Research tab to add a browser-saved note.</p>}</section><div className="hint">Weights are editable preferences, not scientifically validated predictive parameters. AI assistance is unavailable in this version.</div></aside></div></>}
+ {section==='research'&&<>{heading('MY RESEARCH','My investment interests','Screen UIUC-connected ventures against your own investment criteria—not predictions of return.')}<div className="profile-grid"><section className="panel padded"><h2>Investment thesis {info('thesis')}</h2><p className="muted">Enter your own screening preferences; no company is preselected or recommended. Unknown factors stay unknown.</p><div className="form-grid"><label>Preferred sector<input value={criteria.sector} onChange={e=>setCriteria({...criteria,sector:e.target.value})}/></label><label>Stage<input placeholder="Not specified" value={criteria.stage} onChange={e=>setCriteria({...criteria,stage:e.target.value})}/></label></div><label>Technology keywords (comma separated)<input value={criteria.keywords} onChange={e=>setCriteria({...criteria,keywords:e.target.value})}/></label><h3>Factor weights {info('weights')}</h3>{Object.entries(criteria.weights).map(([k,w])=><label className="weight" key={k}><span>{k}</span><input type="range" min="0" max="100" value={w} onChange={e=>setCriteria({...criteria,weights:{...criteria.weights,[k]:+e.target.value}})}/><strong>{w}</strong></label>)}<button className="primary" onClick={async()=>{if(await save('thesis','My thesis',JSON.stringify(criteria)))notify('Thesis saved');}}>Save thesis</button>{item('thesis','My thesis')&&<button onClick={()=>{try{setCriteria(parseSavedThesis(item('thesis','My thesis')!) as typeof criteria);notify('Saved thesis loaded');}catch(e){notify(e instanceof Error?e.message:'Could not restore saved thesis');}}}>Load saved thesis</button>}<hr/><h2>Screening results {info('thesis')} {info('ranking')}</h2><p className="muted">First page, A–Z; not a ranked universe. Fit is withheld below 50% unrounded weighted evidence coverage. Higher fit means closer text alignment, not greater investment merit.</p>{companies.map(c=>{const fit=thesisFit(c,criteria);return <details className="fit" key={c.id}><summary><span>{c.name}</span><strong>{fit.score===null?'Insufficient evidence':`${fit.score}% fit`}</strong><small>{fit.coverage}% coverage</small></summary><div className="fit-explanation"><p><strong>Calculation:</strong> matched weight {fit.matchedWeight} ÷ known weight {fit.knownWeight} × 100{fit.score===null?' → withheld':` → ${fit.score}% (rounded)`}. Coverage: {fit.knownWeight} ÷ {fit.totalWeight} × 100 = {fit.coverage}%.</p><p>Method {fit.version} · 50% cutoff is a product safeguard, not an empirically validated threshold. {info('matching')}</p></div>{fit.factors.map(f=><div className="factor-detail" key={f.key}><strong>{f.key} · weight {f.weight}</strong><p>Criterion: {f.criterion}</p><p>{f.reason} · Contribution: {f.contribution===null?'Unknown / excluded':`${f.contribution.toFixed(2)} percentage points`}</p><div>Observed claims: {f.evidence.length?f.evidence.map((id:string)=><span key={id}><small>{id.slice(0,12)} · {c.claims.find(cl=>cl.id===id)?.classification}{f.matchedEvidence.includes(id)?' · matched':''}</small></span>):'None eligible'}</div>{f.excludedEvidence.length>0&&<p>Excluded claims (inspect evidence): {f.excludedEvidence.map((id:string)=><span key={id}></span>)}</p>}</div>)}<div className="row snapshot-actions"><button onClick={async()=>{const snapshot=screeningSnapshot(c,criteria);if(await save('thesis',`snapshot:${c.id}`,JSON.stringify(snapshot)))notify('Evidence snapshot saved in this browser');}}>Save evidence snapshot</button><button onClick={()=>download(`${c.id}-screening.json`,JSON.stringify(screeningSnapshot(c,criteria),null,2),'application/json')}>Export calculation</button></div></details>;})}</section><aside><section className="panel padded"><h2>Saved searches {info('filters')}</h2>{items.filter(i=>i.kind==='search').length?items.filter(i=>i.kind==='search').map(i=><Link className="saved-search" key={i.key} href="/discover" onClick={()=>sessionStorage.setItem('ivr-saved-search',i.value)}><Search size={15}/>{i.key}<ArrowRight size={15}/></Link>):<p className="muted">Save a filter from Discover to return to it later.</p>}</section><section className="panel padded notes-list"><h2>Saved screening snapshots</h2><p className="muted">Exact evidence and criteria at the time of saving. Older saved theses contain preferences only.</p>{items.filter(i=>i.kind==='thesis'&&i.key.startsWith('snapshot:')).map(i=><button key={i.key} className="saved-search" onClick={()=>download(`${i.key.slice(9)}-screening.json`,i.value,'application/json')}>Download {i.key.slice(9)} snapshot</button>)}</section><section className="panel padded notes-list"><h2>Your research notes</h2>{items.filter(i=>i.kind==='note'&&i.value).map(i=><Link className="saved-search" href={`/companies/${i.key}`} key={i.key}>{i.key}<ArrowRight size={14}/></Link>)}{!items.some(i=>i.kind==='note'&&i.value)&&<p className="muted">Open a company’s Research tab to add a browser-saved note.</p>}</section><div className="hint">Weights are editable preferences, not scientifically validated predictive parameters. AI assistance is unavailable in this version.</div></aside></div></>}
  {section==='sources'&&<>{heading('THE EVIDENCE TRAIL','Sources & provenance','Original records, retrieval dates, and preserved source history.')}<div className="trust-banner"><ShieldCheck size={18}/><span>{summary.claims} published claims linked to {summary.sources} original sources. {info('sources')} {info('claims')}</span></div><section className="panel"><div className="table-scroll"><table><thead><tr><th>Original source</th><th>Publisher</th><th>First retrieved</th><th>Last checked {info('freshness')}</th><th>Accessibility {info('freshness')}</th></tr></thead><tbody>{sources.map(s=><tr key={s.id}><td><a href={s.url} target="_blank" rel="noopener noreferrer" className="strong source-row-link">{s.title} <ExternalLink size={13}/></a><small>{s.url}</small></td><td>{s.publisher}</td><td>{date(s.retrieved_at)}</td><td>{date(s.last_checked)}</td><td>{hasDisplayValue(s.accessibility)?s.accessibility:null}</td></tr>)}</tbody></table></div></section></>}
- {section==='settings'&&<SettingsPage heading={heading} summary={summary} items={items} onItemsChange={setItems}/>}
+ {section==='settings'&&<SettingsPage heading={heading} summary={summary} items={items} onItemsChange={next=>{setItems(next);selectWatchlist(watchlist,next);}}/>}
  {section==='learn'&&<VentureLearning/>}
   {section==='methodology'&&<>{heading('TRANSPARENCY BY DESIGN','Data methodology','Know what the evidence establishes—and what it does not.')}<Methodology/></>}
  <footer>Illinois Venture Radar <span>Independent startup discovery and research for Illinois-connected companies. No university endorsement.</span><Link href="/methodology">Methodology & limitations ↗</Link></footer></main></div>
  {toast&&<div role="status" className="toast"><Check size={16}/>{toast}</div>}</div>;
 }
-function Watchlists({heading,lists,watchlist,setWatchlist,newList,setNewList,save,items,render,empty}:{heading:(a:string,b:string,c:string,d?:React.ReactNode)=>React.ReactNode;lists:string[];watchlist:string;setWatchlist:(v:string)=>void;newList:string;setNewList:(v:string)=>void;save:(a:string,b:string,c:string)=>Promise<boolean>;items:Item[];render:(c:Company[])=>React.ReactNode;empty:(a:string,b:string)=>React.ReactNode}){
- const [rows,setRows]=useState<Company[]>([]),[loading,setLoading]=useState(false),[loadError,setLoadError]=useState('');const raw=items.find(i=>i.kind==='watchlist'&&i.key===watchlist)?.value||'[]';
- useEffect(()=>{let active=true;Promise.resolve().then(()=>setLoading(true));Promise.all((JSON.parse(raw) as string[]).map(id=>request<Company|null>(`/api/data?view=company&id=${encodeURIComponent(id)}`))).then(c=>{if(active)setRows(c.filter((x):x is Company=>!!x));}).catch(e=>setLoadError(e.message)).finally(()=>{if(active)setLoading(false);});return()=>{active=false;};},[raw]);
- return <>{heading('YOUR RESEARCH PIPELINE','Watchlists','Keep promising companies close and return to the original evidence.')}<div className="filters watchlist-tools"><select aria-label="Current watchlist" value={watchlist} onChange={e=>setWatchlist(e.target.value)}>{lists.map(l=><option key={l}>{l}</option>)}</select><input aria-label="New watchlist name" value={newList} maxLength={80} onChange={e=>setNewList(e.target.value)} placeholder="New watchlist name"/><button onClick={async()=>{if(newList.trim()&&await save('watchlist',newList.trim(),'[]')){setWatchlist(newList.trim());setNewList('');}}}><Plus size={16}/>Create watchlist</button></div><section className="panel"><div className="panel-heading"><h2>{watchlist} <span className="pill">{rows.length}</span></h2><Link href="/discover">Add companies <Plus size={15}/></Link></div>{loadError&&<p role="alert">{loadError}</p>}{loading?<div className="loading">Loading watchlist…</div>:rows.length?render(rows):empty('Build your research shortlist','Save companies from Discover using the bookmark icon.')}</section></>;
+function Watchlists({heading,lists,watchlist,setWatchlist,newList,setNewList,onCreate,items,render,empty}:{
+ heading:(a:string,b:string,c:string,d?:React.ReactNode)=>React.ReactNode;
+ lists:string[];watchlist:string;setWatchlist:(v:string)=>void;
+ newList:string;setNewList:(v:string)=>void;
+ onCreate:(name:string)=>{ok:boolean;error?:string};
+ items:Item[];render:(c:Company[])=>React.ReactNode;
+ empty:(a:string,b:string)=>React.ReactNode;
+}){
+ const [rows,setRows]=useState<Company[]>([]);
+ const [loading,setLoading]=useState(false);
+ const [loadError,setLoadError]=useState('');
+ const [createError,setCreateError]=useState('');
+ const raw=items.find(i=>i.kind==='watchlist'&&i.key===watchlist)?.value||'[]';
+ useEffect(()=>{
+  let active=true;
+  void Promise.resolve().then(async()=>{
+   if(!active)return;
+   setLoading(true);
+   setLoadError('');
+   setRows([]);
+   try{
+    const ids=watchlistCompanyIds(items,watchlist);
+    const settled=await Promise.allSettled(ids.map(id=>request<Company|null>(`/api/data?view=company&id=${encodeURIComponent(id)}`)));
+    if(!active)return;
+    const found:Company[]=[];
+    let unavailable=0;
+    for(const result of settled){
+     if(result.status==='fulfilled'&&result.value)found.push(result.value);
+     else unavailable++;
+    }
+    setRows(found);
+    if(unavailable)setLoadError(`${unavailable} saved ${unavailable===1?'company is':'companies are'} unavailable right now. Other saved companies are still shown.`);
+   }catch(e){if(active)setLoadError(e instanceof Error?e.message:'Unable to load this watchlist');}
+   finally{if(active)setLoading(false);}
+  });
+  return()=>{active=false;};
+ },[watchlist,raw]);
+ function submitNewList(event:React.FormEvent<HTMLFormElement>){
+  event.preventDefault();
+  const result=onCreate(newList);
+  if(result.ok){setNewList('');setCreateError('');}
+  else setCreateError(result.error||'Could not create the watchlist');
+ }
+ return <>{heading('YOUR RESEARCH PIPELINE','Watchlists','Keep promising companies close and return to the original sources.')}
+  <div className="filters watchlist-tools">
+   <label className="watchlist-select-label">Selected watchlist
+    <select aria-label="Current watchlist" value={watchlist} onChange={e=>{setWatchlist(e.target.value);setCreateError('');}}>
+     {lists.map(l=><option value={l} key={l}>{l}</option>)}
+    </select>
+   </label>
+   <form className="watchlist-create-form" onSubmit={submitNewList}>
+    <label htmlFor="watchlist-new-name">Create another watchlist</label>
+    <div className="watchlist-create-controls">
+     <input id="watchlist-new-name" aria-label="New watchlist name" value={newList} maxLength={80}
+      onChange={e=>{setNewList(e.target.value);if(createError)setCreateError('');}}
+      placeholder="e.g., Climate technology"/>
+     <button type="submit"><Plus size={16}/>Create watchlist</button>
+    </div>
+   </form>
+  </div>
+  {createError&&<p className="watchlist-error" role="alert">{createError}</p>}
+  <p className="watchlist-active-hint">Bookmarks elsewhere in the site will be saved to <strong>{watchlist}</strong>. Select another list here to change the destination.</p>
+  <section className="panel">
+   <div className="panel-heading"><h2>{watchlist} <span className="pill">{rows.length}</span></h2><Link href="/discover">Add companies <Plus size={15}/></Link></div>
+   {loadError&&<p className="watchlist-error" role="alert">{loadError}</p>}
+   {loading?<div className="loading" role="status">Loading watchlist…</div>:rows.length?render(rows):!loadError?empty('Build your research shortlist','Save companies from Companies using the bookmark icon.'):null}
+  </section>
+ </>;
 }
 function SettingsPage({heading,summary,items,onItemsChange}:{heading:(a:string,b:string,c:string,d?:React.ReactNode)=>React.ReactNode;summary:Summary;items:Item[];onItemsChange:(items:Item[])=>void}){
  const [status,setStatus]=useState('');

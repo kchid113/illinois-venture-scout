@@ -568,3 +568,52 @@ main{min-width:0}
 @media(prefers-reduced-motion:reduce){
  .cb-company-row{transition:none}
 }
+
+/* Personal research: explicit list selection and usable creation controls. */
+.watchlist-tools{
+ display:grid;grid-template-columns:minmax(180px,260px) minmax(280px,1fr);
+ align-items:end;gap:18px;padding:18px;
+ background:#0E2B49;border:1px solid #3A6C97;border-radius:4px;
+ margin-bottom:12px;
+}
+.watchlist-select-label,.watchlist-create-form{display:flex;flex-direction:column;gap:8px;color:#E1EFF8;font-size:12px;font-weight:750;min-width:0}
+.watchlist-tools select,.watchlist-tools input{
+ width:100%;height:43px;min-height:43px;
+ background:#071B31;border:1px solid #5488B4;color:#FFFFFF;
+ border-radius:4px;padding:0 13px;font-size:12px;
+}
+.watchlist-create-controls{display:flex;align-items:stretch;gap:9px;min-width:0}
+.watchlist-create-controls input{flex:1;min-width:0}
+.watchlist-create-controls button{
+ flex-shrink:0;display:inline-flex;align-items:center;gap:7px;
+ min-height:43px;border-radius:4px;
+ border:1px solid #FFB580;background:#FF7A21;color:#091723;
+ font-size:12px;font-weight:800;
+}
+.watchlist-create-controls button:hover{background:#FFA052;color:#091723}
+.watchlist-active-hint{
+ font-size:11px;color:#B7D7EB;
+ line-height:1.55;margin:6px 0 16px;padding:0 3px;
+}
+.watchlist-active-hint strong{color:#FFB989}
+.watchlist-error{
+ margin:7px 0 12px;padding:10px 13px;
+ border:1px solid #E87E7E;border-radius:4px;
+ background:#4A2029;color:#FFE9EA;font-size:12px;
+}
+.watchlist-tools :focus-visible{outline:2px solid #FFAA6D;outline-offset:2px}
+@media(max-width:750px){
+ .watchlist-tools{grid-template-columns:1fr;gap:13px;padding:13px}
+ .watchlist-create-controls{flex-wrap:wrap}
+ .watchlist-create-controls button{width:100%;justify-content:center}
+}
+
+/* Methodology help is a viewport-bounded dialog; Close remains reachable. */
+.method-dialog-overlay{position:fixed;inset:0;z-index:98;background:#040b14c7;backdrop-filter:blur(3px)}
+.method-popover.method-dialog{position:fixed;top:50%;left:50%;z-index:99;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 28px));max-width:440px;max-height:min(76dvh,650px);overflow:auto;overscroll-behavior:contain;padding:0 20px 20px;border:1px solid #5C9AC5;border-top:3px solid #FF7A21;border-radius:5px;color:#ECF7FF;background:#102D4A;box-shadow:0 20px 70px #000000be}
+.method-dialog-header{position:sticky;top:0;z-index:2;margin:0 -20px 15px;padding:15px 20px;background:#153B5D;border-bottom:1px solid #4579A3;display:flex;align-items:center;justify-content:space-between;gap:13px}
+.method-dialog-header h3{font-size:15px;color:#FFFFFF;min-width:0}
+.method-dialog-close{position:relative;flex-shrink:0;z-index:3;width:34px;height:34px;min-height:34px;display:inline-flex;align-items:center;justify-content:center;color:#FFFFFF;background:#244E74;border:1px solid #719FC0;border-radius:3px;box-shadow:none}
+.method-dialog-close:hover{background:#FF7A21;color:#091522;border-color:#FFB681}
+.method-dialog-close:focus-visible{outline:2px solid #FFB681;outline-offset:2px}
+@media(max-width:550px){.method-popover.method-dialog{padding:0 15px 15px;max-height:80dvh}.method-dialog-header{margin:0 -15px 12px;padding:13px 15px}}
