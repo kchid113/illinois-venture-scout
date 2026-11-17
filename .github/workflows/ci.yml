@@ -52,3 +52,32 @@ jobs:
       - run: npm run db:seed
       - run: npm run db:verify
       - run: npm test
+
+  browser:
+    name: Chromium end-to-end buttons, watchlists and user journeys
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://preview-test.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_test_only
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --no-audit --no-fund
+      # Browser tests deliberately avoid adding an unreviewed dependency to
+      # the runtime bundle; install a pinned test runner only in this job.
+      - run: npm install --no-save --package-lock=false --no-audit --no-fund @playwright/test@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npx playwright test --config playwright.config.mjs
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-regression-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
