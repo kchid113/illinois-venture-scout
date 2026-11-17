@@ -1,5 +1,7 @@
 import {test,expect} from '@playwright/test';
 
+test.skip(process.env.RUN_LIVE_DB_BROWSER!=='1','Requires an isolated seeded PostgreSQL test service');
+
 // No mocked API and no production credentials: this suite runs on a freshly
 // seeded isolated PostgreSQL service in GitHub Actions.
 test('real database public API exposes reviewed claims and rejects personal workspace writes',async({request})=>{

@@ -84,13 +84,13 @@ test('saved thesis weights and evidence export controls work for multiple compan
  await page.goto('/research');
  await page.getByRole('textbox',{name:'Preferred sector'}).fill('Robotics');
  await page.getByRole('textbox',{name:'Technology keywords (comma separated)'}).fill('automation, software');
- await page.locator('.weight').first().locator('input[type=range]').fill('80');
+ await page.locator('.weight').first().locator('input[type=range]').press('End');
  await page.getByRole('button',{name:'Save thesis'}).click();
  await expect(page.getByRole('status').filter({hasText:'Thesis saved'})).toBeVisible();
  await page.reload();
  await page.getByRole('button',{name:'Load saved thesis'}).click();
  await expect(page.getByRole('textbox',{name:'Preferred sector'})).toHaveValue('Robotics');
- await expect(page.locator('.weight').first().locator('input[type=range]')).toHaveValue('80');
+ await expect(page.locator('.weight').first().locator('input[type=range]')).toHaveValue('100');
  const first=page.locator('details.fit').first();
  await first.locator('summary').click();
  const downloadPromise=page.waitForEvent('download');
@@ -121,6 +121,7 @@ test('slow obsolete search cannot replace newer directory results',async({page})
  await expect(page.locator('.cb-company-row')).toHaveCount(1);
  await expect(page.locator('.cb-company-row')).toContainText('Beta Robotics');
  await releaseOld();
+ await page.waitForResponse(response=>response.url().includes('/api/data?')&&new URL(response.url()).searchParams.get('q')==='Gamma');
  await expect(page.locator('.cb-company-row')).toContainText('Beta Robotics');
  await expect(page.locator('.cb-company-row').filter({hasText:'Gamma Energy'})).toHaveCount(0);
 });
