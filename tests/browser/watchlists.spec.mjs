@@ -118,3 +118,61 @@ test('a list created on another tab is visible without reloading',async({page,co
  await expect(other.getByRole('combobox',{name:'Current watchlist'}).locator('option[value="Cross-tab"]')).toHaveCount(1);
  await other.close();
 });
+
+
+test('newly created empty watchlist clearly links to company discovery',async({page})=>{
+ await createList(page,'New Leads');
+ await expect(page.locator('.watchlist-empty')).toContainText('This watchlist is ready');
+ await page.getByRole('link',{name:/Find companies to add/}).click();
+ await expect(page).toHaveURL(/\/discover$/);
+ await expect(page.locator('.watchlist-destination')).toContainText('New Leads');
+});
+
+test('storage write failure surfaces an error without falsely creating a watchlist',async({page})=>{
+ await page.addInitScript(()=>{
+  const original=Storage.prototype.setItem;
+  Storage.prototype.setItem=function(key,value){
+   if(key==='ivr-public-workspace-v1')throw new DOMException('Browser storage blocked','QuotaExceededError');
+   return original.call(this,key,value);
+  };
+ });
+ await page.goto('/watchlists');
+ await page.getByRole('textbox',{name:'New watchlist name'}).fill('Should fail');
+ await page.getByRole('button',{name:'Create watchlist'}).click();
+ await expect(page.locator('.watchlist-error[role="alert"]')).toContainText('Browser storage blocked');
+ await expect(page.getByRole('combobox',{name:'Current watchlist'})).toHaveValue('My watchlist');
+ await expect(page.getByRole('combobox',{name:'Current watchlist'}).locator('option')).toHaveCount(1);
+ await expect(page.getByRole('status').filter({hasText:'created'})).toHaveCount(0);
+});
+
+test('a saved company appears in another tab and can be removed there',async({page,context})=>{
+ await page.goto('/discover');
+ await waitForDirectory(page);
+ const other=await context.newPage();
+ await installResearchFixtures(other);
+ await other.goto('/watchlists');
+ await page.locator('.cb-company-row').filter({hasText:'Beta Robotics'})
+  .getByRole('button',{name:'Save Beta Robotics to My watchlist'}).click();
+ await expect(other.locator('.cb-company-row').filter({hasText:'Beta Robotics'})).toBeVisible();
+ await other.locator('.cb-company-row').filter({hasText:'Beta Robotics'})
+  .getByRole('button',{name:'Remove Beta Robotics from My watchlist'}).click();
+ await expect(page.locator('.cb-company-row').filter({hasText:'Beta Robotics'})
+  .getByRole('button',{name:'Save Beta Robotics to My watchlist'})).toBeVisible();
+ await other.close();
+});
+
+test('creating a watchlist while another is populated preserves existing bookmarks',async({page})=>{
+ await createList(page,'Existing');
+ await page.goto('/discover');
+ await waitForDirectory(page);
+ await page.locator('.cb-company-row').filter({hasText:'Alpine Analytics'})
+  .getByRole('button',{name:'Save Alpine Analytics to Existing'}).click();
+ await createList(page,'Second');
+ await page.getByRole('combobox',{name:'Current watchlist'}).selectOption('Existing');
+ await expect(page.locator('.cb-company-row').filter({hasText:'Alpine Analytics'})).toBeVisible();
+ await page.getByRole('combobox',{name:'Current watchlist'}).selectOption('Second');
+ await expect(page.locator('.cb-company-row').filter({hasText:'Alpine Analytics'})).toHaveCount(0);
+ await page.reload();
+ await page.getByRole('combobox',{name:'Current watchlist'}).selectOption('Existing');
+ await expect(page.locator('.cb-company-row').filter({hasText:'Alpine Analytics'})).toBeVisible();
+});

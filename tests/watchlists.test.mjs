@@ -80,3 +80,21 @@ test('no accidental loss on corrupted records or workspace capacity',()=>{
  const full=Array.from({length:500},(_,i)=>({kind:'note',key:'n'+i,value:'ok'}));
  assert.throws(()=>createWatchlist(full,'Extra'),/too many records/);
 });
+
+
+test('creating a new list never modifies another existing list, including default list',()=>{
+ let items=toggleWatchlistCompany([],'My watchlist','company-default').items;
+ items=createWatchlist(items,'Robotics').items;
+ items=toggleWatchlistCompany(items,'Robotics','company-robotics').items;
+ items=createWatchlist(items,'Deep Tech').items;
+ assert.deepEqual(watchlistCompanyIds(items,'My watchlist'),['company-default']);
+ assert.deepEqual(watchlistCompanyIds(items,'Robotics'),['company-robotics']);
+ assert.deepEqual(watchlistCompanyIds(items,'Deep Tech'),[]);
+ assert.equal(activeWatchlist(items,'deep tech'),'Deep Tech');
+});
+
+test('watchlist capacity limits reject oversized sets without corrupting other records',()=>{
+ const current=upsertLocalWorkspace([],'watchlist','My watchlist',JSON.stringify(Array.from({length:500},(_,i)=>'c'+i)));
+ assert.throws(()=>toggleWatchlistCompany(current,'My watchlist','overflow'),/Invalid saved watchlist/);
+ assert.deepEqual(watchlistCompanyIds(current,'My watchlist').length,500);
+});
