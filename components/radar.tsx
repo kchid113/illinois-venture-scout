@@ -195,10 +195,74 @@ export default function Radar({section,slug}:{section:string;slug?:string}){
  <footer>Illinois Venture Radar <span>Independent startup discovery and research for Illinois-connected companies. No university endorsement.</span><Link href="/methodology">Methodology & limitations ↗</Link></footer></main></div>
  {toast&&<div role="status" className="toast"><Check size={16}/>{toast}</div>}</div>;
 }
-function Watchlists({heading,lists,watchlist,setWatchlist,newList,setNewList,save,items,render,empty}:{heading:(a:string,b:string,c:string,d?:React.ReactNode)=>React.ReactNode;lists:string[];watchlist:string;setWatchlist:(v:string)=>void;newList:string;setNewList:(v:string)=>void;save:(a:string,b:string,c:string)=>Promise<boolean>;items:Item[];render:(c:Company[])=>React.ReactNode;empty:(a:string,b:string)=>React.ReactNode}){
- const [rows,setRows]=useState<Company[]>([]),[loading,setLoading]=useState(false),[loadError,setLoadError]=useState('');const raw=items.find(i=>i.kind==='watchlist'&&i.key===watchlist)?.value||'[]';
- useEffect(()=>{let active=true;Promise.resolve().then(()=>setLoading(true));Promise.all((JSON.parse(raw) as string[]).map(id=>request<Company|null>(`/api/data?view=company&id=${encodeURIComponent(id)}`))).then(c=>{if(active)setRows(c.filter((x):x is Company=>!!x));}).catch(e=>setLoadError(e.message)).finally(()=>{if(active)setLoading(false);});return()=>{active=false;};},[raw]);
- return <>{heading('YOUR RESEARCH PIPELINE','Watchlists','Keep promising companies close and return to the original evidence.')}<div className="filters watchlist-tools"><select aria-label="Current watchlist" value={watchlist} onChange={e=>setWatchlist(e.target.value)}>{lists.map(l=><option key={l}>{l}</option>)}</select><input aria-label="New watchlist name" value={newList} maxLength={80} onChange={e=>setNewList(e.target.value)} placeholder="New watchlist name"/><button onClick={async()=>{if(newList.trim()&&await save('watchlist',newList.trim(),'[]')){setWatchlist(newList.trim());setNewList('');}}}><Plus size={16}/>Create watchlist</button></div><section className="panel"><div className="panel-heading"><h2>{watchlist} <span className="pill">{rows.length}</span></h2><Link href="/discover">Add companies <Plus size={15}/></Link></div>{loadError&&<p role="alert">{loadError}</p>}{loading?<div className="loading">Loading watchlist…</div>:rows.length?render(rows):empty('Build your research shortlist','Save companies from Discover using the bookmark icon.')}</section></>;
+function Watchlists({heading,lists,watchlist,setWatchlist,newList,setNewList,onCreate,items,render,empty}:{
+ heading:(a:string,b:string,c:string,d?:React.ReactNode)=>React.ReactNode;
+ lists:string[];watchlist:string;setWatchlist:(v:string)=>void;
+ newList:string;setNewList:(v:string)=>void;
+ onCreate:(name:string)=>{ok:boolean;error?:string};
+ items:Item[];render:(c:Company[])=>React.ReactNode;
+ empty:(a:string,b:string)=>React.ReactNode;
+}){
+ const [rows,setRows]=useState<Company[]>([]);
+ const [loading,setLoading]=useState(false);
+ const [loadError,setLoadError]=useState('');
+ const [createError,setCreateError]=useState('');
+ const raw=items.find(i=>i.kind==='watchlist'&&i.key===watchlist)?.value||'[]';
+ useEffect(()=>{
+  let active=true;
+  void Promise.resolve().then(async()=>{
+   if(!active)return;
+   setLoading(true);
+   setLoadError('');
+   setRows([]);
+   try{
+    const ids=watchlistCompanyIds(items,watchlist);
+    const settled=await Promise.allSettled(ids.map(id=>request<Company|null>(`/api/data?view=company&id=${encodeURIComponent(id)}`)));
+    if(!active)return;
+    const found:Company[]=[];
+    let unavailable=0;
+    for(const result of settled){
+     if(result.status==='fulfilled'&&result.value)found.push(result.value);
+     else unavailable++;
+    }
+    setRows(found);
+    if(unavailable)setLoadError(`${unavailable} saved ${unavailable===1?'company is':'companies are'} unavailable right now. Other saved companies are still shown.`);
+   }catch(e){if(active)setLoadError(e instanceof Error?e.message:'Unable to load this watchlist');}
+   finally{if(active)setLoading(false);}
+  });
+  return()=>{active=false;};
+ },[watchlist,raw]);
+ function submitNewList(event:React.FormEvent<HTMLFormElement>){
+  event.preventDefault();
+  const result=onCreate(newList);
+  if(result.ok){setNewList('');setCreateError('');}
+  else setCreateError(result.error||'Could not create the watchlist');
+ }
+ return <>{heading('YOUR RESEARCH PIPELINE','Watchlists','Keep promising companies close and return to the original sources.')}
+  <div className="filters watchlist-tools">
+   <label className="watchlist-select-label">Selected watchlist
+    <select aria-label="Current watchlist" value={watchlist} onChange={e=>{setWatchlist(e.target.value);setCreateError('');}}>
+     {lists.map(l=><option value={l} key={l}>{l}</option>)}
+    </select>
+   </label>
+   <form className="watchlist-create-form" onSubmit={submitNewList}>
+    <label htmlFor="watchlist-new-name">Create another watchlist</label>
+    <div className="watchlist-create-controls">
+     <input id="watchlist-new-name" aria-label="New watchlist name" value={newList} maxLength={80}
+      onChange={e=>{setNewList(e.target.value);if(createError)setCreateError('');}}
+      placeholder="e.g., Climate technology"/>
+     <button type="submit"><Plus size={16}/>Create watchlist</button>
+    </div>
+   </form>
+  </div>
+  {createError&&<p className="watchlist-error" role="alert">{createError}</p>}
+  <p className="watchlist-active-hint">Bookmarks elsewhere in the site will be saved to <strong>{watchlist}</strong>. Select another list here to change the destination.</p>
+  <section className="panel">
+   <div className="panel-heading"><h2>{watchlist} <span className="pill">{rows.length}</span></h2><Link href="/discover">Add companies <Plus size={15}/></Link></div>
+   {loadError&&<p className="watchlist-error" role="alert">{loadError}</p>}
+   {loading?<div className="loading" role="status">Loading watchlist…</div>:rows.length?render(rows):!loadError?empty('Build your research shortlist','Save companies from Companies using the bookmark icon.'):null}
+  </section>
+ </>;
 }
 function SettingsPage({heading,summary,items,onItemsChange}:{heading:(a:string,b:string,c:string,d?:React.ReactNode)=>React.ReactNode;summary:Summary;items:Item[];onItemsChange:(items:Item[])=>void}){
  const [status,setStatus]=useState('');
