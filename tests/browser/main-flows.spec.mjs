@@ -164,8 +164,6 @@ test('learning, screening controls and methodology popovers respond',async({page
  await entry.getByRole('button',{name:'Export calculation'}).click();
  const dl=await dlPromise;
  expect(dl.suggestedFilename()).toMatch(/-screening\.json$/);
- await page.goto('/discover');
- await waitForDirectory(page);
  await page.getByRole('button',{name:'About Ordering and screening scope'}).click();
  await expect(page.getByRole('heading',{name:'Ordering and screening scope'})).toBeVisible();
  await page.getByRole('button',{name:'Close explanation'}).click();
