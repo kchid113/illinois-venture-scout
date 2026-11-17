@@ -1,5 +1,5 @@
 'use client';
-import {useEffect,useState,useCallback} from 'react';
+import {useEffect,useState,useCallback,useRef} from 'react';
 import Link from 'next/link';
 import {Radar as RadarIcon,LayoutDashboard,Search,Activity,Bookmark,Database,Settings,ArrowUpRight,ArrowRight,ChevronRight,Check,Plus,X,Download,SlidersHorizontal,Grid2X2,List,ShieldCheck,ExternalLink,Menu,BookOpen,UserRound} from 'lucide-react';
 import {MetricInfo,Methodology} from './metric-info';
@@ -43,8 +43,37 @@ export default function Radar({section,slug}:{section:string;slug?:string}){
  const notify=(s:string)=>{setToast(s);setTimeout(()=>setToast(''),3500);};
  const setExperience=(advanced:boolean)=>{setBeginnerMode(!advanced);try{window.localStorage.setItem('ivr-experience-mode',advanced?'advanced':'beginner');}catch{/* Browser preferences are optional. */}};
  useEffect(()=>{let active=true;void Promise.resolve().then(()=>{if(!active)return;try{const storedResearch=decodeLocalWorkspace(window.localStorage.getItem(LOCAL_WORKSPACE_KEY));setItems(storedResearch);setWatchlist(activeWatchlist(storedResearch,localStorage.getItem('ivr-active-watchlist')));const storedMode=localStorage.getItem('ivr-experience-mode');setBeginnerMode(storedMode!=='advanced');if(section==='discover'){const p=new URLSearchParams(window.location.search);setQ(p.get('q')||'');setSector(p.get('sector')||'');setAffiliation(p.get('affiliation')||'');}const saved=sessionStorage.getItem('ivr-saved-search');if(saved){try{const f=parseSavedSearch(saved);setQ(f.q);setSector(f.sector);setAffiliation(f.affiliation);}catch(e){notify(e instanceof Error?e.message:'Unable to reopen this saved search');}finally{sessionStorage.removeItem('ivr-saved-search');}}}catch(e){setError(e instanceof Error?e.message:'Unable to read browser research storage');}});return()=>{active=false;};},[]);
- const load=useCallback(async()=>{setLoading(true);setError('');try{const [s,c]=await Promise.all([request<Summary>('/api/data?view=summary'),request<{companies:Company[];total:number}>(`/api/data?q=${encodeURIComponent(q)}&sector=${encodeURIComponent(sector)}&affiliation=${encodeURIComponent(affiliation)}&sort=${sort}&page=${page}`)]);setSummary(s);setCompanies(c.companies);setTotal(c.total);if(slug)setSelectedCompany(await request<Company|null>(`/api/data?view=company&id=${encodeURIComponent(slug)}`));if(section==='sources')setSources(await request<Evidence[]>('/api/data?view=sources'));if(section==='activity')setSignals(await request<Signal[]>('/api/data?view=signals'));}catch(e){setError(e instanceof Error?e.message:'Unable to load');}finally{setLoading(false);}},[q,sector,affiliation,sort,page,slug,section]);
- useEffect(()=>{const t=setTimeout(()=>void load(),180);return()=>clearTimeout(t);},[load]);
+ const requestVersion=useRef(0);
+ // Ignore older responses after a filter, route or retry changed the request.
+ const load=useCallback(async()=>{
+  const version=++requestVersion.current;
+  setLoading(true);
+  setError('');
+  try{
+   const [s,c]=await Promise.all([
+    request<Summary>('/api/data?view=summary'),
+    request<{companies:Company[];total:number}>(`/api/data?q=${encodeURIComponent(q)}&sector=${encodeURIComponent(sector)}&affiliation=${encodeURIComponent(affiliation)}&sort=${sort}&page=${page}`)
+   ]);
+   const detail=slug?await request<Company|null>(`/api/data?view=company&id=${encodeURIComponent(slug)}`):null;
+   const sourceRows=section==='sources'?await request<Evidence[]>('/api/data?view=sources'):null;
+   const signalRows=section==='activity'?await request<Signal[]>('/api/data?view=signals'):null;
+   if(version!==requestVersion.current)return;
+   setSummary(s);
+   setCompanies(c.companies);
+   setTotal(c.total);
+   if(slug)setSelectedCompany(detail);
+   if(sourceRows)setSources(sourceRows);
+   if(signalRows)setSignals(signalRows);
+  }catch(e){
+   if(version===requestVersion.current)setError(e instanceof Error?e.message:'Unable to load');
+  }finally{
+   if(version===requestVersion.current)setLoading(false);
+  }
+ },[q,sector,affiliation,sort,page,slug,section]);
+ useEffect(()=>{
+  const timeout=setTimeout(()=>void load(),180);
+  return ()=>{clearTimeout(timeout);requestVersion.current++;};
+ },[load]);
  const item=(kind:string,key:string)=>items.find(i=>i.kind===kind&&i.key===key)?.value;
  async function save(kind:string,key:string,v:string){try{const current=decodeLocalWorkspace(window.localStorage.getItem(LOCAL_WORKSPACE_KEY));const next=upsertLocalWorkspace(current,kind,key,v);window.localStorage.setItem(LOCAL_WORKSPACE_KEY,encodeLocalWorkspace(next));setItems(next);return true;}catch(e){notify(e instanceof Error?e.message:'Browser storage is unavailable or full');return false;}}
  const lists=watchlistNames(items);
@@ -161,13 +190,13 @@ export default function Radar({section,slug}:{section:string;slug?:string}){
   <div className="premium-disclaimer"><ShieldCheck size={14}/> Public, independent research · Missing funding and traction information is not evidence of zero activity.</div>
 </>}
   {section==='discover'&&<>
- {heading('ILLINOIS STARTUP DIRECTORY','Company discovery','Search startups, filter documented Illinois relationships, and open company profiles for deeper research.',
-  <button type="button" onClick={async()=>{if(await save('search',savedSearchName({q,sector,affiliation}),JSON.stringify({q,sector,affiliation})))notify('Search saved in My Research');}}><Bookmark size={16}/>Save search</button>)}
+ {heading('ILLINOIS STARTUP DIRECTORY','Company discovery',beginnerMode?'Find startups by name or industry. Choose a company to learn what it does and inspect the sources.':'Search published claims, documented affiliations and sector labels to support investment screening.',
+  <div className="row"><Link className="button" href="/watchlists">Create / manage watchlists</Link><button type="button" onClick={async()=>{if(await save('search',savedSearchName({q,sector,affiliation}),JSON.stringify({q,sector,affiliation})))notify('Search saved in My Research');}}><Bookmark size={16}/>Save search</button></div>)}
  <div className="cb-directory-tabs"><span className="cb-directory-tab active"><Database size={15}/> Companies</span><Link className="cb-directory-tab" href="/watchlists"><Bookmark size={15}/> Saved companies</Link><Link className="cb-directory-tab" href="/learn"><BookOpen size={15}/> Research guide</Link></div>
  <div className="cb-directory-layout">
   {filters}
   <section className="panel cb-results-panel">
-   <div className="results-bar cb-results-bar"><div className="cb-results-count"><strong>{loading?'…':total}</strong><span> companies</span>{(q||sector||affiliation)&&<small> · Filtered results</small>}</div><div className="row cb-results-controls"><label htmlFor="cb-results-sort" className="cb-sort-label">Sort</label><select id="cb-results-sort" aria-label="Sort companies" value={sort} onChange={e=>setSort(e.target.value)}><option value="name">Name A–Z</option><option value="updated">Recently updated</option></select><div className="cb-view-switch" role="group" aria-label="Company view"><button type="button" className={!cards?'selected':''} aria-label="Table view" aria-pressed={!cards} onClick={()=>setCards(false)}><List size={17}/></button><button type="button" className={cards?'selected':''} aria-label="Card view" aria-pressed={cards} onClick={()=>setCards(true)}><Grid2X2 size={17}/></button></div></div></div>
+   <div className="results-bar cb-results-bar"><div className="cb-results-count"><strong>{loading?'…':total}</strong><span> companies</span>{(q||sector||affiliation)&&<small> · Filtered results</small>}<small className="watchlist-destination"> · Saving to <strong>{watchlist}</strong></small></div><div className="row cb-results-controls"><label htmlFor="cb-results-sort" className="cb-sort-label">Sort</label><select id="cb-results-sort" aria-label="Sort companies" value={sort} onChange={e=>setSort(e.target.value)}><option value="name">Name A–Z</option><option value="updated">Recently updated</option></select><div className="cb-view-switch" role="group" aria-label="Company view"><button type="button" className={!cards?'selected':''} aria-label="Table view" aria-pressed={!cards} onClick={()=>setCards(false)}><List size={17}/></button><button type="button" className={cards?'selected':''} aria-label="Card view" aria-pressed={cards} onClick={()=>setCards(true)}><Grid2X2 size={17}/></button></div></div></div>
    {(q||sector||affiliation)&&<div className="cb-active-filters">{q&&<button type="button" onClick={()=>{setQ('');setPage(1);}}>Search: {q} <X size={12}/></button>}{sector&&<button type="button" onClick={()=>{setSector('');setPage(1);}}>{sector} <X size={12}/></button>}{affiliation&&<button type="button" onClick={()=>{setAffiliation('');setPage(1);}}>{affiliation} <X size={12}/></button>}</div>}
    {loading?<div className="loading">Loading company records…</div>:companies.length?companyTable(companies):empty('No companies match','Try another keyword or clear your filters.')}
    <div className="pagination"><span>Page {page} of {Math.max(1,Math.ceil(total/12))}</span><div className="row"><button disabled={page===1} onClick={()=>setPage(page-1)}>Previous</button><button disabled={page*12>=total} onClick={()=>setPage(page+1)}>Next <ChevronRight size={14}/></button></div></div>
@@ -261,7 +290,7 @@ function Watchlists({heading,lists,watchlist,setWatchlist,newList,setNewList,onC
   <section className="panel">
    <div className="panel-heading"><h2>{watchlist} <span className="pill">{rows.length}</span></h2><Link href="/discover">Add companies <Plus size={15}/></Link></div>
    {loadError&&<p className="watchlist-error" role="alert">{loadError}</p>}
-   {loading?<div className="loading" role="status">Loading watchlist…</div>:rows.length?render(rows):!loadError?empty('Build your research shortlist','Save companies from Companies using the bookmark icon.'):null}
+   {loading?<div className="loading" role="status">Loading watchlist…</div>:rows.length?render(rows):!loadError?<div className="watchlist-empty"><div>{empty('Build your research shortlist','This watchlist is ready. Find companies and use the bookmark icon to save them here.')}</div><Link className="button" href="/discover">Find companies to add <ArrowRight size={15}/></Link></div>:null}
   </section>
  </>;
 }
