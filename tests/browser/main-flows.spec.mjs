@@ -167,6 +167,11 @@ test('learning, screening controls and methodology popovers respond',async({page
  await page.getByRole('button',{name:'About Ordering and screening scope'}).click();
  await expect(page.getByRole('heading',{name:'Ordering and screening scope',exact:true})).toBeVisible();
  await page.getByRole('button',{name:'Close explanation'}).click();
+ await expect(page.getByRole('heading',{name:'Ordering and screening scope',exact:true})).toHaveCount(0);
+ await page.getByRole('button',{name:'About Ordering and screening scope'}).click();
+ await expect(page.getByRole('heading',{name:'Ordering and screening scope',exact:true})).toBeVisible();
+ await page.keyboard.press('Escape');
+ await expect(page.getByRole('heading',{name:'Ordering and screening scope',exact:true})).toHaveCount(0);
 });
 
 test('server rejects legacy workspace writes and missing comparison route',async({page})=>{
