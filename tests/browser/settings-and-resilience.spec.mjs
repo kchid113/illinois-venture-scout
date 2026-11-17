@@ -78,7 +78,7 @@ test('a transient data outage displays Retry and recovers without refreshing the
   body:JSON.stringify({error:'Synthetic temporary outage'})
  }));
  await page.goto('/discover');
- await expect(page.getByRole('alert')).toContainText('Synthetic temporary outage');
+ await expect(page.locator('main .error[role="alert"]')).toContainText('Synthetic temporary outage');
  await page.unroute(pattern);
  await page.getByRole('button',{name:'Retry'}).click();
  await waitForDirectory(page);
