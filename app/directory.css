@@ -617,3 +617,77 @@ main{min-width:0}
 .method-dialog-close:hover{background:#FF7A21;color:#091522;border-color:#FFB681}
 .method-dialog-close:focus-visible{outline:2px solid #FFB681;outline-offset:2px}
 @media(max-width:550px){.method-popover.method-dialog{padding:0 15px 15px;max-height:80dvh}.method-dialog-header{margin:0 -15px 12px;padding:13px 15px}}
+
+
+/* Shiro audit: readable research surfaces, clear actions and responsive navigation.
+   Preserve the existing palette and route-specific styles. */
+.skip-link{position:fixed;top:12px;left:12px;z-index:200;padding:12px 18px;background:var(--cb-orange);color:var(--cb-ink);font-weight:750;transform:translateY(-160%)}
+.skip-link:focus{transform:none;color:var(--cb-ink)}
+.navigation-backdrop,.mobile-experience{display:none}
+.sidebar .nav-link{font-size:14px;min-height:44px}
+.sidebar{overflow-y:auto;overscroll-behavior:contain}
+.method-card p,.account small{font-size:12px}
+.page-heading p,.home-company-heading p,.premium-hero-main>p{font-size:14px;line-height:1.65}
+.premium-hero-main{padding-block:22px}
+.premium-hero h1{line-height:1.13}
+.premium-hero,.cb-results-panel,.company-overview .panel{box-shadow:none}
+.cb-filter-field>label,.cb-filter-shortcuts>span,.cb-sort-label{font-size:13px}
+.cb-filter-field select,.cb-filter-field .search-field input,.cb-results-controls select{font-size:13px}
+.cb-filter-field select,.cb-filter-field .search-field{min-height:44px}
+.cb-filter-shortcuts button,.cb-active-filters button{font-size:12px;min-height:36px}
+.cb-filter-explainer,.cb-company-copy .truncate,.cb-results-count small{font-size:12px}
+.cb-company-table thead th{font-size:11px;letter-spacing:.025em}
+.cb-company-row td,.cb-affiliation{font-size:13px}
+.cb-company-copy strong{font-size:14px}
+.cb-company-copy .truncate{max-width:270px}
+.cb-industry-tag{font-size:12px}
+.cb-company-row .cb-company-copy strong{text-decoration:underline;text-decoration-color:#709BBE;text-underline-offset:3px}
+.cb-company-row:nth-child(2n){background:transparent}
+.cb-company-row:hover,.cb-company-row:focus-within{background:#173E65}
+.cb-row-save-cell button,.cb-view-switch button{width:44px;height:44px;min-height:44px}
+.cb-results-count{flex-wrap:wrap;min-width:0;max-width:100%;font-size:13px}
+.watchlist-destination{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--cb-text);min-width:0}
+.watchlist-destination select{font-size:13px;min-height:40px;max-width:100%;width:auto}
+.cb-results-panel .company-card>p,.company-story-text{font-size:14px;line-height:1.65}
+.cb-results-panel .company-card .card-footer,.profile-heading p{font-size:13px}
+.cb-profile-facts>div span{font-size:12px}
+.cb-profile-facts>div strong,.tabs button{font-size:14px}
+.tabs{overflow-x:auto;overscroll-behavior-x:contain;gap:20px}
+.tabs button{flex-shrink:0;white-space:nowrap}
+.cb-table-scroll:focus-visible,.skip-link:focus-visible{outline:2px solid #FFAA6D;outline-offset:-3px}
+.watchlist-create-controls input,.watchlist-select-label select,.watchlist-create-controls button{min-height:44px;font-size:14px}
+button:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+main{min-width:0}
+@media(max-width:850px){
+ .sidebar:not(.open){visibility:hidden}
+ .sidebar.open{visibility:visible;z-index:80;overflow-y:auto}
+ .navigation-backdrop{display:block;position:fixed;inset:0;z-index:79;background:#060D16B8;border:0;border-radius:0;box-shadow:none;width:100%;height:100%;padding:0}
+ .navigation-backdrop:hover{background:#060D16B8;box-shadow:none}
+ .mobile-toggle{min-width:44px;min-height:44px}
+}
+@media(max-width:700px){
+ .mobile-experience{display:flex;flex-direction:column;gap:8px;margin:12px 6px;color:var(--cb-text);font-size:12px}
+ .mobile-experience .experience-toggle{display:flex;max-width:100%}
+ .mobile-experience button{min-height:40px}
+ .cb-global-search{min-width:0;padding-left:9px}
+ .cb-global-search input{min-width:0}
+ .cb-global-search input,.premium-search input,.cb-filter-field .search-field input,.cb-filter-field select,.watchlist-create-controls input{font-size:16px}
+ .premium-hero-main{padding:20px 17px}
+ .premium-hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;align-items:center}
+ .premium-stats-top,.premium-stats-foot{grid-column:1/-1}
+ .premium-stat-number{font-size:38px}
+ .premium-stat-grid{display:flex;flex-wrap:wrap;gap:10px}
+ .premium-stat-grid>div{padding:5px 0}
+ .premium-stat-grid strong{font-size:20px}
+ .premium-stat-grid span{font-size:10px}
+ .premium-stat-primary{border:0}
+ .home-company-heading p{font-size:13px}
+ .cb-results-controls{justify-content:flex-start}
+ .cb-results-count{display:flex;align-items:center}
+ .cb-company-table{min-width:680px}
+ .cb-directory-tabs{overflow-x:auto;white-space:nowrap}
+ .watchlist-create-controls{flex-wrap:wrap}
+ .watchlist-create-controls input{flex:1 1 160px;min-width:0}
+ .profile-actions{margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){.skip-link,.sidebar,.cb-company-row{transition:none}}
